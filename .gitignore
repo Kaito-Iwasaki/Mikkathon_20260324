@@ -39,3 +39,8 @@
 
 # debug information files
 *.dwo
+
+/.vs
+/Release
+/Debug
+/x64
