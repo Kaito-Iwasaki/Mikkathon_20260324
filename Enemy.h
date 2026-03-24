@@ -51,5 +51,6 @@ void UninitEnemy(void);
 void UpdateEnemy(void);
 void DrawEnemy(void);
 ENEMY* SetEnemy(D3DXVECTOR3 pos);
+ENEMY* GetEnemy(D3DXVECTOR3 pos);
 
 #endif
