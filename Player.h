@@ -39,6 +39,7 @@ typedef struct PLAYER
 	int nMaxBullet;
 	int nBulletLeft;
 	float fBulletSpeed;
+	float speed;
 };
 
 //*********************************************************************

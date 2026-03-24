@@ -70,6 +70,7 @@ void InitPlayer(void)
 	g_Player.nMaxBullet = PLAYER_MAX_HOLDABLE_BULLET;
 	g_Player.fBulletSpeed = PLAYER_BULLETSPEED;
 	g_Player.nBulletLeft = PLAYER_MAX_HOLDABLE_BULLET;
+	g_Player.speed = PLAYER_SPEED;
 
 	// テクスチャの読み込み
 	if (TEXTURE_FILENAME)
@@ -119,21 +120,36 @@ void UpdatePlayer(void)
 	D3DXVECTOR3 direction = D3DXVECTOR3_ZERO;
 
 	// マウス位置を目的地に設定
-	direction = Vector2To3(GetMousePos());
-	g_Player.move = Direction(g_Player.obj.pos, direction);
+	direction = Normalize(Vector2To3(GetMousePos()) - g_Player.obj.pos);
 
-	float fRotDest = atan2f(g_Player.move.x, g_Player.move.y);
+	float fRotDest = atan2f(direction.x, direction.y);
 
 	// プレイヤーをマウス方向に傾ける（角度値は-pi~piに補正）
 	g_Player.obj.rot.z += (GetFixedRotation(fRotDest - g_Player.obj.rot.z)) * PLAYER_ROTSPEED;
 	g_Player.obj.rot.z = GetFixedRotation(g_Player.obj.rot.z);
 
-	g_Player.obj.pos += Direction(g_Player.obj.rot.z) * PLAYER_SPEED;
 
-	if (GetMouseTrigger(MOUSE_LEFT))
+	if (!GetMousePress(MOUSE_LEFT))
 	{
-		GenerateBullet(g_Player.obj.pos, g_Player.obj.rot, 20, 0.1f, BT_TEST);
+		if (GetMouseRelease(MOUSE_LEFT))
+		{
+			g_Player.speed = PLAYER_SPEED * 10;
+		}
+
+		g_Player.move = Direction(g_Player.obj.rot.z);
+		g_Player.obj.pos += Direction(g_Player.obj.rot.z) * g_Player.speed;
+		//GenerateBullet(g_Player.obj.pos, g_Player.obj.rot, 20, 0.1f, BT_TEST);
+
+		g_Player.speed += (PLAYER_SPEED - g_Player.speed) * 0.1f;
+
 	}
+	else
+	{
+		g_Player.obj.pos += g_Player.move * g_Player.speed;
+
+		g_Player.speed += (0.0f - g_Player.speed) * 0.01f;
+	}
+
 }
 
 //=====================================================================
