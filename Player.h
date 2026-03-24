@@ -28,7 +28,7 @@
 // ***** ç\ë¢ëÃ *****
 // 
 //*********************************************************************
-typedef struct PlayerStruct
+typedef struct PLAYER
 {
 	BASEOBJECT obj;
 	D3DXVECTOR3 move;
@@ -51,5 +51,6 @@ void InitPlayer(void);
 void UninitPlayer(void);
 void UpdatePlayer(void);
 void DrawPlayer(void);
+PLAYER* GetPlayer(void);
 
 #endif

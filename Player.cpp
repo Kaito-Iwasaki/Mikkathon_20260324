@@ -52,7 +52,7 @@
 //*********************************************************************
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPlayer = NULL;
 LPDIRECT3DTEXTURE9 g_pTexBuffPlayer = NULL;
-PlayerStruct g_Player;
+PLAYER g_Player;
 
 //=====================================================================
 // 初期化処理
@@ -62,7 +62,7 @@ void InitPlayer(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	// 構造体の初期化
-	memset(&g_Player, 0, sizeof(PlayerStruct));
+	memset(&g_Player, 0, sizeof(PLAYER));
 	g_Player.obj.pos = INIT_POS;
 	g_Player.obj.size = INIT_SIZE;
 	g_Player.obj.color = INIT_COLOR;
@@ -163,4 +163,12 @@ void DrawPlayer(void)
 		// ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 	}
+}
+
+//=====================================================================
+// プレイヤー取得処理
+//=====================================================================
+PLAYER* GetPlayer(void)
+{
+	return &g_Player;
 }
