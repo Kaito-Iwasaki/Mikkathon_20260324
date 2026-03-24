@@ -130,9 +130,9 @@ void UpdatePlayer(void)
 
 	g_Player.obj.pos += Direction(g_Player.obj.rot.z) * PLAYER_SPEED;
 
-	if (GetKeyboardTrigger(DIK_SPACE))
+	if (GetMouseTrigger(MOUSE_LEFT))
 	{
-		GenerateBullet(g_Player.obj.pos, g_Player.obj.rot, 5, 0.1f, BT_TEST);
+		GenerateBullet(g_Player.obj.pos, g_Player.obj.rot, 20, 0.1f, BT_TEST);
 	}
 }
 
