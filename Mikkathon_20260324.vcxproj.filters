@@ -81,6 +81,9 @@
     <ClCompile Include="Enemy.cpp">
       <Filter>ソース ファイル\GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="bulletController.cpp">
+      <Filter>ソース ファイル\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sound.h">
@@ -112,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="Enemy.h">
       <Filter>ヘッダー ファイル\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="bulletController.h">
+      <Filter>ヘッダー ファイル\Controllers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
