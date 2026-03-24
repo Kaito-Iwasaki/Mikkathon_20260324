@@ -12,6 +12,7 @@
 //*********************************************************************
 #include "Player.h"
 #include "input.h"
+#include "bulletGenerator.h"
 
 //*********************************************************************
 // 
@@ -35,8 +36,7 @@
 // ***** 構造体 *****
 // 
 //*********************************************************************
-#define PLAYER_SPEED		(10.0f)
-#define PLAYER_ROTSPEED		(0.05f)
+
 
 //*********************************************************************
 // 
@@ -67,6 +67,8 @@ void InitPlayer(void)
 	g_Player.obj.size = INIT_SIZE;
 	g_Player.obj.color = INIT_COLOR;
 	g_Player.obj.bVisible = true;
+	g_Player.nMaxBullet = PLAYER_MAX_HOLDABLE_BULLET;
+	g_Player.fBulletSpeed = PLAYER_BULLETSPEED;
 
 	// テクスチャの読み込み
 	if (TEXTURE_FILENAME)
@@ -77,7 +79,6 @@ void InitPlayer(void)
 			&g_pTexBuffPlayer
 		);
 	}
-
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(
@@ -127,6 +128,11 @@ void UpdatePlayer(void)
 	g_Player.obj.rot.z = GetFixedRotation(g_Player.obj.rot.z);
 
 	g_Player.obj.pos += Direction(g_Player.obj.rot.z) * PLAYER_SPEED;
+
+	if (GetKeyboardTrigger(DIK_SPACE))
+	{
+		GenerateBullet(g_Player.obj.pos, g_Player.obj.rot, 5, BT_TEST);
+	}
 }
 
 //=====================================================================

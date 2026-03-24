@@ -21,7 +21,10 @@
 // ***** É}ÉNÉçíËã` *****
 // 
 //*********************************************************************
-
+#define PLAYER_SPEED				(5.0f)
+#define PLAYER_ROTSPEED				(0.05f)
+#define PLAYER_BULLETSPEED			(10.0f)
+#define PLAYER_MAX_HOLDABLE_BULLET	(5)
 
 //*********************************************************************
 // 
@@ -33,6 +36,9 @@ typedef struct PLAYER
 	BASEOBJECT obj;
 	D3DXVECTOR3 move;
 	D3DXVECTOR3 rotMove;
+	int nMaxBullet;
+	int nBulletLeft;
+	float fBulletSpeed;
 };
 
 //*********************************************************************
