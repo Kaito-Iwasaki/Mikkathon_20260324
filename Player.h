@@ -31,6 +31,8 @@
 typedef struct PlayerStruct
 {
 	BASEOBJECT obj;
+	D3DXVECTOR3 move;
+	D3DXVECTOR3 rotMove;
 };
 
 //*********************************************************************

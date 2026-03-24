@@ -20,15 +20,8 @@
 //*********************************************************************
 #define TEXTURE_FILENAME	NULL
 #define INIT_POS			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
-#define INIT_SIZE			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
+#define INIT_SIZE			D3DXVECTOR3(50.0f, 50.0f, 0.0f)
 #define INIT_COLOR			D3DXCOLOR_WHITE
-
-//*********************************************************************
-// 
-// ***** 構造体 *****
-// 
-//*********************************************************************
-
 
 //*********************************************************************
 // 
@@ -36,6 +29,14 @@
 // 
 //*********************************************************************
 
+
+//*********************************************************************
+// 
+// ***** 構造体 *****
+// 
+//*********************************************************************
+#define PLAYER_SPEED		(10.0f)
+#define PLAYER_ROTSPEED		(0.05f)
 
 //*********************************************************************
 // 
@@ -113,7 +114,19 @@ void UninitPlayer(void)
 //=====================================================================
 void UpdatePlayer(void)
 {
+	D3DXVECTOR3 direction = D3DXVECTOR3_ZERO;
 
+	// マウス位置を目的地に設定
+	direction = Vector2To3(GetMousePos());
+	g_Player.move = Direction(g_Player.obj.pos, direction);
+
+	float fRotDest = atan2f(g_Player.move.x, g_Player.move.y);
+
+	// プレイヤーをマウス方向に傾ける（角度値は-pi~piに補正）
+	g_Player.obj.rot.z += (GetFixedRotation(fRotDest - g_Player.obj.rot.z)) * PLAYER_ROTSPEED;
+	g_Player.obj.rot.z = GetFixedRotation(g_Player.obj.rot.z);
+
+	g_Player.obj.pos += Direction(g_Player.obj.rot.z) * PLAYER_SPEED;
 }
 
 //=====================================================================
