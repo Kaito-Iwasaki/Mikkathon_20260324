@@ -1,11 +1,11 @@
 //=====================================================================
 //
-// Player.cppのヘッダファイル [Player.h]
+// Enemy.cppのヘッダファイル [Enemy.h]
 // Author : 
 // 
 //=====================================================================
-#ifndef _Player_H_
-#define _Player_H_
+#ifndef _Enemy_H_
+#define _Enemy_H_
 
 //*********************************************************************
 // 
@@ -21,18 +21,17 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-
+#define MAX_ENEMY	(256)
 
 //*********************************************************************
 // 
 // ***** 構造体 *****
 // 
 //*********************************************************************
-typedef struct PlayerStruct
+typedef struct ENEMY
 {
 	BASEOBJECT obj;
-	D3DXVECTOR3 move;
-	D3DXVECTOR3 rotMove;
+	bool bUsed;
 };
 
 //*********************************************************************
@@ -47,9 +46,9 @@ typedef struct PlayerStruct
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitPlayer(void);
-void UninitPlayer(void);
-void UpdatePlayer(void);
-void DrawPlayer(void);
+void InitEnemy(void);
+void UninitEnemy(void);
+void UpdateEnemy(void);
+void DrawEnemy(void);
 
 #endif

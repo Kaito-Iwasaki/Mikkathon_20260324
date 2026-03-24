@@ -37,6 +37,18 @@
     <Filter Include="ヘッダー ファイル\Scenes">
       <UniqueIdentifier>{dd0ea1b0-32cd-4909-9cf3-5451e1fb4dd4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Generators">
+      <UniqueIdentifier>{58abd9bd-e90b-426a-9f95-6430378fe425}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Controllers">
+      <UniqueIdentifier>{b8de8532-3148-4826-ad90-530f25a98007}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Generators">
+      <UniqueIdentifier>{d45bac19-2c0c-4614-9470-f74dad994e32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Controllers">
+      <UniqueIdentifier>{fbf75d02-01b4-4201-8546-cd964e06081a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sound.cpp">
@@ -66,6 +78,18 @@
     <ClCompile Include="util.cpp">
       <Filter>ソース ファイル\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>ソース ファイル\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="bulletController.cpp">
+      <Filter>ソース ファイル\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="playerController.cpp">
+      <Filter>ソース ファイル\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="bulletGenerator.cpp">
+      <Filter>ソース ファイル\Generators</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sound.h">
@@ -94,6 +118,18 @@
     </ClInclude>
     <ClInclude Include="util.h">
       <Filter>ヘッダー ファイル\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>ヘッダー ファイル\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="bulletController.h">
+      <Filter>ヘッダー ファイル\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="playerController.h">
+      <Filter>ヘッダー ファイル\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="bulletGenerator.h">
+      <Filter>ヘッダー ファイル\Generators</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

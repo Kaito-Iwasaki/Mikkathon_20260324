@@ -139,6 +139,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="baseObject.h" />
+    <ClInclude Include="bulletController.h" />
+    <ClInclude Include="bulletGenerator.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="fade.h" />
     <ClInclude Include="Game.h">
       <SubType>
@@ -148,6 +157,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="playerController.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="main.h" />
@@ -156,6 +166,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="baseObject.cpp" />
+    <ClCompile Include="bulletController.cpp" />
+    <ClCompile Include="bulletGenerator.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="Game.cpp">
       <SubType>
@@ -165,6 +184,7 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="playerController.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />

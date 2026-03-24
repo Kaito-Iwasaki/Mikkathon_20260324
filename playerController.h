@@ -1,11 +1,11 @@
 //=====================================================================
 //
-// Player.cppのヘッダファイル [Player.h]
+// playerController.cppのヘッダファイル [playerController.h]
 // Author : 
 // 
 //=====================================================================
-#ifndef _Player_H_
-#define _Player_H_
+#ifndef _PlayerController_H_
+#define _PlayerController_H_
 
 //*********************************************************************
 // 
@@ -13,8 +13,6 @@
 // 
 //*********************************************************************
 #include "main.h"
-#include "baseObject.h"
-#include "util.h"
 
 //*********************************************************************
 // 
@@ -28,12 +26,7 @@
 // ***** 構造体 *****
 // 
 //*********************************************************************
-typedef struct PlayerStruct
-{
-	BASEOBJECT obj;
-	D3DXVECTOR3 move;
-	D3DXVECTOR3 rotMove;
-};
+
 
 //*********************************************************************
 // 
@@ -47,9 +40,8 @@ typedef struct PlayerStruct
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitPlayer(void);
-void UninitPlayer(void);
-void UpdatePlayer(void);
-void DrawPlayer(void);
+void InitPlayerController(void);
+void UninitPlayerController(void);
+void UpdatePlayerController(void);
 
 #endif

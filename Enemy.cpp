@@ -1,6 +1,6 @@
 //=====================================================================
 //
-// Player [Player.cpp]
+// Enemy [Enemy.cpp]
 // Author : 
 // 
 //=====================================================================
@@ -10,8 +10,7 @@
 // ***** インクルードファイル *****
 // 
 //*********************************************************************
-#include "Player.h"
-#include "input.h"
+#include "Enemy.h"
 
 //*********************************************************************
 // 
@@ -20,8 +19,15 @@
 //*********************************************************************
 #define TEXTURE_FILENAME	NULL
 #define INIT_POS			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
-#define INIT_SIZE			D3DXVECTOR3(50.0f, 50.0f, 0.0f)
-#define INIT_COLOR			D3DXCOLOR_WHITE
+#define INIT_SIZE			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
+#define INIT_COLOR			D3DXCOLOR(1, 0, 0, 1)
+
+//*********************************************************************
+// 
+// ***** 構造体 *****
+// 
+//*********************************************************************
+
 
 //*********************************************************************
 // 
@@ -29,14 +35,6 @@
 // 
 //*********************************************************************
 
-
-//*********************************************************************
-// 
-// ***** 構造体 *****
-// 
-//*********************************************************************
-#define PLAYER_SPEED		(10.0f)
-#define PLAYER_ROTSPEED		(0.05f)
 
 //*********************************************************************
 // 
@@ -50,23 +48,26 @@
 // ***** グローバル変数 *****
 // 
 //*********************************************************************
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPlayer = NULL;
-LPDIRECT3DTEXTURE9 g_pTexBuffPlayer = NULL;
-PlayerStruct g_Player;
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffEnemy = NULL;
+LPDIRECT3DTEXTURE9 g_pTexBuffEnemy = NULL;
+ENEMY g_aEnemy[MAX_ENEMY];
 
 //=====================================================================
 // 初期化処理
 //=====================================================================
-void InitPlayer(void)
+void InitEnemy(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	// 構造体の初期化
-	memset(&g_Player, 0, sizeof(PlayerStruct));
-	g_Player.obj.pos = INIT_POS;
-	g_Player.obj.size = INIT_SIZE;
-	g_Player.obj.color = INIT_COLOR;
-	g_Player.obj.bVisible = true;
+	memset(&g_aEnemy, 0, sizeof(ENEMY) * MAX_ENEMY);
+	for (int i = 0; i < MAX_ENEMY; i++)
+	{
+		g_aEnemy[i].obj.pos = INIT_POS;
+		g_aEnemy[i].obj.size = INIT_SIZE;
+		g_aEnemy[i].obj.color = INIT_COLOR;
+		g_aEnemy[i].obj.bVisible = true;
+	}
 
 	// テクスチャの読み込み
 	if (TEXTURE_FILENAME)
@@ -74,18 +75,17 @@ void InitPlayer(void)
 		D3DXCreateTextureFromFile(
 			pDevice,
 			TEXTURE_FILENAME,
-			&g_pTexBuffPlayer
+			&g_pTexBuffEnemy
 		);
 	}
 
-
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(
-		sizeof(VERTEX_2D) * 4,
+		sizeof(VERTEX_2D) * 4 * MAX_ENEMY,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
-		&g_pVtxBuffPlayer,
+		&g_pVtxBuffEnemy,
 		NULL
 	);
 
@@ -94,73 +94,68 @@ void InitPlayer(void)
 //=====================================================================
 // 終了処理
 //=====================================================================
-void UninitPlayer(void)
+void UninitEnemy(void)
 {
-	if (g_pTexBuffPlayer != NULL)
+	if (g_pTexBuffEnemy != NULL)
 	{// テクスチャの破棄
-		g_pTexBuffPlayer->Release();
-		g_pTexBuffPlayer = NULL;
+		g_pTexBuffEnemy->Release();
+		g_pTexBuffEnemy = NULL;
 	}
 
-	if (g_pVtxBuffPlayer != NULL)
+	if (g_pVtxBuffEnemy != NULL)
 	{// 頂点バッファの破棄
-		g_pVtxBuffPlayer->Release();
-		g_pVtxBuffPlayer = NULL;
+		g_pVtxBuffEnemy->Release();
+		g_pVtxBuffEnemy = NULL;
 	}
 }
 
 //=====================================================================
 // 更新処理
 //=====================================================================
-void UpdatePlayer(void)
+void UpdateEnemy(void)
 {
-	D3DXVECTOR3 direction = D3DXVECTOR3_ZERO;
 
-	// マウス位置を目的地に設定
-	direction = Vector2To3(GetMousePos());
-	g_Player.move = Direction(g_Player.obj.pos, direction);
-
-	float fRotDest = atan2f(g_Player.move.x, g_Player.move.y);
-
-	// プレイヤーをマウス方向に傾ける（角度値は-pi~piに補正）
-	g_Player.obj.rot.z += (GetFixedRotation(fRotDest - g_Player.obj.rot.z)) * PLAYER_ROTSPEED;
-	g_Player.obj.rot.z = GetFixedRotation(g_Player.obj.rot.z);
-
-	g_Player.obj.pos += Direction(g_Player.obj.rot.z) * PLAYER_SPEED;
 }
 
 //=====================================================================
 // 描画処理
 //=====================================================================
-void DrawPlayer(void)
+void DrawEnemy(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	VERTEX_2D* pVtx;
 
 	// 頂点バッファをロックして頂点情報へのポインタを取得
-	g_pVtxBuffPlayer->Lock(0, 0, (void**)&pVtx, 0);
+	g_pVtxBuffEnemy->Lock(0, 0, (void**)&pVtx, 0);
 
 	// 頂点情報を設定
-	SetVertexPos(pVtx, g_Player.obj);
-	SetVertexRHW(pVtx, 1.0f);
-	SetVertexColor(pVtx, g_Player.obj.color);
-	SetVertexTexturePos(pVtx);
+	for (int i = 0; i < MAX_ENEMY; i++, pVtx += 4)
+	{
+		if (!g_aEnemy[i].obj.bVisible || !g_aEnemy[i].bUsed) continue;
+
+		SetVertexPos(pVtx, g_aEnemy[i].obj);
+		SetVertexRHW(pVtx, 1.0f);
+		SetVertexColor(pVtx, g_aEnemy[i].obj.color);
+		SetVertexTexturePos(pVtx);
+	}
 
 	// 頂点バッファをアンロック
-	g_pVtxBuffPlayer->Unlock();
+	g_pVtxBuffEnemy->Unlock();
 
 	// 頂点バッファをデータストリームに設定
-	pDevice->SetStreamSource(0, g_pVtxBuffPlayer, 0, sizeof(VERTEX_2D));
+	pDevice->SetStreamSource(0, g_pVtxBuffEnemy, 0, sizeof(VERTEX_2D));
 
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	if (g_Player.obj.bVisible)
-	{// 表示状態
+	for (int i = 0; i < MAX_ENEMY; i++)
+	{
+		if (!g_aEnemy[i].obj.bVisible || !g_aEnemy[i].bUsed) continue;
+
 		// テクスチャの設定
-		pDevice->SetTexture(0, g_pTexBuffPlayer);
+		pDevice->SetTexture(0, NULL);
 
 		// ポリゴンの描画
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, i * 4, 2);
 	}
 }
