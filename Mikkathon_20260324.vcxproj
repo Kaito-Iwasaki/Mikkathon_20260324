@@ -149,6 +149,10 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="enemyGenerator.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="fade.h" />
     <ClInclude Include="Game.h">
       <SubType>
@@ -174,6 +178,10 @@
     </ClCompile>
     <ClCompile Include="bulletManager.cpp" />
     <ClCompile Include="Enemy.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="enemyGenerator.cpp">
       <SubType>
       </SubType>
     </ClCompile>

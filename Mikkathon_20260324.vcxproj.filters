@@ -99,6 +99,9 @@
     <ClCompile Include="bulletManager.cpp">
       <Filter>ソース ファイル\Managers</Filter>
     </ClCompile>
+    <ClCompile Include="enemyGenerator.cpp">
+      <Filter>ソース ファイル\Generators</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sound.h">
@@ -142,6 +145,9 @@
     </ClInclude>
     <ClInclude Include="bulletManager.h">
       <Filter>ヘッダー ファイル\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="enemyGenerator.h">
+      <Filter>ヘッダー ファイル\Generators</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
