@@ -13,6 +13,7 @@
 // 
 //*********************************************************************
 #include "main.h"
+#include "bulletManager.h"
 
 //*********************************************************************
 // 
@@ -32,22 +33,12 @@
 // 
 // ***** 列挙型 *****
 // 
-//*********************************************************************
-// --- 弾の種類 --- //
-typedef enum
-{
-	BT_TEST = 0,	// テスト用発射弾
-	BT_MAX
-}BULLETTYPE;		
+//*********************************************************************	
 
 //*********************************************************************
 // 
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitBulletGenerator(void);
-void UninitBulletGenerator(void);
-void UpdateBulletGenerator(void);
-
-void GenerateBullet(D3DXVECTOR3 start, D3DXVECTOR3 rot, float fSpeed, BULLETTYPE type);
+void GenerateBullet(D3DXVECTOR3 start, D3DXVECTOR3 rot, float fSpeed, float fRotSpeed, BULLETTYPE type);
 #endif

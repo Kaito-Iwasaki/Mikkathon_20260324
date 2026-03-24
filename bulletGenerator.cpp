@@ -11,7 +11,7 @@
 // 
 //*********************************************************************
 #include "bulletGenerator.h"
-#include "bulletManager.h"
+#include "util.h"
 
 //*********************************************************************
 // 
@@ -47,43 +47,28 @@
 // 
 //*********************************************************************
 
-
-//=====================================================================
-// 初期化処理
-//=====================================================================
-void InitBulletGenerator(void)
-{
-
-}
-
-//=====================================================================
-// 終了処理
-//=====================================================================
-void UninitBulletGenerator(void)
-{
-
-}
-
-//=====================================================================
-// 更新処理
-//=====================================================================
-void UpdateBulletGenerator(void)
-{
-
-}
-
-//=====================================================================
-// 描画処理
-//=====================================================================
-void DrawBulletGenerator(void)
-{
-
-}
-
 //=====================================================================
 // 出現処理処理
 //=====================================================================
-void GenerateBullet(D3DXVECTOR3 start, D3DXVECTOR3 rot, float fSpeed, BULLETTYPE type)
+void GenerateBullet(D3DXVECTOR3 start, D3DXVECTOR3 rot, float fSpeed, float fRotSpeed, BULLETTYPE type)
 {
+	LPBULLET pBullet = GetBulletPtr();
 
+	for (int nCntBullet = 0; nCntBullet < BULLET_CONST::nBulletMax; nCntBullet++, pBullet++)
+	{
+		if (pBullet->bUse) continue;	// 使用時スキップ
+
+		pBullet->obj.pos = start;				// 開始位置
+		pBullet->obj.rot = rot;					// 角度
+		pBullet->rotMove = D3DXVECTOR3(0, fRotSpeed, 0);
+		pBullet->move = Direction(rot.y) * fSpeed;	// 移動量
+		pBullet->fSpeed = fSpeed;				// 速度
+		pBullet->type = type;					// 種類
+		pBullet->obj.color = D3DXCOLOR_WHITE;
+		pBullet->obj.bVisible = true;
+		pBullet->obj.size = D3DXVECTOR3(50, 50, 0);
+		pBullet->bUse = true;					// 使用済みに変更
+
+		break;
+	}
 }

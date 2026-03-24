@@ -13,6 +13,7 @@
 // 
 //*********************************************************************
 #include "main.h"
+#include "bulletManager.h"
 
 //*********************************************************************
 // 
@@ -40,8 +41,6 @@
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitBulletController(void);
-void UninitBulletController(void);
-void UpdateBulletController(void);
+void BulletController(LPBULLET pBullet);
 
 #endif
