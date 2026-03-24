@@ -149,6 +149,7 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="bulletManager.h" />
+    <ClInclude Include="DebugProc.h" />
     <ClInclude Include="Enemy.h">
       <SubType>
       </SubType>
@@ -193,6 +194,7 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="bulletManager.cpp" />
+    <ClCompile Include="DebugProc.cpp" />
     <ClCompile Include="Enemy.cpp">
       <SubType>
       </SubType>
