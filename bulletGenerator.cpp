@@ -61,7 +61,7 @@ void GenerateBullet(D3DXVECTOR3 start, D3DXVECTOR3 rot, float fSpeed, float fRot
 		pBullet->obj.pos = start;				// 開始位置
 		pBullet->obj.rot = rot;					// 角度
 		pBullet->rotMove = D3DXVECTOR3(0, fRotSpeed, 0);
-		pBullet->move = Direction(rot.y) * fSpeed;	// 移動量
+		pBullet->move = Direction(rot.z) * fSpeed;	// 移動量
 		pBullet->fSpeed = fSpeed;				// 速度
 		pBullet->type = type;					// 種類
 		pBullet->obj.color = D3DXCOLOR_WHITE;

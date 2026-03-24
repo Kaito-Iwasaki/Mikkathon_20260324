@@ -132,7 +132,7 @@ void UpdatePlayer(void)
 
 	if (GetKeyboardTrigger(DIK_SPACE))
 	{
-		GenerateBullet(g_Player.obj.pos, g_Player.obj.rot, 5, BT_TEST);
+		GenerateBullet(g_Player.obj.pos, g_Player.obj.rot, 5, 0.1f, BT_TEST);
 	}
 }
 
