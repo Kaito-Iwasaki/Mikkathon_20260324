@@ -14,6 +14,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "bulletManager.h"
+#include "BulletFollow.h"
 
 //*********************************************************************
 // 
@@ -61,6 +62,8 @@ void InitGame(void)
   
   InitBulletManager();
 
+  InitBulletFollow();
+
 	SetEnemy(D3DXVECTOR3(500, 500, 0));
 }
 
@@ -74,6 +77,8 @@ void UninitGame(void)
   UninitEnemy();
 
 	UninitBulletManager();
+
+	UninitBulletFollow();
 }
 
 //=====================================================================
@@ -86,6 +91,8 @@ void UpdateGame(void)
 	UpdateEnemy();
   
   UpdateBulletManager();
+
+  UpdateBulletFollow();
 }
 
 //=====================================================================
@@ -98,4 +105,6 @@ void DrawGame(void)
 	DrawEnemy();
   
   DrawBulletManager();
+
+  DrawBulletFollow();
 }
