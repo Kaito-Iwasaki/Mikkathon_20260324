@@ -153,6 +153,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="playerController.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="main.h" />
@@ -175,6 +176,7 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="playerController.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />

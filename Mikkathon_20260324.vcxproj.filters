@@ -84,6 +84,9 @@
     <ClCompile Include="bulletController.cpp">
       <Filter>ソース ファイル\Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="playerController.cpp">
+      <Filter>ソース ファイル\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sound.h">
@@ -117,6 +120,9 @@
       <Filter>ヘッダー ファイル\GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="bulletController.h">
+      <Filter>ヘッダー ファイル\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="playerController.h">
       <Filter>ヘッダー ファイル\Controllers</Filter>
     </ClInclude>
   </ItemGroup>
