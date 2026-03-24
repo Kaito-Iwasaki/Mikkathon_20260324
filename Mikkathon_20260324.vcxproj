@@ -140,12 +140,20 @@
   <ItemGroup>
     <ClInclude Include="baseObject.h" />
     <ClInclude Include="bulletController.h" />
+    <ClInclude Include="BulletFollow.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="bulletGenerator.h">
       <SubType>
       </SubType>
     </ClInclude>
     <ClInclude Include="bulletManager.h" />
     <ClInclude Include="Enemy.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="enemyGenerator.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -168,12 +176,20 @@
   <ItemGroup>
     <ClCompile Include="baseObject.cpp" />
     <ClCompile Include="bulletController.cpp" />
+    <ClCompile Include="BulletFollow.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="bulletGenerator.cpp">
       <SubType>
       </SubType>
     </ClCompile>
     <ClCompile Include="bulletManager.cpp" />
     <ClCompile Include="Enemy.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="enemyGenerator.cpp">
       <SubType>
       </SubType>
     </ClCompile>
