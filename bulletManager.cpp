@@ -20,6 +20,11 @@
 //*********************************************************************
 #define RELEASE(p) do{ if(p != nullptr){ (p)->Release(); (p) = nullptr;} }while(0)				// バッファ解放
 #define RELEASE_ARRAY(pp, num) do{ for(int i = 0; i < num; i++){ RELEASE(pp[i]); } }while(0)	// 配列バッファ解放
+#ifdef _DEBUG
+#define DEBUG_FUNC(func)	func			// DEBUG関数
+#else
+#define DEBUG_FUNC(func)	printf("")		// DEBUG関数
+#endif
 
 //*********************************************************************
 // 
@@ -45,7 +50,7 @@ typedef struct
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-bool CreateBulletBuffer(_Out_ BULLETBUFFER *pOut, _Out_opt_ HRESULT *pOutHr = NULL);	// バッファ作成
+bool CreateBulletBuffer(_Out_ BULLETBUFFER *pOut);	// バッファ作成
 void SetVertexBullet(void);
 
 //*********************************************************************
@@ -61,7 +66,7 @@ const char *c_apTextureBullet[BT_MAX] =
 
 Bullet g_aBullet[BULLET_CONST::nBulletMax];	// 弾の情報
 BULLETBUFFER g_bufferBullet;	// 弾のバッファ
-
+ 
 //=====================================================================
 // 初期化処理
 //=====================================================================
@@ -95,9 +100,11 @@ void UpdateBulletManager(void)
 	{
 		if (pBullet->bUse == false) continue;
 
+		// 弾を更新
 		BulletController(pBullet);
 	}
-
+	
+	// 頂点バッファを更新
 	SetVertexBullet();
 }
 
@@ -140,10 +147,13 @@ LPBULLET GetBulletPtr(void)
 //=====================================================================
 // バッファ作成処理
 //=====================================================================
-bool CreateBulletBuffer(_Out_ BULLETBUFFER *pOut, _Out_opt_ HRESULT *pOutHr)
+bool CreateBulletBuffer(_Out_ BULLETBUFFER *pOut)
 {
 	// NULLCHECK
 	if (pOut == nullptr) return false;
+
+	// 初期化
+	*pOut = {};
 
 	// デバイス取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
@@ -163,7 +173,6 @@ bool CreateBulletBuffer(_Out_ BULLETBUFFER *pOut, _Out_opt_ HRESULT *pOutHr)
 	if (pOut->pVtxBuff == nullptr)
 	{
 		pOut->bSafeVtx = false;		// 作成失敗
-		if (pOutHr) *pOutHr = hr;	// エラーコード代入
 		return false;
 	}
 
