@@ -1,6 +1,6 @@
 //=====================================================================
 //
-// Player [Player.cpp]
+// BulletFollow [BulletFollow.cpp]
 // Author : Kaito Iwasaki
 // 
 //=====================================================================
@@ -10,9 +10,7 @@
 // ***** インクルードファイル *****
 // 
 //*********************************************************************
-#include "Player.h"
-#include "input.h"
-#include "bulletGenerator.h"
+#include "BulletFollow.h"
 
 //*********************************************************************
 // 
@@ -21,19 +19,21 @@
 //*********************************************************************
 #define TEXTURE_FILENAME	NULL
 #define INIT_POS			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
-#define INIT_SIZE			D3DXVECTOR3(50.0f, 50.0f, 0.0f)
-#define INIT_COLOR			D3DXCOLOR_WHITE
+#define INIT_SIZE			D3DXVECTOR3(10.0f, 10.0f, 0.0f)
+#define INIT_COLOR			D3DXCOLOR(1, 0, 0, 1)
 
-//*********************************************************************
-// 
-// ***** 列挙型 *****
-// 
-//*********************************************************************
-
+#define BULLETFOLLOW_GAP	(30.0f)
 
 //*********************************************************************
 // 
 // ***** 構造体 *****
+// 
+//*********************************************************************
+
+
+//*********************************************************************
+// 
+// ***** 列挙型 *****
 // 
 //*********************************************************************
 
@@ -50,26 +50,26 @@
 // ***** グローバル変数 *****
 // 
 //*********************************************************************
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPlayer = NULL;
-LPDIRECT3DTEXTURE9 g_pTexBuffPlayer = NULL;
-PLAYER g_Player;
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBulletFollow = NULL;
+LPDIRECT3DTEXTURE9 g_pTexBuffBulletFollow = NULL;
+BULLETFOLLOW g_aBulletFollow[PLAYER_MAX_HOLDABLE_BULLET];
 
 //=====================================================================
 // 初期化処理
 //=====================================================================
-void InitPlayer(void)
+void InitBulletFollow(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	// 構造体の初期化
-	memset(&g_Player, 0, sizeof(PLAYER));
-	g_Player.obj.pos = INIT_POS;
-	g_Player.obj.size = INIT_SIZE;
-	g_Player.obj.color = INIT_COLOR;
-	g_Player.obj.bVisible = true;
-	g_Player.nMaxBullet = PLAYER_MAX_HOLDABLE_BULLET;
-	g_Player.fBulletSpeed = PLAYER_BULLETSPEED;
-	g_Player.nBulletLeft = PLAYER_MAX_HOLDABLE_BULLET;
+	memset(&g_aBulletFollow[0], 0, sizeof(BULLETFOLLOW) * MAX_BULLETFOLLOW);
+	for (int i = 0; i < MAX_BULLETFOLLOW; i++)
+	{
+		g_aBulletFollow[i].obj.pos = INIT_POS;
+		g_aBulletFollow[i].obj.size = INIT_SIZE;
+		g_aBulletFollow[i].obj.color = INIT_COLOR;
+		g_aBulletFollow[i].obj.bVisible = true;
+	}
 
 	// テクスチャの読み込み
 	if (TEXTURE_FILENAME)
@@ -77,17 +77,17 @@ void InitPlayer(void)
 		D3DXCreateTextureFromFile(
 			pDevice,
 			TEXTURE_FILENAME,
-			&g_pTexBuffPlayer
+			&g_pTexBuffBulletFollow
 		);
 	}
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(
-		sizeof(VERTEX_2D) * 4,
+		sizeof(VERTEX_2D) * 4 * MAX_BULLETFOLLOW,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
-		&g_pVtxBuffPlayer,
+		&g_pVtxBuffBulletFollow,
 		NULL
 	);
 
@@ -96,86 +96,92 @@ void InitPlayer(void)
 //=====================================================================
 // 終了処理
 //=====================================================================
-void UninitPlayer(void)
+void UninitBulletFollow(void)
 {
-	if (g_pTexBuffPlayer != NULL)
+	if (g_pTexBuffBulletFollow != NULL)
 	{// テクスチャの破棄
-		g_pTexBuffPlayer->Release();
-		g_pTexBuffPlayer = NULL;
+		g_pTexBuffBulletFollow->Release();
+		g_pTexBuffBulletFollow = NULL;
 	}
 
-	if (g_pVtxBuffPlayer != NULL)
+	if (g_pVtxBuffBulletFollow != NULL)
 	{// 頂点バッファの破棄
-		g_pVtxBuffPlayer->Release();
-		g_pVtxBuffPlayer = NULL;
+		g_pVtxBuffBulletFollow->Release();
+		g_pVtxBuffBulletFollow = NULL;
 	}
 }
 
 //=====================================================================
 // 更新処理
 //=====================================================================
-void UpdatePlayer(void)
+void UpdateBulletFollow(void)
 {
-	D3DXVECTOR3 direction = D3DXVECTOR3_ZERO;
+	PLAYER* pPlayer = GetPlayer();
 
-	// マウス位置を目的地に設定
-	direction = Vector2To3(GetMousePos());
-	g_Player.move = Direction(g_Player.obj.pos, direction);
-
-	float fRotDest = atan2f(g_Player.move.x, g_Player.move.y);
-
-	// プレイヤーをマウス方向に傾ける（角度値は-pi~piに補正）
-	g_Player.obj.rot.z += (GetFixedRotation(fRotDest - g_Player.obj.rot.z)) * PLAYER_ROTSPEED;
-	g_Player.obj.rot.z = GetFixedRotation(g_Player.obj.rot.z);
-
-	g_Player.obj.pos += Direction(g_Player.obj.rot.z) * PLAYER_SPEED;
-
-	if (GetKeyboardTrigger(DIK_SPACE))
+	for (int i = 0; i < pPlayer->nBulletLeft; i++)
 	{
-		GenerateBullet(g_Player.obj.pos, g_Player.obj.rot, 5, BT_TEST);
+		D3DXVECTOR3 destination;
+		D3DXVECTOR3 direction;
+
+		if (i == 0)
+		{
+			destination = pPlayer->obj.pos;
+		}
+		else
+		{
+			destination = g_aBulletFollow[i - 1].obj.pos;
+		}
+
+		direction = Normalize(destination - g_aBulletFollow[i].obj.pos);
+
+		if (Magnitude(g_aBulletFollow[i].obj.pos, destination) > BULLETFOLLOW_GAP)
+		{
+			g_aBulletFollow[i].obj.pos += direction * PLAYER_SPEED;
+		}
+
+		g_aBulletFollow[i].obj.rot.z = atan2f(direction.x, direction.y);
 	}
 }
 
 //=====================================================================
 // 描画処理
 //=====================================================================
-void DrawPlayer(void)
+void DrawBulletFollow(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	VERTEX_2D* pVtx;
+	PLAYER* pPlayer = GetPlayer();
 
 	// 頂点バッファをロックして頂点情報へのポインタを取得
-	g_pVtxBuffPlayer->Lock(0, 0, (void**)&pVtx, 0);
+	g_pVtxBuffBulletFollow->Lock(0, 0, (void**)&pVtx, 0);
 
 	// 頂点情報を設定
-	SetVertexPos(pVtx, g_Player.obj);
-	SetVertexRHW(pVtx, 1.0f);
-	SetVertexColor(pVtx, g_Player.obj.color);
-	SetVertexTexturePos(pVtx);
+	for (int i = 0; i < pPlayer->nBulletLeft; i++, pVtx += 4)
+	{
+		SetVertexPos(pVtx, g_aBulletFollow[i].obj);
+		SetVertexRHW(pVtx, 1.0f);
+		SetVertexColor(pVtx, g_aBulletFollow[i].obj.color);
+		SetVertexTexturePos(pVtx);
+	}
 
 	// 頂点バッファをアンロック
-	g_pVtxBuffPlayer->Unlock();
+	g_pVtxBuffBulletFollow->Unlock();
 
 	// 頂点バッファをデータストリームに設定
-	pDevice->SetStreamSource(0, g_pVtxBuffPlayer, 0, sizeof(VERTEX_2D));
+	pDevice->SetStreamSource(0, g_pVtxBuffBulletFollow, 0, sizeof(VERTEX_2D));
 
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	if (g_Player.obj.bVisible)
-	{// 表示状態
-		// テクスチャの設定
-		pDevice->SetTexture(0, g_pTexBuffPlayer);
+	for (int i = 0; i < pPlayer->nBulletLeft; i++)
+	{
+		if (g_aBulletFollow[i].obj.bVisible)
+		{// 表示状態
+			// テクスチャの設定
+			pDevice->SetTexture(0, NULL);
 
-		// ポリゴンの描画
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+			// ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, i * 4, 2);
+		}
 	}
-}
-
-//=====================================================================
-// プレイヤー取得処理
-//=====================================================================
-PLAYER* GetPlayer(void)
-{
-	return &g_Player;
 }

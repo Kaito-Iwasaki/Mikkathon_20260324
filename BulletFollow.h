@@ -1,11 +1,11 @@
 //=====================================================================
 //
-// Player.cppのヘッダファイル [Player.h]
+// BulletFollow.cppのヘッダファイル [BulletFollow.h]
 // Author : Kaito Iwasaki
 // 
 //=====================================================================
-#ifndef _Player_H_
-#define _Player_H_
+#ifndef _BulletFollow_H_
+#define _BulletFollow_H_
 
 //*********************************************************************
 // 
@@ -15,30 +15,23 @@
 #include "main.h"
 #include "baseObject.h"
 #include "util.h"
+#include "Player.h"
 
 //*********************************************************************
 // 
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define PLAYER_SPEED				(5.0f)
-#define PLAYER_ROTSPEED				(0.05f)
-#define PLAYER_BULLETSPEED			(10.0f)
-#define PLAYER_MAX_HOLDABLE_BULLET	(5)
+#define MAX_BULLETFOLLOW	PLAYER_MAX_HOLDABLE_BULLET
 
 //*********************************************************************
 // 
 // ***** 構造体 *****
 // 
 //*********************************************************************
-typedef struct PLAYER
+typedef struct BULLETFOLLOW
 {
 	BASEOBJECT obj;
-	D3DXVECTOR3 move;
-	D3DXVECTOR3 rotMove;
-	int nMaxBullet;
-	int nBulletLeft;
-	float fBulletSpeed;
 };
 
 //*********************************************************************
@@ -53,10 +46,9 @@ typedef struct PLAYER
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitPlayer(void);
-void UninitPlayer(void);
-void UpdatePlayer(void);
-void DrawPlayer(void);
-PLAYER* GetPlayer(void);
+void InitBulletFollow(void);
+void UninitBulletFollow(void);
+void UpdateBulletFollow(void);
+void DrawBulletFollow(void);
 
 #endif

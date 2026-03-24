@@ -102,6 +102,9 @@
     <ClCompile Include="enemyGenerator.cpp">
       <Filter>ソース ファイル\Generators</Filter>
     </ClCompile>
+    <ClCompile Include="BulletFollow.cpp">
+      <Filter>ソース ファイル\GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sound.h">
@@ -148,6 +151,9 @@
     </ClInclude>
     <ClInclude Include="enemyGenerator.h">
       <Filter>ヘッダー ファイル\Generators</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletFollow.h">
+      <Filter>ヘッダー ファイル\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
