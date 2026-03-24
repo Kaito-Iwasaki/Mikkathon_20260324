@@ -1,11 +1,11 @@
 //=====================================================================
 //
-// scene.cppのヘッダファイル [scene.h]
-// Author : Kaito Iwasaki
+// enemyGenerator.cppのヘッダファイル [enemyGenerator.h]
+// Author : 
 // 
 //=====================================================================
-#ifndef _SCENE_H_
-#define _SCENE_H_
+#ifndef _Item_H_
+#define _Item_H_
 
 //*********************************************************************
 // 
@@ -13,6 +13,7 @@
 // 
 //*********************************************************************
 #include "main.h"
+#include "baseObject.h"
 
 //*********************************************************************
 // 
@@ -26,44 +27,32 @@
 // ***** 列挙型 *****
 // 
 //*********************************************************************
-//*********************************************************************
-// シーン列挙型
-//*********************************************************************
 typedef enum
 {
-	SCENE_TITLE = 0,
-	SCENE_GAME,
-	SCENE_RESULT,
-	SCENE_MAX
-}SCENE;	
+	IT_PROTEIN_ALPHA = 0,	// PROTEINタイプα
+	IT_MAX
+} ITEMTYPE;
 
 //*********************************************************************
 // 
 // ***** 構造体 *****
 // 
 //*********************************************************************
-//*********************************************************************
-// シーン処理関数構造体
-//*********************************************************************
-typedef struct SCENEDATA
+typedef struct Item
 {
-	void (*Init)(void);		// 初期化処理
-	void (*Uninit)(void);	// 終了処理
-	void (*Update)(void);	// 更新処理
-	void (*Draw)(void);		// 描画処理
-};
+	BASEOBJECT obj;		// オブジェクト情報
+	ITEMTYPE type;		// アイテムの種類
+	bool bUse;			// 使用済みか
+} Item;
+
 
 //*********************************************************************
 // 
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitScene(void);
-void UninitScene(void);
-void UpdateScene(void);
-void DrawScene(void);
-SCENE SetScene(SCENE nextScene, bool bStopSound = true);
-SCENE GetCurrentScene(void);
-SCENE GetPreviousScene(void);
-
+void InitItem(void);
+void UninitItem(void);
+void UpdateItem(void);
+void DrawItem(void);
 #endif
