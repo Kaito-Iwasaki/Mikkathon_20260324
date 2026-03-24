@@ -20,7 +20,7 @@
 #define TEXTURE_FILENAME	NULL
 #define INIT_POS			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
 #define INIT_SIZE			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
-#define INIT_COLOR			D3DXCOLOR(1, 0, 0, 1)
+#define INIT_COLOR			D3DXCOLOR(0, 0, 1, 1)
 
 //*********************************************************************
 // 
@@ -158,4 +158,26 @@ void DrawEnemy(void)
 		// É|ÉäÉSÉìÇÃï`âÊ
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, i * 4, 2);
 	}
+}
+
+//=====================================================================
+// ìGê›íËèàóù
+//=====================================================================
+ENEMY* SetEnemy(D3DXVECTOR3 pos)
+{
+	for (int i = 0; i < MAX_ENEMY; i++)
+	{
+		if (g_aEnemy[i].bUsed) continue;
+
+		ZeroMemory(&g_aEnemy[i], sizeof(ENEMY));
+		g_aEnemy[i].bUsed = true;
+		g_aEnemy[i].obj.pos = INIT_POS;
+		g_aEnemy[i].obj.size = INIT_SIZE;
+		g_aEnemy[i].obj.color = INIT_COLOR;
+		g_aEnemy[i].obj.bVisible = true;
+
+		return &g_aEnemy[i];
+	}
+
+	return NULL;
 }
