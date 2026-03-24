@@ -139,6 +139,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="baseObject.h" />
+    <ClInclude Include="Enemy.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="fade.h" />
     <ClInclude Include="Game.h">
       <SubType>
@@ -156,6 +160,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="baseObject.cpp" />
+    <ClCompile Include="Enemy.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="Game.cpp">
       <SubType>
