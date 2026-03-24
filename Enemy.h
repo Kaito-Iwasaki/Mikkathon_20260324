@@ -25,6 +25,18 @@
 
 //*********************************************************************
 // 
+// ***** óÒãìå^ *****
+// 
+//*********************************************************************
+typedef enum
+{
+	ENEMYSTATE_NORMAL = 0,
+	ENEMYSTATE_DAMAGE,
+	ENEMYSTATE_MAX
+}ENEMYSTATE;
+
+//*********************************************************************
+// 
 // ***** ç\ë¢ëÃ *****
 // 
 //*********************************************************************
@@ -32,14 +44,10 @@ typedef struct ENEMY
 {
 	BASEOBJECT obj;
 	bool bUsed;
+	int nConunterState;
+	int nLife;
+	ENEMYSTATE state;
 };
-
-//*********************************************************************
-// 
-// ***** óÒãìå^ *****
-// 
-//*********************************************************************
-
 
 //*********************************************************************
 // 
@@ -52,5 +60,7 @@ void UpdateEnemy(void);
 void DrawEnemy(void);
 ENEMY* SetEnemy(D3DXVECTOR3 pos);
 ENEMY* GetEnemy(D3DXVECTOR3 pos);
+void DamageEnemy(ENEMY* pEnemy);
+void SetEnemyState(ENEMY* pEnemy, ENEMYSTATE newState);
 
 #endif

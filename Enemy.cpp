@@ -11,6 +11,7 @@
 // 
 //*********************************************************************
 #include "Enemy.h"
+#include "Player.h"
 
 //*********************************************************************
 // 
@@ -21,6 +22,9 @@
 #define INIT_POS			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
 #define INIT_SIZE			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
 #define INIT_COLOR			D3DXCOLOR(0, 0, 1, 1)
+
+#define COLOR_NORMAL		INIT_COLOR
+#define COLOR_DAMAGED		D3DXCOLOR(1, 0, 0, 1)
 
 //*********************************************************************
 // 
@@ -114,7 +118,29 @@ void UninitEnemy(void)
 //=====================================================================
 void UpdateEnemy(void)
 {
+	PLAYER* pPlayer = GetPlayer();
 
+	for (int i = 0; i < MAX_ENEMY; i++)
+	{
+		if (g_aEnemy[i].state == ENEMYSTATE_DAMAGE)
+		{
+			SetEnemyState(&g_aEnemy[i], ENEMYSTATE_NORMAL);
+		}
+
+		switch (g_aEnemy[i].state)
+		{
+		case ENEMYSTATE_NORMAL:
+			g_aEnemy[i].obj.color = COLOR_NORMAL;
+			break;
+
+		case ENEMYSTATE_DAMAGE:
+			g_aEnemy[i].obj.color = COLOR_DAMAGED;
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
 //=====================================================================
@@ -171,7 +197,7 @@ ENEMY* SetEnemy(D3DXVECTOR3 pos)
 
 		ZeroMemory(&g_aEnemy[i], sizeof(ENEMY));
 		g_aEnemy[i].bUsed = true;
-		g_aEnemy[i].obj.pos = INIT_POS;
+		g_aEnemy[i].obj.pos = pos;
 		g_aEnemy[i].obj.size = INIT_SIZE;
 		g_aEnemy[i].obj.color = INIT_COLOR;
 		g_aEnemy[i].obj.bVisible = true;
@@ -188,4 +214,22 @@ ENEMY* SetEnemy(D3DXVECTOR3 pos)
 ENEMY* GetEnemy(D3DXVECTOR3 pos)
 {
 	return &g_aEnemy[0];
+}
+
+//=====================================================================
+// “Gƒ_ƒ[ƒWˆ—
+//=====================================================================
+void DamageEnemy(ENEMY* pEnemy)
+{
+	SetEnemyState(pEnemy, ENEMYSTATE_DAMAGE);
+	pEnemy->nLife--;
+}
+
+//=====================================================================
+// “Gó‘ÔÝ’èˆ—
+//=====================================================================
+void SetEnemyState(ENEMY* pEnemy, ENEMYSTATE newState)
+{
+	pEnemy->state = newState;
+	pEnemy->nConunterState = 0;
 }
