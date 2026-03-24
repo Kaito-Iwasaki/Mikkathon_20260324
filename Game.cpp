@@ -12,6 +12,7 @@
 //*********************************************************************
 #include "Game.h"
 #include "Player.h"
+#include "bulletManager.h"
 
 //*********************************************************************
 // 
@@ -54,6 +55,8 @@
 void InitGame(void)
 {
 	InitPlayer();
+
+	InitBulletManager();
 }
 
 //=====================================================================
@@ -62,6 +65,8 @@ void InitGame(void)
 void UninitGame(void)
 {
 	UninitPlayer();
+
+	UninitBulletManager();
 }
 
 //=====================================================================
@@ -70,6 +75,8 @@ void UninitGame(void)
 void UpdateGame(void)
 {
 	UpdatePlayer();
+
+	UpdateBulletManager();
 }
 
 //=====================================================================
@@ -78,4 +85,6 @@ void UpdateGame(void)
 void DrawGame(void)
 {
 	DrawPlayer();
+
+	DrawBulletManager();
 }

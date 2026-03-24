@@ -49,6 +49,12 @@
     <Filter Include="ヘッダー ファイル\Controllers">
       <UniqueIdentifier>{fbf75d02-01b4-4201-8546-cd964e06081a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Managers">
+      <UniqueIdentifier>{17486c28-b8ff-43ea-984c-5796dc2bf678}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Managers">
+      <UniqueIdentifier>{10f037db-eb20-4864-a07b-4d81a62b3856}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sound.cpp">
@@ -90,6 +96,9 @@
     <ClCompile Include="bulletGenerator.cpp">
       <Filter>ソース ファイル\Generators</Filter>
     </ClCompile>
+    <ClCompile Include="bulletManager.cpp">
+      <Filter>ソース ファイル\Managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sound.h">
@@ -130,6 +139,9 @@
     </ClInclude>
     <ClInclude Include="bulletGenerator.h">
       <Filter>ヘッダー ファイル\Generators</Filter>
+    </ClInclude>
+    <ClInclude Include="bulletManager.h">
+      <Filter>ヘッダー ファイル\Managers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

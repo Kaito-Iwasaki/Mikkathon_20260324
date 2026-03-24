@@ -1,11 +1,11 @@
 //=====================================================================
 //
-// bulletGenerator.cppのヘッダファイル [bulletGenerator.h]
+// bulletManager.cppのヘッダファイル [bulletManager.h]
 // Author : 
 // 
 //=====================================================================
-#ifndef _BulletGenerator_H_
-#define _BulletGenerator_H_
+#ifndef _BulletManager_H_
+#define _BulletManager_H_
 
 //*********************************************************************
 // 
@@ -33,21 +33,16 @@
 // ***** 列挙型 *****
 // 
 //*********************************************************************
-// --- 弾の種類 --- //
-typedef enum
-{
-	BT_TEST = 0,	// テスト用発射弾
-	BT_MAX
-}BULLETTYPE;		
+
 
 //*********************************************************************
 // 
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitBulletGenerator(void);
-void UninitBulletGenerator(void);
-void UpdateBulletGenerator(void);
+void InitBulletManager(void);
+void UninitBulletManager(void);
+void UpdateBulletManager(void);
+void DrawBulletManager(void);
 
-void GenerateBullet(D3DXVECTOR3 start, D3DXVECTOR3 rot, float fSpeed, BULLETTYPE type);
 #endif
