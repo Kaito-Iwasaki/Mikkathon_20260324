@@ -140,6 +140,10 @@
   <ItemGroup>
     <ClInclude Include="baseObject.h" />
     <ClInclude Include="bulletController.h" />
+    <ClInclude Include="bulletGenerator.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Enemy.h">
       <SubType>
       </SubType>
@@ -163,6 +167,10 @@
   <ItemGroup>
     <ClCompile Include="baseObject.cpp" />
     <ClCompile Include="bulletController.cpp" />
+    <ClCompile Include="bulletGenerator.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Enemy.cpp">
       <SubType>
       </SubType>
