@@ -12,6 +12,7 @@
 //*********************************************************************
 #include "Game.h"
 #include "Player.h"
+#include "Enemy.h"
 
 //*********************************************************************
 // 
@@ -54,6 +55,9 @@
 void InitGame(void)
 {
 	InitPlayer();
+	InitEnemy();
+
+	SetEnemy(D3DXVECTOR3(500, 500, 0));
 }
 
 //=====================================================================
@@ -62,6 +66,7 @@ void InitGame(void)
 void UninitGame(void)
 {
 	UninitPlayer();
+	UninitEnemy();
 }
 
 //=====================================================================
@@ -70,6 +75,7 @@ void UninitGame(void)
 void UpdateGame(void)
 {
 	UpdatePlayer();
+	UpdateEnemy();
 }
 
 //=====================================================================
@@ -78,4 +84,5 @@ void UpdateGame(void)
 void DrawGame(void)
 {
 	DrawPlayer();
+	DrawEnemy();
 }
