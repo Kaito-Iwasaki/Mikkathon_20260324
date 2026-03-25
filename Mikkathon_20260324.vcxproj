@@ -145,6 +145,7 @@
     <ClInclude Include="baseObject.h" />
     <ClInclude Include="bulletController.h" />
     <ClInclude Include="effect.h" />
+    <ClInclude Include="font.h" />
     <ClInclude Include="LevelGenerator.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="WeightFollow.h">
@@ -203,6 +204,7 @@
     <ClCompile Include="baseObject.cpp" />
     <ClCompile Include="bulletController.cpp" />
     <ClCompile Include="effect.cpp" />
+    <ClCompile Include="font.cpp" />
     <ClCompile Include="LevelGenerator.cpp" />
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="WeightFollow.cpp">
