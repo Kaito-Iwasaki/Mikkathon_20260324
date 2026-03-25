@@ -16,6 +16,7 @@
 #include "camera.h"
 #include "effect.h"
 #include "particle.h"
+#include "sound.h"
 
 //*********************************************************************
 // 
@@ -225,9 +226,12 @@ bool DamageEnemy(ENEMY* pEnemy, int nDamage)
 	if (pEnemy->nLife < 0)
 	{
 		SmashEnemy(pEnemy);
+		return true;
 	}
-
-	return !pEnemy->bUsed;
+	else
+	{
+		return false;
+	}
 }
 
 //=====================================================================
@@ -263,6 +267,8 @@ void KillEnemy(ENEMY* pEnemy)
 	info.nMaxLife = 60;
 
 	SetParticle(info, pEnemy->obj.pos, 0, D3DX_PI, 1, 15);
+
+	PlaySound(SOUND_LABEL_SE_EXPLOSION);
 
 	pEnemy->bUsed = false;
 }

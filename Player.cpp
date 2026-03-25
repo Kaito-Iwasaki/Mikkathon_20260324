@@ -16,6 +16,7 @@
 #include "Camera.h"
 #include "Enemy.h"
 #include "LevelGenerator.h"
+#include "sound.h"
 
 //*********************************************************************
 // 
@@ -327,10 +328,30 @@ void _OnEnemyEnteredAttackRange(ENEMY* pEnemy)
 	D3DXVECTOR3 punchDir = Direction(punchStart, pEnemy->obj.pos);
 	D3DXVECTOR3 punchRot = D3DXVECTOR3(0, 0, atan2f(punchDir.x, punchDir.y));
 	GenerateBullet(punchStart, punchRot, 10, 0, 10, BT_TEST);
+
+	// 効果音
+	switch (rand() % 3)
+	{
+	case 0:
+		PlaySound(SOUND_LABEL_SE_PUNCH_00);
+		break;
+
+	case 1:
+		PlaySound(SOUND_LABEL_SE_PUNCH_01);
+		break;
+
+	case 2:
+		PlaySound(SOUND_LABEL_SE_PUNCH_02);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void _OnEnemyKilled(ENEMY* pEnemy)
 {
 	ShakeCamera(10);
 	AddLevel(g_Player.nIdxLevel, 1);
+	PlaySound(SOUND_LABEL_SE_SMASH);
 }
