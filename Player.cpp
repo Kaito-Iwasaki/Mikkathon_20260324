@@ -22,7 +22,7 @@
 //*********************************************************************
 #define TEXTURE_FILENAME	NULL
 #define INIT_POS			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
-#define INIT_SIZE			D3DXVECTOR3(50.0f, 50.0f, 0.0f)
+#define INIT_SIZE			D3DXVECTOR3(25.0f, 25.0f, 0.0f)
 #define INIT_COLOR			D3DXCOLOR(1.0, 0.847, 0.58, 1.0)
 
 //*********************************************************************
