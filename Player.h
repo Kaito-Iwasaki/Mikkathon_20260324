@@ -21,7 +21,7 @@
 // ***** É}ÉNÉçíËã` *****
 // 
 //*********************************************************************
-#define PLAYER_INIT_SPEED			(10.0f)
+#define PLAYER_INIT_SPEED			(5.0f)
 #define PLAYER_INIT_ROTSPEED		(0.05f)
 #define PLAYER_INIT_BULLETSPEED		(10.0f)
 #define PLAYER_MAX_HOLDABLE_BULLET	(5)
