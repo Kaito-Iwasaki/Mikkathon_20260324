@@ -120,6 +120,9 @@
     <ClCompile Include="Item.cpp">
       <Filter>ソース ファイル\GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="itemGenerator.cpp">
+      <Filter>ソース ファイル\Generators</Filter>
+	</ClCompile>
     <ClCompile Include="Background.cpp">
       <Filter>ソース ファイル\GameObjects</Filter>
     </ClCompile>
@@ -191,6 +194,9 @@
     <ClInclude Include="Camera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="itemGenerator.h">
+      <Filter>ヘッダー ファイル\Generators</Filter>
+	</ClInclude>
     <ClInclude Include="Background.h">
       <Filter>ヘッダー ファイル\GameObjects</Filter>
     </ClInclude>

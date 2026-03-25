@@ -172,6 +172,7 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Item.h" />
+    <ClInclude Include="itemGenerator.h" />
     <ClInclude Include="Player.h">
       <SubType>
       </SubType>
@@ -226,6 +227,7 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="itemGenerator.cpp" />
     <ClCompile Include="Player.cpp">
       <SubType>
       </SubType>
