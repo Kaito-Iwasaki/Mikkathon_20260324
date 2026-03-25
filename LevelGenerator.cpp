@@ -16,8 +16,8 @@
 #define NUM_PLACE			(3)				// タイマーの最大桁数
 #define NUM_WIDTH			(15.0f)			// タイマーの数字の横幅
 #define NUM_HEIGHT			(20.0f)			// タイマーの数字の縦幅
-#define WIDTH_LV			(20)
-#define HEIGHT_LV			(10)
+#define WIDTH_LV			(30)
+#define HEIGHT_LV			(15)
 #define NUM_SPACE			(30.0f)			// タイマーの数字の隙間
 #define RELEASE(p) do{ if(p != nullptr){ (p)->Release(); (p) = nullptr;} }while(0)				// バッファ解放
 #define RELEASE_ARRAY(pp, num) do{ for(int i = 0; i < num; i++){ RELEASE(pp[i]); } }while(0)	// 配列バッファ解放(配列の先頭アドレス, 配列数)
@@ -31,7 +31,6 @@ typedef struct
 	BASEOBJECT objLv;		// Lvのポリゴン
 	BASEOBJECT aLevelNum[NUM_PLACE];	// 数字のポリゴン
 	int nLevel;				// スコア
-	int nLevelNum;			// スコアの桁数
 	bool bUse;				// 使用状況
 	LPDIRECT3DVERTEXBUFFER9 pVtxBuffNum;	// 数字の頂点バッファのポインタ
 	LPDIRECT3DVERTEXBUFFER9 pVtxBuffLv;		// Lvの頂点バッファのポインタ
@@ -52,16 +51,24 @@ LPDIRECT3DTEXTURE9 g_apTexBuffLevel[TEX_NUM];	// テクスチャバッファのポインタ
 const char *g_apTextureLevel[TEX_NUM] =
 {
 	"data/TEXTURE/number000.png",
-	NULL,
+	"data/TEXTURE/Lv.png",
 };
 
 //=================================================================================================
 // --- スコアの初期化処理 ---
 //=================================================================================================
-void InitLevel(void)
+void InitLevelGenerator(void)
 {
 	// 初期化
 	ZeroMemory(GetLevelPtr(), sizeof(Level) * MAX_LEVEL);
+
+	// バッファの作成
+	LPLEVEL pLevel = GetLevelPtr();
+
+	for (int nCntItem = 0; nCntItem < MAX_LEVEL; nCntItem++, pLevel++)
+	{
+		CreateBufferLevel(pLevel);
+	}
 
 	// テクスチャの読み込み
 	for (int nCntTex = 0; nCntTex < TEX_NUM; nCntTex++)
@@ -77,7 +84,7 @@ void InitLevel(void)
 //=================================================================================================
 // --- スコアの終了 ---
 //=================================================================================================
-void UninitLevel(void)
+void UninitLevelGenerator(void)
 {
 	LPLEVEL pLevel = GetLevelPtr();
 
@@ -95,15 +102,79 @@ void UninitLevel(void)
 //=================================================================================================
 // --- スコアの更新 ---
 //=================================================================================================
-void UpdateLevel(void)
+void UpdateLevelGenerator(void)
 {
-	
+	LPLEVEL pLevel = GetLevelPtr();	// レベルのポインタ取得
+	VERTEX_2D* pVtx;				// 頂点情報へのポインタ
+
+	for (int nCntItem = 0; nCntItem < MAX_LEVEL; nCntItem++, pLevel++)
+	{
+		if (pLevel->bUse == false) continue;
+
+		if (pLevel->bUse)
+		{// 表示状態
+			// 頂点バッファをロックし、頂点情報へのポインタを取得
+			pLevel->pVtxBuffNum->Lock(0, 0, (void**)&pVtx, 0);
+
+			for (int nCntVtx = 0; nCntVtx < NUM_PLACE; nCntVtx++)
+			{
+				// 頂点座標の設定(座標設定は必ず右回りで！！！)
+				pVtx[0].pos.x = pLevel->aLevelNum[nCntVtx].pos.x + (NUM_SPACE * nCntVtx) - NUM_WIDTH;
+				pVtx[0].pos.y = pLevel->aLevelNum[nCntVtx].pos.y - NUM_HEIGHT;
+				pVtx[0].pos.z = 0.0f;
+
+				pVtx[1].pos.x = pLevel->aLevelNum[nCntVtx].pos.x + (NUM_SPACE * nCntVtx) + NUM_WIDTH;
+				pVtx[1].pos.y = pLevel->aLevelNum[nCntVtx].pos.y - NUM_HEIGHT;
+				pVtx[1].pos.z = 0.0f;
+
+				pVtx[2].pos.x = pLevel->aLevelNum[nCntVtx].pos.x + (NUM_SPACE * nCntVtx) - NUM_WIDTH;
+				pVtx[2].pos.y = pLevel->aLevelNum[nCntVtx].pos.y + NUM_HEIGHT;
+				pVtx[2].pos.z = 0.0f;
+
+				pVtx[3].pos.x = pLevel->aLevelNum[nCntVtx].pos.x + (NUM_SPACE * nCntVtx) + NUM_WIDTH;
+				pVtx[3].pos.y = pLevel->aLevelNum[nCntVtx].pos.y + NUM_HEIGHT;
+				pVtx[3].pos.z = 0.0f;
+
+				// オフセット適用
+				SetVertexPos(pVtx, pVtx[0].pos, pVtx[1].pos, pVtx[2].pos, pVtx[3].pos);
+
+				pVtx += 4;
+			}
+
+			pLevel->pVtxBuffNum->Unlock();
+
+			// 頂点バッファをロックし、頂点情報へのポインタを取得
+			pLevel->pVtxBuffLv->Lock(0, 0, (void**)&pVtx, 0);
+
+			// 頂点情報を設定
+			pVtx[0].pos.x = pLevel->objLv.pos.x - WIDTH_LV;
+			pVtx[0].pos.y = pLevel->objLv.pos.y - HEIGHT_LV;
+			pVtx[0].pos.z = 0.0f;
+
+			pVtx[1].pos.x = pLevel->objLv.pos.x + WIDTH_LV;
+			pVtx[1].pos.y = pLevel->objLv.pos.y - HEIGHT_LV;
+			pVtx[1].pos.z = 0.0f;
+
+			pVtx[2].pos.x = pLevel->objLv.pos.x - WIDTH_LV;
+			pVtx[2].pos.y = pLevel->objLv.pos.y + HEIGHT_LV;
+			pVtx[2].pos.z = 0.0f;
+
+			pVtx[3].pos.x = pLevel->objLv.pos.x + WIDTH_LV;
+			pVtx[3].pos.y = pLevel->objLv.pos.y + HEIGHT_LV;
+			pVtx[3].pos.z = 0.0f;
+
+			// オフセット適用
+			SetVertexPos(pVtx, pVtx[0].pos, pVtx[1].pos, pVtx[2].pos, pVtx[3].pos);
+
+			pLevel->pVtxBuffLv->Unlock();
+		}
+	}
 }
 
 //=================================================================================================
 // --- スコアの描画 ---
 //=================================================================================================
-void DrawLevel(void)
+void DrawLevelGenerator(void)
 {
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
@@ -156,42 +227,45 @@ int GeneratorLevel(int nLevel, D3DXVECTOR3 posCenter)
 	int aTexU[128];				//各桁の数字を収納
 	int nDiff = 1;
 	int nCntLevel;
-	LPLEVEL pLevel = &g_aLevel[0];
+	LPLEVEL pLevel = GetLevelPtr();
 
-	for (int nCntLevelPointer = 0; nCntLevelPointer < MAX_LEVEL; nCntLevelPointer++, pLevel++)
+	for (int nCntLevel = 0; nCntLevel < MAX_LEVEL; nCntLevel++, pLevel++)
 	{
 		if (pLevel->bUse == false)
 		{
-			CreateBufferLevel(pLevel);
-
 			pLevel->nLevel = nLevel;
 
-			for (nCntLevel = 0; nCntLevel < NUM_PLACE; nCntLevel++)
+			for (int nCntTex = 0; nCntTex < NUM_PLACE; nCntTex++)
 			{
-				aTexU[nCntLevel] = pLevel->nLevel % (int)powf(10.0f, (float)(NUM_PLACE - nCntLevel)) / (int)powf(10.0f, (float)(NUM_PLACE - nCntLevel) - 1.0f);
+				aTexU[nCntTex] = pLevel->nLevel % (int)powf(10.0f, (float)(NUM_PLACE - nCntTex)) / (int)powf(10.0f, (float)(NUM_PLACE - nCntTex) - 1.0f);
 			}
 
 			// 頂点バッファをロックし、頂点情報へのポインタを取得
 			pLevel->pVtxBuffNum->Lock(0, 0, (void**)&pVtx, 0);
 
-			for (nCntLevel = 0; nCntLevel < NUM_PLACE; nCntLevel++)
+			for (int nCntVtx = 0; nCntVtx < NUM_PLACE; nCntVtx++)
 			{
+				pLevel->aLevelNum[nCntVtx].pos = posCenter;
+
 				// 頂点座標の設定(座標設定は必ず右回りで！！！)
-				pVtx[0].pos.x = pLevel->aLevelNum[nCntLevel].pos.x + (NUM_SPACE * nCntLevel) - NUM_WIDTH;
-				pVtx[0].pos.y = pLevel->aLevelNum[nCntLevel].pos.y - NUM_HEIGHT;
+				pVtx[0].pos.x = pLevel->aLevelNum[nCntVtx].pos.x + (NUM_SPACE * nCntVtx) - NUM_WIDTH;
+				pVtx[0].pos.y = pLevel->aLevelNum[nCntVtx].pos.y - NUM_HEIGHT;
 				pVtx[0].pos.z = 0.0f;
 
-				pVtx[1].pos.x = pLevel->aLevelNum[nCntLevel].pos.x + (NUM_SPACE * nCntLevel) + NUM_WIDTH;
-				pVtx[1].pos.y = pLevel->aLevelNum[nCntLevel].pos.y - NUM_HEIGHT;
+				pVtx[1].pos.x = pLevel->aLevelNum[nCntVtx].pos.x + (NUM_SPACE * nCntVtx) + NUM_WIDTH;
+				pVtx[1].pos.y = pLevel->aLevelNum[nCntVtx].pos.y - NUM_HEIGHT;
 				pVtx[1].pos.z = 0.0f;
 
-				pVtx[2].pos.x = pLevel->aLevelNum[nCntLevel].pos.x + (NUM_SPACE * nCntLevel) - NUM_WIDTH;
-				pVtx[2].pos.y = pLevel->aLevelNum[nCntLevel].pos.y + NUM_HEIGHT;
+				pVtx[2].pos.x = pLevel->aLevelNum[nCntVtx].pos.x + (NUM_SPACE * nCntVtx) - NUM_WIDTH;
+				pVtx[2].pos.y = pLevel->aLevelNum[nCntVtx].pos.y + NUM_HEIGHT;
 				pVtx[2].pos.z = 0.0f;
 
-				pVtx[3].pos.x = pLevel->aLevelNum[nCntLevel].pos.x + (NUM_SPACE * nCntLevel) + NUM_WIDTH;
-				pVtx[3].pos.y = pLevel->aLevelNum[nCntLevel].pos.y + NUM_HEIGHT;
+				pVtx[3].pos.x = pLevel->aLevelNum[nCntVtx].pos.x + (NUM_SPACE * nCntVtx) + NUM_WIDTH;
+				pVtx[3].pos.y = pLevel->aLevelNum[nCntVtx].pos.y + NUM_HEIGHT;
 				pVtx[3].pos.z = 0.0f;
+
+				// オフセット適用
+				SetVertexPos(pVtx, pVtx[0].pos, pVtx[1].pos, pVtx[2].pos, pVtx[3].pos);
 
 				// rhwの設定
 				pVtx[0].rhw = 1.0f;
@@ -206,10 +280,10 @@ int GeneratorLevel(int nLevel, D3DXVECTOR3 posCenter)
 				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 				// テクスチャ座標の設定
-				pVtx[0].tex = D3DXVECTOR2((0.1f * aTexU[nCntLevel]), 0.0f);
-				pVtx[1].tex = D3DXVECTOR2((0.1f * aTexU[nCntLevel]) + 0.1f, 0.0f);
-				pVtx[2].tex = D3DXVECTOR2((0.1f * aTexU[nCntLevel]), 1.0f);
-				pVtx[3].tex = D3DXVECTOR2((0.1f * aTexU[nCntLevel]) + 0.1f, 1.0f);
+				pVtx[0].tex = D3DXVECTOR2((0.1f * aTexU[nCntVtx]), 0.0f);
+				pVtx[1].tex = D3DXVECTOR2((0.1f * aTexU[nCntVtx]) + 0.1f, 0.0f);
+				pVtx[2].tex = D3DXVECTOR2((0.1f * aTexU[nCntVtx]), 1.0f);
+				pVtx[3].tex = D3DXVECTOR2((0.1f * aTexU[nCntVtx]) + 0.1f, 1.0f);
 
 				pVtx += 4;
 			}
@@ -217,23 +291,41 @@ int GeneratorLevel(int nLevel, D3DXVECTOR3 posCenter)
 			pLevel->pVtxBuffNum->Unlock();
 
 			// 頂点バッファをロックし、頂点情報へのポインタを取得
-			pLevel->pVtxBuffNum->Lock(0, 0, (void**)&pVtx, 0);
+			pLevel->pVtxBuffLv->Lock(0, 0, (void**)&pVtx, 0);
 
-			pLevel->objLv.pos.x = posCenter.x - (2 * NUM_WIDTH);
+			pLevel->objLv.pos.x = posCenter.x - (2 * NUM_SPACE);
 			pLevel->objLv.pos.y = posCenter.y;
 			pLevel->objLv.pos.z = 0.0f;
 			pLevel->objLv.size.x = WIDTH_LV;
 			pLevel->objLv.size.y = HEIGHT_LV;
 
 			// 頂点情報を設定
-			SetVertexPos(pVtx, pLevel->objLv);
+			pVtx[0].pos.x = pLevel->objLv.pos.x - WIDTH_LV;
+			pVtx[0].pos.y = pLevel->objLv.pos.y - HEIGHT_LV;
+			pVtx[0].pos.z = 0.0f;
+
+			pVtx[1].pos.x = pLevel->objLv.pos.x + WIDTH_LV;
+			pVtx[1].pos.y = pLevel->objLv.pos.y - HEIGHT_LV;
+			pVtx[1].pos.z = 0.0f;
+
+			pVtx[2].pos.x = pLevel->objLv.pos.x - WIDTH_LV;
+			pVtx[2].pos.y = pLevel->objLv.pos.y + HEIGHT_LV;
+			pVtx[2].pos.z = 0.0f;
+
+			pVtx[3].pos.x = pLevel->objLv.pos.x + WIDTH_LV;
+			pVtx[3].pos.y = pLevel->objLv.pos.y + HEIGHT_LV;
+			pVtx[3].pos.z = 0.0f;
+
+			// オフセット適用
+			SetVertexPos(pVtx, pVtx[0].pos, pVtx[1].pos, pVtx[2].pos, pVtx[3].pos);
 			SetVertexRHW(pVtx, 1.0f);
-			SetVertexColor(pVtx, pLevel->objLv.color);
+			SetVertexColor(pVtx, D3DXCOLOR(1, 1, 1, 1));
 			SetVertexTexturePos(pVtx);
 
-			pLevel->pVtxBuffNum->Unlock();
+			pLevel->pVtxBuffLv->Unlock();
+			pLevel->bUse = true;
 
-			return nCntLevelPointer;
+			return nCntLevel;
 		}
 	}
 
@@ -266,7 +358,7 @@ bool CreateBufferLevel(LPLEVEL pOut)
 	HRESULT hr;		// エラーコード
 
 	// 頂点バッファ確保
-	hr = pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * (4 * pOut->nLevelNum),
+	hr = pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * (4 * NUM_PLACE),
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
@@ -281,4 +373,140 @@ bool CreateBufferLevel(LPLEVEL pOut)
 		NULL);
 
 	return true;
+}
+
+//=====================================================================
+// 移動処理
+//=====================================================================
+void SetPositionLevel(int nIdxLevel, D3DXVECTOR3 pos)
+{
+	LPLEVEL pLevel = GetLevelPtr();	// レベルのポインタ取得
+	VERTEX_2D* pVtx;				// 頂点情報へのポインタ
+
+	pLevel += nIdxLevel;
+	if (pLevel->bUse == false) return;
+
+	// 頂点バッファをロックし、頂点情報へのポインタを取得
+	pLevel->pVtxBuffNum->Lock(0, 0, (void**)&pVtx, 0);
+
+	for (int nCntVtx = 0; nCntVtx < NUM_PLACE; nCntVtx++)
+	{
+		pLevel->aLevelNum[nCntVtx].pos = pos;
+
+		// 頂点座標の設定(座標設定は必ず右回りで！！！)
+		pVtx[0].pos.x = pLevel->aLevelNum[nCntVtx].pos.x + (NUM_SPACE * nCntVtx) - NUM_WIDTH;
+		pVtx[0].pos.y = pLevel->aLevelNum[nCntVtx].pos.y - NUM_HEIGHT;
+		pVtx[0].pos.z = 0.0f;
+
+		pVtx[1].pos.x = pLevel->aLevelNum[nCntVtx].pos.x + (NUM_SPACE * nCntVtx) + NUM_WIDTH;
+		pVtx[1].pos.y = pLevel->aLevelNum[nCntVtx].pos.y - NUM_HEIGHT;
+		pVtx[1].pos.z = 0.0f;
+
+		pVtx[2].pos.x = pLevel->aLevelNum[nCntVtx].pos.x + (NUM_SPACE * nCntVtx) - NUM_WIDTH;
+		pVtx[2].pos.y = pLevel->aLevelNum[nCntVtx].pos.y + NUM_HEIGHT;
+		pVtx[2].pos.z = 0.0f;
+
+		pVtx[3].pos.x = pLevel->aLevelNum[nCntVtx].pos.x + (NUM_SPACE * nCntVtx) + NUM_WIDTH;
+		pVtx[3].pos.y = pLevel->aLevelNum[nCntVtx].pos.y + NUM_HEIGHT;
+		pVtx[3].pos.z = 0.0f;
+
+		// オフセット適用
+		SetVertexPos(pVtx, pVtx[0].pos, pVtx[1].pos, pVtx[2].pos, pVtx[3].pos);
+
+		pVtx += 4;
+	}
+
+	pLevel->pVtxBuffNum->Unlock();
+
+	// 頂点バッファをロックし、頂点情報へのポインタを取得
+	pLevel->pVtxBuffLv->Lock(0, 0, (void**)&pVtx, 0);
+
+	pLevel->objLv.pos = pos;
+
+	// 頂点情報を設定
+	pVtx[0].pos.x = pLevel->objLv.pos.x - WIDTH_LV;
+	pVtx[0].pos.y = pLevel->objLv.pos.y - HEIGHT_LV;
+	pVtx[0].pos.z = 0.0f;
+
+	pVtx[1].pos.x = pLevel->objLv.pos.x + WIDTH_LV;
+	pVtx[1].pos.y = pLevel->objLv.pos.y - HEIGHT_LV;
+	pVtx[1].pos.z = 0.0f;
+
+	pVtx[2].pos.x = pLevel->objLv.pos.x - WIDTH_LV;
+	pVtx[2].pos.y = pLevel->objLv.pos.y + HEIGHT_LV;
+	pVtx[2].pos.z = 0.0f;
+
+	pVtx[3].pos.x = pLevel->objLv.pos.x + WIDTH_LV;
+	pVtx[3].pos.y = pLevel->objLv.pos.y + HEIGHT_LV;
+	pVtx[3].pos.z = 0.0f;
+
+	// オフセット適用
+	SetVertexPos(pVtx, pVtx[0].pos, pVtx[1].pos, pVtx[2].pos, pVtx[3].pos);
+
+	pLevel->pVtxBuffLv->Unlock();
+}
+
+//=====================================================================
+// バッファ作成処理
+//=====================================================================
+void AddLevel(int nIdxLevel, int nValue)
+{
+	LPLEVEL pLevel = GetLevelPtr();	// レベルのポインタ取得
+
+	pLevel += nIdxLevel;
+	if (pLevel->bUse == false) return;
+
+	SetLevel(nIdxLevel, pLevel->nLevel + nValue);
+}
+
+//=====================================================================
+// バッファ作成処理
+//=====================================================================
+void SetLevel(int nIdxLevel, int nElem)
+{
+	LPLEVEL pLevel = GetLevelPtr();	// レベルのポインタ取得
+	VERTEX_2D* pVtx;				// 頂点情報へのポインタ
+	int aTexU[128];					//各桁の数字を収納
+
+	pLevel->nLevel = nElem;
+
+	pLevel += nIdxLevel;
+	if (pLevel->bUse == false) return;
+
+	// スコアから各桁を求める
+	for (int nCntTex = 0; nCntTex < NUM_PLACE; nCntTex++)
+	{
+		aTexU[nCntTex] = pLevel->nLevel % (int)powf(10.0f, (float)(NUM_PLACE - nCntTex)) / (int)powf(10.0f, (float)(NUM_PLACE - nCntTex) - 1.0f);
+	}
+
+	// 頂点バッファをロックし、頂点情報へのポインタを取得
+	pLevel->pVtxBuffNum->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 適用
+	for (int nCntVtx = 0; nCntVtx < NUM_PLACE; nCntVtx++)
+	{
+		// テクスチャ座標の設定
+		pVtx[0].tex = D3DXVECTOR2((0.1f * aTexU[nCntVtx]), 0.0f);
+		pVtx[1].tex = D3DXVECTOR2((0.1f * aTexU[nCntVtx]) + 0.1f, 0.0f);
+		pVtx[2].tex = D3DXVECTOR2((0.1f * aTexU[nCntVtx]), 1.0f);
+		pVtx[3].tex = D3DXVECTOR2((0.1f * aTexU[nCntVtx]) + 0.1f, 1.0f);
+
+		pVtx += 4;
+	}
+
+	pLevel->pVtxBuffNum->Unlock();
+}
+
+//=====================================================================
+// バッファ作成処理
+//=====================================================================
+void RemoveLevel(int nIdxLevel)
+{
+	LPLEVEL pLevel = GetLevelPtr();	// レベルのポインタ取得
+
+	pLevel += nIdxLevel;
+	if (pLevel->bUse == false) return;
+
+	pLevel->bUse = false;
+	pLevel->nLevel = 0;
 }
