@@ -15,7 +15,9 @@
 #include "input.h"
 #include "fade.h"
 
+#include "Title.h"
 #include "Game.h"
+#include "Result.h"
 
 //*********************************************************************
 // 
@@ -29,7 +31,9 @@ SCENE g_previousScene = g_currentScene;		// 直前のシーン
 // 各シーンの処理関数
 //*********************************************************************
 SCENEDATA g_scenes[SCENE_MAX] = {
+	{ InitTitle, UninitTitle, UpdateTitle, DrawTitle },
 	{ InitGame, UninitGame, UpdateGame, DrawGame },
+	{ InitResult, UninitResult, UpdateResult, DrawResult },
 };
 
 //=====================================================================

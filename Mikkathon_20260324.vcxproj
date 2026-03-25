@@ -153,6 +153,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="DebugProc.h" />
     <ClInclude Include="Enemy.h">
       <SubType>
       </SubType>
@@ -171,10 +172,18 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="playerController.h" />
+    <ClInclude Include="Result.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="scene.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="sound.h" />
+    <ClInclude Include="Title.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +202,7 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="DebugProc.cpp" />
     <ClCompile Include="Enemy.cpp">
       <SubType>
       </SubType>
@@ -211,10 +221,18 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="playerController.cpp" />
+    <ClCompile Include="Result.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="sound.cpp" />
+    <ClCompile Include="Title.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="util.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
