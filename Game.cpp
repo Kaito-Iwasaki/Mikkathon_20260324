@@ -70,8 +70,6 @@ void InitGame(void)
 	InitWeightFollow();
 	InitBackground();
   
-	SetEnemy(D3DXVECTOR3(500, 500, 0));
-  
 	// -- Managers --
 	InitBulletManager();
 	

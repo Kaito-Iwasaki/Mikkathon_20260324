@@ -14,6 +14,7 @@
 #include "input.h"
 #include "bulletGenerator.h"
 #include "Camera.h"
+#include "Enemy.h"
 
 //*********************************************************************
 // 
@@ -51,7 +52,9 @@ typedef enum
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-
+void _AttackNearEnemies();
+void _OnEnemyEnteredAttackZone(ENEMY* pEnemy);
+void _OnEnemyKilled(ENEMY* pEnemy);
 
 //*********************************************************************
 // 
@@ -61,6 +64,9 @@ typedef enum
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPlayer = NULL;
 LPDIRECT3DTEXTURE9 g_pTexBuffPlayer = NULL;
 PLAYER g_Player;
+
+// プレイヤー操作タイプ
+// これによって入力方法と方向の求め方が変わる
 PLAYER_CONTROLTYPE g_ctrlType = PLAYER_CONTROLTYPE_MOUSE;
 
 //=====================================================================
@@ -172,10 +178,12 @@ void UpdatePlayer(void)
 
 	g_Player.obj.pos += Direction(g_Player.obj.rot.z) * PLAYER_INIT_SPEED;
 
-	GetCamera()->pos = g_Player.obj.pos;
+	GetCamera()->pos = g_Player.obj.pos + Direction(g_Player.obj.rot.z) * 100;
 
 	// テクスチャアニメーション（現在のテクスチャ位置を更新）
 	g_Player.nTexture = (g_Player.nTexture + 1) % (NUM_TEXTURE_X * NUM_TEXTURE_Y);
+
+	_AttackNearEnemies();
 }
 
 //=====================================================================
@@ -223,4 +231,49 @@ void DrawPlayer(void)
 PLAYER* GetPlayer(void)
 {
 	return &g_Player;
+}
+
+void _AttackNearEnemies()
+{
+	ENEMY* pEnemy = GetEnemy();
+
+	for (int i = 0; i < MAX_ENEMY; i++, pEnemy++)
+	{
+		if (pEnemy->bUsed == false) continue;
+
+		if (Magnitude(pEnemy->obj.pos, g_Player.obj.pos) < (pEnemy->obj.size.x * 0.5f + pEnemy->obj.size.x * 0.5f) * 2)
+		{
+
+			_OnEnemyEnteredAttackZone(pEnemy);
+		}
+	}
+}
+
+void _OnEnemyEnteredAttackZone(ENEMY* pEnemy)
+{
+	bool bHasEnemyDied = DamageEnemy(pEnemy);
+
+	if (bHasEnemyDied)
+	{
+		_OnEnemyKilled(pEnemy);
+	}
+	else
+	{
+		// ノックバック（プレイヤーに向かって反対に方向に押し出す）
+		pEnemy->obj.pos += Direction(g_Player.obj.pos, pEnemy->obj.pos) * PLAYER_INIT_SPEED * 0.75f;
+
+		// 若干揺らす
+		pEnemy->obj.pos += Vector2To3(GetRandomVector2()) * pEnemy->obj.size.x * 0.05f;
+	}
+
+	// パンチエフェクトの生成
+	D3DXVECTOR3 punch_start = g_Player.obj.pos + Vector2To3(GetRandomVector2() * 100);
+	D3DXVECTOR3 punch_dir = Direction(punch_start, pEnemy->obj.pos);
+	D3DXVECTOR3 punch_rot = D3DXVECTOR3(0, 0, atan2f(punch_dir.x, punch_dir.y));
+	GenerateBullet(punch_start, punch_rot, 10, 0, BT_TEST);
+}
+
+void _OnEnemyKilled(ENEMY* pEnemy)
+{
+	ShakeCamera(10);
 }
