@@ -24,6 +24,7 @@
 #include "effect.h"
 #include "particle.h"
 #include "LevelGenerator.h"
+#include "Background2.h"
 
 //*********************************************************************
 // 
@@ -77,6 +78,7 @@ void InitGame(void)
 	InitItem();
 	InitWeightFollow();
 	InitBackground();
+	InitBackground2();
 	InitEffect();
 	InitParticle();
 
@@ -103,6 +105,7 @@ void UninitGame(void)
 	UninitEnemy();
 	UninitWeightFollow();
 	UninitBackground();
+	UninitBackground2();
 	UninitEffect();
 	UninitParticle();
 	
@@ -152,6 +155,7 @@ void UpdateGame(void)
 		UpdateItem();
 		UpdateWeightFollow();
 		UpdateBackground();
+		UpdateBackground2();
 		UpdateEffect();
 		UpdateParticle();
 
@@ -174,13 +178,14 @@ void UpdateGame(void)
 void DrawGame(void)
 {
 	// -- 2D Objects --
+	DrawBackground2();
 	DrawBackground();
+	DrawEffect();
 	DrawEnemy();
 	DrawBulletManager();
 	DrawItem();
 	DrawWeightFollow();
 	DrawPlayer();
-	DrawEffect();
 	DrawLevelGenerator();
 
 	if (g_bPauseGame)

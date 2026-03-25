@@ -131,6 +131,20 @@ void UpdateEnemy(void)
 		if (g_aEnemy[i].bUsed == false) continue;
 
 		_OnEnemyState(&g_aEnemy[i]);
+
+		for (int j = 0; j < MAX_ENEMY; j++)
+		{
+			if (g_aEnemy[j].bUsed == false) continue;
+			if (j == i) continue;
+
+			D3DXVECTOR3 vecEnemyAToEnemyB = g_aEnemy[j].obj.pos - g_aEnemy[i].obj.pos;
+			float sizeAAndB = g_aEnemy[i].obj.size.x * 0.5f + g_aEnemy[j].obj.size.x * 0.5f;
+
+			if (Magnitude(vecEnemyAToEnemyB) < sizeAAndB)
+			{
+				g_aEnemy[j].obj.pos += Normalize(vecEnemyAToEnemyB);
+			}
+		}
 	}
 }
 
@@ -211,11 +225,11 @@ ENEMY* GetEnemy(void)
 //=====================================================================
 // “Gƒ_ƒ[ƒWˆ—
 //=====================================================================
-bool DamageEnemy(ENEMY* pEnemy)
+bool DamageEnemy(ENEMY* pEnemy, int nDamage)
 {
 	ShakeCamera(1);
 	SetEnemyState(pEnemy, ENEMYSTATE_DAMAGE);
-	pEnemy->nLife--;
+	pEnemy->nLife -= nDamage;
 
 	if (pEnemy->nLife < 0)
 	{

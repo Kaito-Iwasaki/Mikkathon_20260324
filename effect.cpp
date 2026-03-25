@@ -92,11 +92,11 @@ void UpdateEffect(void)
 	{
 		if (pEffect->bUsed == false) continue;
 
-		//if (IsObjectOutOfScreen(pEffect->obj, GetCameraRect()) || pEffect->nLife < 1)
-		//{
-		//	pEffect->bUsed = false;
-		//	continue;
-		//}
+		if (pEffect->nLife <= 0)
+		{
+			pEffect->bUsed = false;
+			continue;
+		}
 
 		pEffect->obj.pos += D3DXVECTOR3(sinf(pEffect->fAngle), cosf(pEffect->fAngle), 0.0f) * pEffect->info.fSpeed;
 		pEffect->fScale = pEffect->info.fMaxScale * ((float)pEffect->nLife / (float)pEffect->info.nMaxLife);
