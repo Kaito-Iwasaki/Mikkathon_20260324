@@ -53,9 +53,11 @@ typedef enum
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
+void _PlayerControl();
+
 ENEMY* _GetNearestEnemy(void);
-void _AttackNearEnemies(void);
-void _OnEnemyEnteredAttackZone(ENEMY* pEnemy);
+void _AttackNearestEnemy(void);
+void _OnEnemyEnteredAttackRange(ENEMY* pEnemy);
 void _OnEnemyKilled(ENEMY* pEnemy);
 
 //*********************************************************************
@@ -111,7 +113,10 @@ void InitPlayer(void)
 		NULL
 	);
 
-	GeneratorLevel(g_Player.nIdxLevel, g_Player.obj.pos + D3DXVECTOR3(0, g_Player.obj.size.y * 1.5f, 0));
+	GeneratorLevel(
+		g_Player.nIdxLevel,
+		g_Player.obj.pos
+	);
 }
 
 //=====================================================================
@@ -136,6 +141,83 @@ void UninitPlayer(void)
 // 更新処理
 //=====================================================================
 void UpdatePlayer(void)
+{
+	_PlayerControl();
+
+	// カメラをプレイヤーに追従させる
+	// 若干向いてる方向にオフセットする
+	float fCamOffsetMagnitude = 100.0f;
+	D3DXVECTOR3 vecCamOffset = Direction(g_Player.obj.rot.z) * fCamOffsetMagnitude;
+	GetCamera()->pos = g_Player.obj.pos + vecCamOffset;
+
+	// レベル表示をプレイヤーの頭上に追従させる
+	D3DXVECTOR3 vecLevelOffset = D3DXVECTOR3(0, -g_Player.obj.size.y, 0);
+	SetPositionLevel(
+		g_Player.nIdxLevel,
+		g_Player.obj.pos + vecLevelOffset
+	);
+
+	// テクスチャアニメーション（現在のテクスチャ位置を更新）
+	g_Player.nTexture = (g_Player.nTexture + 1) % (NUM_TEXTURE_X * NUM_TEXTURE_Y);
+
+	// 一番近くの敵１人だけを攻撃
+	_AttackNearestEnemy();
+}
+
+//=====================================================================
+// 描画処理
+//=====================================================================
+void DrawPlayer(void)
+{
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	VERTEX_2D* pVtx;
+
+	// 頂点バッファをロックして頂点情報へのポインタを取得
+	g_pVtxBuffPlayer->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 頂点情報を設定
+	SetVertexPos(pVtx, g_Player.obj);
+	SetVertexRHW(pVtx, 1.0f);
+	SetVertexColor(pVtx, g_Player.obj.color);
+	int nTextureX = g_Player.nTexture % NUM_TEXTURE_X;
+	int nTextureY = g_Player.nTexture / NUM_TEXTURE_X;
+	SetVertexTexturePos(
+		pVtx,
+		nTextureX,
+		nTextureY,
+		NUM_TEXTURE_X,
+		NUM_TEXTURE_Y, 
+		g_Player.obj.bInversed
+	);
+
+	// 頂点バッファをアンロック
+	g_pVtxBuffPlayer->Unlock();
+
+	// 頂点バッファをデータストリームに設定
+	pDevice->SetStreamSource(0, g_pVtxBuffPlayer, 0, sizeof(VERTEX_2D));
+
+	// 頂点フォーマットの設定
+	pDevice->SetFVF(FVF_VERTEX_2D);
+
+	if (g_Player.obj.bVisible)
+	{// 表示状態
+		// テクスチャの設定
+		pDevice->SetTexture(0, g_pTexBuffPlayer);
+
+		// ポリゴンの描画
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+	}
+}
+
+//=====================================================================
+// プレイヤー取得処理
+//=====================================================================
+PLAYER* GetPlayer(void)
+{
+	return &g_Player;
+}
+
+void _PlayerControl()
 {
 	DIMOUSESTATE mouse = GetMouse();
 	XINPUT_STATE* joypad = GetJoypad();
@@ -168,7 +250,7 @@ void UpdatePlayer(void)
 			g_ctrlType = PLAYER_CONTROLTYPE_MOUSE;
 		}
 	}
-	
+
 	// 入力方向が変わった時だけ移動方向も変える
 	if (fabsf(direction.x + direction.y) > 0)
 	{
@@ -182,62 +264,6 @@ void UpdatePlayer(void)
 	g_Player.obj.rot.z = GetFixedRotation(g_Player.obj.rot.z);
 
 	g_Player.obj.pos += Direction(g_Player.obj.rot.z) * g_Player.fSpeed;
-
-	GetCamera()->pos = g_Player.obj.pos + Direction(g_Player.obj.rot.z) * 100;
-
-	// テクスチャアニメーション（現在のテクスチャ位置を更新）
-	g_Player.nTexture = (g_Player.nTexture + 1) % (NUM_TEXTURE_X * NUM_TEXTURE_Y);
-
-	_AttackNearEnemies();
-
-	SetPositionLevel(g_Player.nIdxLevel, g_Player.obj.pos + D3DXVECTOR3(0, -g_Player.obj.size.y, 0));
-}
-
-//=====================================================================
-// 描画処理
-//=====================================================================
-void DrawPlayer(void)
-{
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-	VERTEX_2D* pVtx;
-
-	// 頂点バッファをロックして頂点情報へのポインタを取得
-	g_pVtxBuffPlayer->Lock(0, 0, (void**)&pVtx, 0);
-
-	// 頂点情報を設定
-	SetVertexPos(pVtx, g_Player.obj);
-	SetVertexRHW(pVtx, 1.0f);
-	SetVertexColor(pVtx, g_Player.obj.color);
-
-	int nTextureX = g_Player.nTexture % NUM_TEXTURE_X;
-	int nTextureY = g_Player.nTexture / NUM_TEXTURE_X;
-	SetVertexTexturePos(pVtx, nTextureX, nTextureY, NUM_TEXTURE_X, NUM_TEXTURE_Y, g_Player.obj.bInversed);
-
-	// 頂点バッファをアンロック
-	g_pVtxBuffPlayer->Unlock();
-
-	// 頂点バッファをデータストリームに設定
-	pDevice->SetStreamSource(0, g_pVtxBuffPlayer, 0, sizeof(VERTEX_2D));
-
-	// 頂点フォーマットの設定
-	pDevice->SetFVF(FVF_VERTEX_2D);
-
-	if (g_Player.obj.bVisible)
-	{// 表示状態
-		// テクスチャの設定
-		pDevice->SetTexture(0, g_pTexBuffPlayer);
-
-		// ポリゴンの描画
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
-	}
-}
-
-//=====================================================================
-// プレイヤー取得処理
-//=====================================================================
-PLAYER* GetPlayer(void)
-{
-	return &g_Player;
 }
 
 ENEMY* _GetNearestEnemy(void)
@@ -262,7 +288,7 @@ ENEMY* _GetNearestEnemy(void)
 	return pNearestEnemy;
 }
 
-void _AttackNearEnemies(void)
+void _AttackNearestEnemy(void)
 {
 	ENEMY* pEnemy = _GetNearestEnemy();
 
@@ -273,11 +299,11 @@ void _AttackNearEnemies(void)
 
 	if (Magnitude(pEnemy->obj.pos, g_Player.obj.pos) < fAttackRange)
 	{
-		_OnEnemyEnteredAttackZone(pEnemy);
+		_OnEnemyEnteredAttackRange(pEnemy);
 	}
 }
 
-void _OnEnemyEnteredAttackZone(ENEMY* pEnemy)
+void _OnEnemyEnteredAttackRange(ENEMY* pEnemy)
 {
 	bool bHasEnemyDied = DamageEnemy(pEnemy, g_Player.nPower);
 
