@@ -213,6 +213,11 @@ void SetPlayerState(PLAYERSTATE newState)
 	g_Player.nCounterState = 0;
 }
 
+PLAYERSTATE GetPlayerState(void)
+{
+	return g_Player.state;
+}
+
 void SmashPlayer(D3DXVECTOR3 dir)
 {
 	g_Player.bControlEnabled = false;

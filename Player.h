@@ -73,6 +73,7 @@ void UpdatePlayer(void);
 void DrawPlayer(void);
 PLAYER* GetPlayer(void);
 void SetPlayerState(PLAYERSTATE newState);
+PLAYERSTATE GetPlayerState(void);
 void SmashPlayer(D3DXVECTOR3 dir);
 
 #endif
