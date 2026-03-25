@@ -306,6 +306,7 @@ void _OnEnemyType(ENEMY* pEnemy)
 
 	case ENEMYTYPE_CHASER:
 	{
+		if (pPlayer->state == PLAYERSTATE_SMASH) return;
 		D3DXVECTOR3 vecMoveDir = Direction(pEnemy->obj.pos, pPlayer->obj.pos);
 		pEnemy->obj.pos += vecMoveDir * pEnemy->fSpeed;
 		pEnemy->obj.rot.z = atan2(vecMoveDir.x, vecMoveDir.y);
