@@ -422,6 +422,7 @@ void SetPositionLevel(int nIdxLevel, D3DXVECTOR3 pos)
 	pLevel->pVtxBuffLv->Lock(0, 0, (void**)&pVtx, 0);
 
 	pLevel->objLv.pos = pos;
+	pLevel->objLv.pos.x = pos.x - (2 * NUM_SPACE);
 
 	// ’¸“_î•ñ‚ðÝ’è
 	pVtx[0].pos.x = pLevel->objLv.pos.x - WIDTH_LV;
