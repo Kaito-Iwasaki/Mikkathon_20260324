@@ -30,7 +30,7 @@
 #define COLOR_NORMAL		INIT_COLOR
 #define COLOR_DAMAGED		D3DXCOLOR(1, 0, 0, 1)
 
-#define ENEMY_INIT_LIFE		(100)
+#define ENEMY_INIT_LIFE		(10)
 
 //*********************************************************************
 // 
