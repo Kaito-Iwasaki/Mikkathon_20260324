@@ -20,53 +20,44 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define DYNAMIC_ASSERT(expr) if(!expr){ OutputDebugString(TEXT("Assertion Failed!")); __debugbreak(); }	// 動的なアサ―ト感知
 
 //*********************************************************************
 // 
 // ***** 列挙型 *****
 // 
 //*********************************************************************
-// --- 弾の種類 --- //
-typedef enum
-{
-	BT_TEST = 0,	// テスト用発射弾
-	BT_MAX
-}BULLETTYPE;
+
 
 //*********************************************************************
 // 
 // ***** 構造体 *****
 // 
 //*********************************************************************
-// --- 弾の構造体 --- //
-typedef struct Bullet
+// --- 浮動小数の矩形指定構造体 --- //
+typedef struct FLOAT_RECT
 {
-	BASEOBJECT obj;			// オブジェクト情報
-	D3DXVECTOR3 move;		// 移動量
-	D3DXVECTOR3 rotMove;	// 回転の移動量
-	BULLETTYPE type;		// 弾の種類
-	float fSpeed;			// 速度
-	bool bUse;				// 使用されているか
-} Bullet;
+	FLOAT left;
+	FLOAT top;
+	FLOAT right;
+	FLOAT bottom;
+} FLOAT_RECT;
 
-typedef Bullet *LPBULLET, *PBULLET;
+typedef FLOAT_RECT *LPFLOAT_RECT, *PFLOAT_RECT;
 
-// --- 弾に関する定数まとめ --- //
-typedef struct BULLET_CONST
+// --- アイテム生成の設定関連 --- //
+typedef struct
 {
-	static const int nBulletMax;
-}BULLET_CONST;
+	FLOAT_RECT rect;	// 矩形範囲
+	int nUpperSpawn;	// 一度の処理で出現する最大数
+	int nLowerSpawn;	// 一度の処理で出現する最小数
+	int nFrameSpawn;	// 出現待機フレーム
+}ITEM_GENERATE_SETTING;
 
 //*********************************************************************
 // 
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitBulletManager(void);
-void UninitBulletManager(void);
-void UpdateBulletManager(void);
-void DrawBulletManager(void);
-
-LPBULLET GetBulletPtr(void);
+void UpdateItemGenerator(void);
+void SetItemGenerator(ITEM_GENERATE_SETTING igs);
 #endif

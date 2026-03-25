@@ -11,6 +11,7 @@
 // 
 //*********************************************************************
 #include "Item.h"
+#include "itemGenerator.h"
 
 //*********************************************************************
 // 
@@ -54,9 +55,9 @@ void SetVertexItem(void);	// 頂点設定
 // 
 //*********************************************************************
 // --- static const変数の値設定 --- //
-const int ITEM_CONST::nMaxItem = 64;		// アイテムの最大数
+const int ITEM_CONST::nMaxItem = 256;		// アイテムの最大数
 const D3DXVECTOR2 ITEM_CONST::DefSize = D3DXVECTOR2(30, 30);	// 基本サイズ
-const D3DXCOLOR ITEM_CONST::DefColor = D3DXCOLOR(1, 1, 1, 1);	// 基本色
+const D3DXCOLOR ITEM_CONST::DefColor = D3DXCOLOR(1, 0, 1, 1);	// 基本色
 
 // --- const変数の宣言 --- //
 const char *c_apTextureItem[ITEMTYPE_MAX] =	// テクスチャパス
@@ -88,6 +89,15 @@ void InitItem(void)
 
 	// バッファ作成
 	CreateItemBuffer(&g_itemBuffer);
+
+	ITEM_GENERATE_SETTING igs;
+	igs.nFrameSpawn = 240;
+	igs.nUpperSpawn = 10;
+	igs.nLowerSpawn = 3;
+	igs.rect = FLOAT_RECT{ -500, -500, 2000, 2000 };
+
+	// アイテム発生処理の設定
+	SetItemGenerator(igs);
 }
 
 //=====================================================================
@@ -107,7 +117,11 @@ void UninitItem(void)
 //=====================================================================
 void UpdateItem(void)
 {
+	// アイテム発生処理
+	UpdateItemGenerator();
 
+	// 頂点設定
+	SetVertexItem();
 }
 
 //=====================================================================
@@ -144,6 +158,30 @@ void DrawItem(void)
 LPITEM GetItemPtr(void)
 {
 	return &g_aItem[0];
+}
+
+//=====================================================================
+// アイテム設置処理
+//=====================================================================
+void SetItem(D3DXVECTOR3 pos, ITEMTYPE type, D3DXCOLOR color, D3DXVECTOR2 size)
+{
+	LPITEM pItem = GetItemPtr();	// アイテムへのポインタ
+
+	for (int nCntItem = 0; nCntItem < ITEM_CONST::nMaxItem; nCntItem++, pItem++)
+	{
+		if (pItem->bUse) continue;	// 使用済みならスキップ
+
+		// 各情報を保存
+		pItem->type = type;							// 種類を保存
+		pItem->obj.pos = pos;						// 位置を保存
+		pItem->obj.color = color;					// 色を保存
+		pItem->obj.rot = D3DXVECTOR3(0, 0, 0);		// 角度を初期化
+		pItem->obj.size = ToVector3(size);			// サイズを保存
+		pItem->obj.bVisible = true;					// 描画状態を保存
+
+		pItem->bUse = true;							// 使用済みに変更
+		break;
+	}
 }
 
 //=====================================================================
