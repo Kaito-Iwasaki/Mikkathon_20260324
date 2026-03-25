@@ -1,11 +1,11 @@
 //=====================================================================
-//
-// bulletGenerator.cppのヘッダファイル [bulletGenerator.h]
-// Author : 
 // 
+// particle.cppのヘッダファイル [particle.h]
+// Author : Kaito Iwasaki
+//
 //=====================================================================
-#ifndef _BulletGenerator_H_
-#define _BulletGenerator_H_
+#ifndef _PARTICLE_H_
+#define _PARTICLE_H_		// 二重インクルード防止のマクロ
 
 //*********************************************************************
 // 
@@ -13,11 +13,19 @@
 // 
 //*********************************************************************
 #include "main.h"
-#include "bulletManager.h"
+#include "baseObject.h"
+#include "effect.h"
 
 //*********************************************************************
 // 
 // ***** マクロ定義 *****
+// 
+//*********************************************************************
+#define MAX_PARTICLE		(256)
+
+//*********************************************************************
+// 
+// ***** 列挙型 *****
 // 
 //*********************************************************************
 
@@ -27,18 +35,27 @@
 // ***** 構造体 *****
 // 
 //*********************************************************************
-
-
-//*********************************************************************
-// 
-// ***** 列挙型 *****
-// 
-//*********************************************************************	
+typedef struct
+{
+	BASEOBJECT obj;
+	bool bUsed;
+	EFFECTINFO info;
+	float fAngle;
+	float fRange;
+	int nLife;
+	int nNumEffect;
+	D3DXVECTOR3* pPosParent;
+}PARTICLE;
 
 //*********************************************************************
 // 
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void GenerateBullet(D3DXVECTOR3 start, D3DXVECTOR3 rot, float fSpeed, float fRotSpeed, int nLife, BULLETTYPE type);
+void InitParticle(void);
+void UninitParticle(void);
+void UpdateParticle(void);
+void SetParticle(EFFECTINFO info, D3DXVECTOR3 pos, float fAngle, float fRange, int nLife, int nNumEffect);
+void SetParticle(EFFECTINFO info, D3DXVECTOR3* pPos, float fAngle, float fRange, int nLife, int nNumEffect);
+
 #endif

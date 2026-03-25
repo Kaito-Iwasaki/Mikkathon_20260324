@@ -61,7 +61,7 @@ void SetVertexBullet(void);
 const int BULLET_CONST::nBulletMax = 64;	// ’e‚ÌÅ‘å”
 const char *c_apTextureBullet[BT_MAX] =
 {
-	NULL,
+	"data\\TEXTURE\\punch.png",
 };
 
 Bullet g_aBullet[BULLET_CONST::nBulletMax];	// ’e‚Ìî•ñ
@@ -212,7 +212,7 @@ void SetVertexBullet(void)
 		SetVertexPos(pVtx, pBullet->obj);
 		SetVertexRHW(pVtx, 1.0f);
 		SetVertexColor(pVtx, pBullet->obj.color);
-		SetVertexTexturePos(pVtx);
+		SetVertexTexturePos(pVtx, pBullet->obj.bInversed);
 
 		pVtx += 4;
 	}

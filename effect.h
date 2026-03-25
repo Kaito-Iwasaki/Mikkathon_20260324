@@ -1,11 +1,11 @@
 //=====================================================================
-//
-// bulletGenerator.cppのヘッダファイル [bulletGenerator.h]
-// Author : 
 // 
+// effect.cppのヘッダファイル [effect.h]
+// Author:
+//
 //=====================================================================
-#ifndef _BulletGenerator_H_
-#define _BulletGenerator_H_
+#ifndef _EFFECT_H_
+#define _EFFECT_H_		// 二重インクルード防止のマクロ
 
 //*********************************************************************
 // 
@@ -13,11 +13,18 @@
 // 
 //*********************************************************************
 #include "main.h"
-#include "bulletManager.h"
+#include "baseObject.h"
 
 //*********************************************************************
 // 
 // ***** マクロ定義 *****
+// 
+//*********************************************************************
+#define MAX_EFFECT			(1024)
+
+//*********************************************************************
+// 
+// ***** 列挙型 *****
 // 
 //*********************************************************************
 
@@ -27,18 +34,35 @@
 // ***** 構造体 *****
 // 
 //*********************************************************************
+typedef struct
+{
+	float fSpeed;
+	float fRotSpeed;
+	float fMaxScale;
+	int nMaxLife;
+	float fMaxAlpha;
+	D3DXCOLOR col;
+}EFFECTINFO;
 
-
-//*********************************************************************
-// 
-// ***** 列挙型 *****
-// 
-//*********************************************************************	
+typedef struct
+{
+	BASEOBJECT obj;
+	bool bUsed;
+	EFFECTINFO info;
+	float fAngle;
+	float fScale;
+	int nLife;
+}EFFECT;
 
 //*********************************************************************
 // 
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void GenerateBullet(D3DXVECTOR3 start, D3DXVECTOR3 rot, float fSpeed, float fRotSpeed, int nLife, BULLETTYPE type);
+void InitEffect(void);
+void UninitEffect(void);
+void UpdateEffect(void);
+void DrawEffect(void);
+void SetEffect(D3DXVECTOR3 pos, float fSpeed, float fRotSpeed, float fAngle, float fScale, int nLife, D3DXCOLOR col);
+
 #endif
