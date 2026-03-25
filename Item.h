@@ -67,4 +67,5 @@ void UpdateItem(void);
 void DrawItem(void);
 
 LPITEM GetItemPtr(void);
+void SetItem(D3DXVECTOR3 pos, ITEMTYPE type, D3DXCOLOR color = ITEM_CONST::DefColor, D3DXVECTOR2 size = ITEM_CONST::DefSize);
 #endif

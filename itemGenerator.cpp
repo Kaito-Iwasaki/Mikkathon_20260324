@@ -1,6 +1,6 @@
 //=====================================================================
 //
-// bulletGenerator [bulletGenerator.cpp]
+// itemGenerator [itemGenerator.cpp]
 // Author : 
 // 
 //=====================================================================
@@ -10,8 +10,8 @@
 // ***** インクルードファイル *****
 // 
 //*********************************************************************
-#include "bulletGenerator.h"
-#include "util.h"
+#include "itemGenerator.h"
+#include "Item.h"
 
 //*********************************************************************
 // 
@@ -25,7 +25,11 @@
 // ***** 構造体 *****
 // 
 //*********************************************************************
-
+typedef struct
+{
+	ITEM_GENERATE_SETTING IGS;	// アイテム出現の設定
+	int nCounter;				// フレームカウント
+} ItemGenerator;
 
 //*********************************************************************
 // 
@@ -46,28 +50,47 @@
 // ***** グローバル変数 *****
 // 
 //*********************************************************************
+ItemGenerator g_itemGenerator = {};		// ジェネレーターの情報
 
 //=====================================================================
-// 出現処理処理
+// 更新処理
 //=====================================================================
-void GenerateBullet(D3DXVECTOR3 start, D3DXVECTOR3 rot, float fSpeed, float fRotSpeed, BULLETTYPE type)
+void UpdateItemGenerator(void)
 {
-	LPBULLET pBullet = GetBulletPtr();
-
-	for (int nCntBullet = 0; nCntBullet < BULLET_CONST::nBulletMax; nCntBullet++, pBullet++)
+	if (g_itemGenerator.nCounter % g_itemGenerator.IGS.nFrameSpawn == 0)
 	{
-		if (pBullet->bUse) continue;	// 使用時スキップ
+		ITEM_GENERATE_SETTING *pSetting = &g_itemGenerator.IGS;
 
-		pBullet->obj.pos = start;				// 開始位置
-		pBullet->obj.rot = rot;					// 角度
-		pBullet->rotMove = D3DXVECTOR3(0, fRotSpeed, 0);
-		pBullet->move = Direction(rot.z) * fSpeed;	// 移動量
-		pBullet->fSpeed = fSpeed;				// 速度
-		pBullet->type = type;					// 種類
-		pBullet->obj.color = D3DXCOLOR_WHITE;
-		pBullet->obj.bVisible = true;
-		pBullet->obj.size = D3DXVECTOR3(50, 50, 0);
-		pBullet->bUse = true;					// 使用済みに変更
-		break;
+		// アイテムの出現数
+		int nSpawn = rand() % (pSetting->nUpperSpawn - pSetting->nLowerSpawn) + pSetting->nLowerSpawn;
+		
+		// アイテムを出現
+		for (int nCntItem = 0; nCntItem < nSpawn; nCntItem++)
+		{
+			int nXMax = pSetting->rect.right, nXMin = pSetting->rect.left;
+			int nYMax = pSetting->rect.bottom, nYMin = pSetting->rect.top;
+
+			// 位置を設定
+			float fXPos = (float)(rand() % nXMax + nXMin);
+			float fYPos = (float)(rand() % nYMax + nYMin);
+
+			// 種類を設定
+			ITEMTYPE type = (ITEMTYPE)(rand() % ITEMTYPE_MAX);
+
+			SetItem(D3DXVECTOR3(fXPos, fYPos, 0), type);
+		}
 	}
+
+	g_itemGenerator.nCounter++;
+}
+
+//=====================================================================
+// 出現設定処理
+//=====================================================================
+void SetItemGenerator(ITEM_GENERATE_SETTING igs)
+{
+	ZeroMemory(&g_itemGenerator, sizeof(ItemGenerator));
+
+	// 設定保存
+	g_itemGenerator.IGS = igs;
 }
