@@ -70,13 +70,13 @@ const unsigned int ITEM_CONST::aStateCount[ITEMSTATE_MAX] =
 	0
 };
 
-const D3DXVECTOR2 ITEM_CONST::DefSize = D3DXVECTOR2(30, 30);	// 基本サイズ
-const D3DXCOLOR ITEM_CONST::DefColor = D3DXCOLOR(1, 0, 1, 1);	// 基本色
+const D3DXVECTOR2 ITEM_CONST::DefSize = D3DXVECTOR2(100, 100);	// 基本サイズ
+const D3DXCOLOR ITEM_CONST::DefColor = D3DXCOLOR(1, 1, 1, 1);	// 基本色
 
 // --- const変数の宣言 --- //
 const char *c_apTextureItem[ITEMTYPE_MAX] =	// テクスチャパス
 {
-	NULL,	
+	"data/TEXTURE/ProteinNormal.png",	
 };
 
 // --- 通常のグローバル変数の宣言 --- //
