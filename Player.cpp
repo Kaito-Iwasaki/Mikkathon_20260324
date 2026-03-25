@@ -15,6 +15,7 @@
 #include "bulletGenerator.h"
 #include "Camera.h"
 #include "Enemy.h"
+#include "LevelGenerator.h"
 
 //*********************************************************************
 // 
@@ -107,6 +108,7 @@ void InitPlayer(void)
 		NULL
 	);
 
+	GeneratorLevel(g_Player.nLevel, g_Player.obj.pos + D3DXVECTOR3(0, g_Player.obj.size.y * 1.5f, 0));
 }
 
 //=====================================================================
@@ -184,6 +186,8 @@ void UpdatePlayer(void)
 	g_Player.nTexture = (g_Player.nTexture + 1) % (NUM_TEXTURE_X * NUM_TEXTURE_Y);
 
 	_AttackNearEnemies();
+
+	SetPositionLevel(g_Player.nLevel, g_Player.obj.pos + D3DXVECTOR3(0, -g_Player.obj.size.y, 0));
 }
 
 //=====================================================================
@@ -241,9 +245,10 @@ void _AttackNearEnemies()
 	{
 		if (pEnemy->bUsed == false) continue;
 
-		if (Magnitude(pEnemy->obj.pos, g_Player.obj.pos) < (pEnemy->obj.size.x * 0.5f + pEnemy->obj.size.x * 0.5f) * 2)
-		{
+		float fAttackRange = (pEnemy->obj.size.x * 0.5f + pEnemy->obj.size.x * 0.5f) * 2;
 
+		if (Magnitude(pEnemy->obj.pos, g_Player.obj.pos) < fAttackRange)
+		{
 			_OnEnemyEnteredAttackZone(pEnemy);
 		}
 	}

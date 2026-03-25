@@ -65,7 +65,12 @@ bool g_bPauseGame = false;
 //=====================================================================
 void InitGame(void)
 {
+
+	// -- Managers --
+	InitBulletManager();
+	
 	// -- Objects --
+	InitLevelGenerator();
 	InitCamera();
 	InitPlayer();
 	InitEnemy();
@@ -74,17 +79,12 @@ void InitGame(void)
 	InitBackground();
 	InitEffect();
 	InitParticle();
-  
-	// -- Managers --
-	InitBulletManager();
-	
+
 	// -- Generators --
 	InitEnemyGenerator();
-	InitLevelGenerator();
 
 	// -- Ex --
 	SetCursorMid();
-	GeneratorLevel(100, D3DXVECTOR3(640, 360, 0));
 
 	// -- 構造体・グローバル変数 --
 	g_bPauseGame = false;
