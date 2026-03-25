@@ -60,4 +60,5 @@ typedef struct
 //*********************************************************************
 void UpdateItemGenerator(void);
 void SetItemGenerator(ITEM_GENERATE_SETTING igs);
+void ChengeGenerateRand(float alpha = 0.6f, float beta = 0.3f, float gamma = 0.1f);
 #endif

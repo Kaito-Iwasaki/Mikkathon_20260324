@@ -13,6 +13,7 @@
 #include "Item.h"
 #include "Player.h"
 #include "itemGenerator.h"
+#include "LevelGenerator.h"
 
 //*********************************************************************
 // 
@@ -35,6 +36,20 @@ typedef struct
 	bool bSafeVtx;		// 頂点バッファの獲得状況
 }ITEMBUFFER;
 
+typedef struct
+{
+	LPDIRECT3DVERTEXBUFFER9 pVtxBuff;	// 頂点バッファへのポインタ
+	LPDIRECT3DTEXTURE9 apTex[ITEMTYPE_MAX];	// テクスチャバッファへのポインタ
+	bool bSafeVtx;		// 頂点バッファの獲得状況
+}LVUPEFFECTBUFFER;
+
+typedef struct 
+{
+	BASEOBJECT obj;	// オブジェクト情報
+	ITEMTYPE type;	// 発生時のアイテムの種類
+	bool bUse;		// 使っているか
+} LvUpEffect, *LPLVUPEFFECT, *PLVUPEFFECT;
+
 //*********************************************************************
 // 
 // ***** 列挙型 *****
@@ -53,7 +68,13 @@ void SetItemState(LPITEM pItem, ITEMSTATE state);	// ステート設定
 void UpdateItemState(LPITEM pItem);					// ステートの更新
 void RemoveItem(LPITEM pItem);						// アイテムの消去処理
 bool CreateItemBuffer(_Out_ ITEMBUFFER *pOut);		// バッファ作成
+bool CreateLvUpBuffer(_Out_ LVUPEFFECTBUFFER *pOut);		// バッファ作成
 void SetVertexItem(void);							// 頂点設定
+void SetVertexLvUp(void);							// 頂点設定
+LPLVUPEFFECT GetLvUpEffectPtr(void);				// ポインタ取得
+void UpdateLvUpEffect(LPLVUPEFFECT pLvUp);			// レベルアップ演出の更新
+void DrawLvUpEffect(void);							// 演出の描画
+void SetLvUpEffect(D3DXVECTOR3 pos, ITEMTYPE type);	// 演出の設置
 
 //*********************************************************************
 // 
@@ -61,6 +82,8 @@ void SetVertexItem(void);							// 頂点設定
 // 
 //*********************************************************************
 // --- static const変数の値設定 --- //
+const float ITEM_CONST::fAlphaDecrease = 0.02f;	// α値の減少係数
+const float ITEM_CONST::fYIncrease = 4.0f;		// Yの増加係数
 const int ITEM_CONST::nMaxItem = 256;		// アイテムの最大数
 const unsigned int ITEM_CONST::aStateCount[ITEMSTATE_MAX] = 
 {
@@ -70,18 +93,37 @@ const unsigned int ITEM_CONST::aStateCount[ITEMSTATE_MAX] =
 	0
 };
 
-const D3DXVECTOR2 ITEM_CONST::DefSize = D3DXVECTOR2(100, 100);	// 基本サイズ
-const D3DXCOLOR ITEM_CONST::DefColor = D3DXCOLOR(1, 1, 1, 1);	// 基本色
+const int ITEM_CONST::aLevel[ITEMTYPE_MAX] =	// 各アイテムのレベルアップ幅
+{
+	1,
+	5,
+	10
+};
+
+const D3DXVECTOR2 ITEM_CONST::DefSize = D3DXVECTOR2(100, 100);		// 基本サイズ
+const D3DXVECTOR2 ITEM_CONST::DefSizeEffect = D3DXVECTOR2(50, 25);	// 演出基本サイズ
+const D3DXCOLOR ITEM_CONST::DefColor = D3DXCOLOR(1, 1, 1, 1);		// 基本色
 
 // --- const変数の宣言 --- //
 const char *c_apTextureItem[ITEMTYPE_MAX] =	// テクスチャパス
 {
-	"data/TEXTURE/ProteinNormal.png",	
+	"data/TEXTURE/ProteinBlue.png",
+	"data/TEXTURE/ProteinRED.png",
+	"data/TEXTURE/ProteinNormal.png",
+};
+
+const char* c_apTextureLevelUpEffect[ITEMTYPE_MAX] =	// テクスチャパス
+{
+	"data/TEXTURE/LvUpAlpha.png",
+	"data/TEXTURE/LvUpBeta.png",
+	"data/TEXTURE/LvUpGamma.png",
 };
 
 // --- 通常のグローバル変数の宣言 --- //
 ITEMBUFFER g_itemBuffer = {};				// アイテムのバッファ
+LVUPEFFECTBUFFER g_lvupBuffer = {};			// レベルアップ時の演出のバッファ
 Item g_aItem[ITEM_CONST::nMaxItem] = {};	// アイテムの情報
+LvUpEffect g_aLvUpEffect[ITEM_CONST::nMaxItem] = {};	// レベルアップ演出の情報
 
 //=====================================================================
 // 初期化処理
@@ -90,21 +132,32 @@ void InitItem(void)
 {
 	LPITEM pItem = GetItemPtr();			// アイテムへのポインタ
 	ITEMBUFFER *pBuffer = &g_itemBuffer;	// バッファ構造体へのポインタ
+	LPLVUPEFFECT pLvEffect = GetLvUpEffectPtr();	// レベルアップ演出へのポインタ
+	LVUPEFFECTBUFFER *pBufferEffect = &g_lvupBuffer;	// レベルアップ演出バッファへのポインタ
 
 	// 初期化
 	ZeroMemory(pItem, sizeof(Item) * ITEM_CONST::nMaxItem);
 	ZeroMemory(pBuffer, sizeof(ITEMBUFFER));
+	ZeroMemory(pLvEffect, sizeof(LvUpEffect) * ITEM_CONST::nMaxItem);
+	ZeroMemory(pBufferEffect, sizeof(LVUPEFFECTBUFFER));
 
 	// 各初期値を設定
-	for (int nCntItem = 0; nCntItem < ITEM_CONST::nMaxItem; nCntItem++, pItem++)
+	for (int nCntItem = 0; nCntItem < ITEM_CONST::nMaxItem; nCntItem++, pItem++, pLvEffect++)
 	{
+		// アイテムの初期値
 		pItem->obj.bVisible = true;
 		pItem->obj.color = ITEM_CONST::DefColor;
 		pItem->obj.size = ToVector3(ITEM_CONST::DefSize);
+
+		// 演出の初期値
+		pLvEffect->obj.bVisible = true;
+		pLvEffect->obj.color = ITEM_CONST::DefColor;
+		pLvEffect->obj.size = ToVector3(ITEM_CONST::DefSizeEffect);
 	}
 
 	// バッファ作成
 	CreateItemBuffer(&g_itemBuffer);
+	CreateLvUpBuffer(&g_lvupBuffer);
 
 	ITEM_GENERATE_SETTING igs;
 	igs.nFrameSpawn = 240;
@@ -121,11 +174,19 @@ void InitItem(void)
 //=====================================================================
 void UninitItem(void)
 {
+	// -- アイテム --
 	// 頂点バッファ解放
 	RELEASE(g_itemBuffer.pVtxBuff);
 
 	// テクスチャバッファ解放
 	RELEASE_ARRAY(g_itemBuffer.apTex, ITEMTYPE_MAX);
+
+	// -- 演出 --
+	// 頂点バッファ解放
+	RELEASE(g_lvupBuffer.pVtxBuff);
+
+	// テクスチャバッファ解放
+	RELEASE_ARRAY(g_lvupBuffer.apTex, ITEMTYPE_MAX);
 }
 
 //=====================================================================
@@ -148,8 +209,16 @@ void UpdateItem(void)
 		UpdateItemState(pItem);
 	}
 
+	LPLVUPEFFECT pLvUp = GetLvUpEffectPtr();
+
+	for (int nCntEffect = 0; nCntEffect < ITEM_CONST::nMaxItem; nCntEffect++, pLvUp++)
+	{
+		UpdateLvUpEffect(pLvUp);
+	}
+
 	// 頂点設定
 	SetVertexItem();
+	SetVertexLvUp();
 }
 
 //=====================================================================
@@ -178,6 +247,9 @@ void DrawItem(void)
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCntItem, 2);
 		}
 	}
+
+	// 演出の描画
+	DrawLvUpEffect();
 }
 
 //=====================================================================
@@ -266,6 +338,57 @@ bool CreateItemBuffer(_Out_ ITEMBUFFER *pOut)
 }
 
 //=====================================================================
+// バッファ作成処理
+//=====================================================================
+bool CreateLvUpBuffer(_Out_ LVUPEFFECTBUFFER *pOut)
+{
+	// NULLCHECK
+	if (pOut == nullptr) return false;
+
+	// 初期化
+	*pOut = {};
+
+	// デバイス取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	if (pDevice == nullptr) return false;	// NULLCHECK
+
+	HRESULT hr;		// エラーコード
+
+	// 頂点バッファ確保
+	hr = pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * (4 * ITEM_CONST::nMaxItem),
+		D3DUSAGE_WRITEONLY,
+		FVF_VERTEX_2D,
+		D3DPOOL_MANAGED,
+		&pOut->pVtxBuff,
+		NULL);
+
+	// NULLCHECK
+	if (pOut->pVtxBuff == nullptr)
+	{
+		pOut->bSafeVtx = false;		// 作成失敗
+		return false;
+	}
+
+	// テクスチャ読み込み
+	for (int nCntTexture = 0; nCntTexture < ITEMTYPE_MAX; nCntTexture++)
+	{
+		// NULLCHECK
+		if (c_apTextureLevelUpEffect[nCntTexture] == nullptr)
+		{
+			pOut->apTex[nCntTexture] = NULL;
+			continue;
+		}
+
+		// バッファ作成
+		hr = D3DXCreateTextureFromFile(pDevice,
+			c_apTextureLevelUpEffect[nCntTexture],
+			&pOut->apTex[nCntTexture]);
+	}
+
+	return true;
+}
+
+//=====================================================================
 // 頂点バッファ設定処理
 //=====================================================================
 void SetVertexItem(void)
@@ -298,6 +421,7 @@ void CollisionItem(LPITEM pItem)
 {
 	// NULLCHECK
 	if (pItem == nullptr) return;
+	if (pItem->bUse == false) return;
 
 	PLAYER* pPlayer = GetPlayer();	// プレイヤーへのポインタ
 	if (pPlayer == nullptr) return;	// NULLCHECK
@@ -321,17 +445,11 @@ void HitItem(LPITEM pItem, PLAYER *pPlayer)
 	// NULLCHECK
 	if (pItem == nullptr || pPlayer == nullptr) return;
 
-	// 種類によって場合分け
-	switch (pItem->type)
-	{
-	case ITEMTYPE_PROTEIN_ALPHA:
-	{
-		break;
-	}
+	// レベルアップ演出
+	SetLvUpEffect(pItem->obj.pos, pItem->type);
 
-	default:
-		break;
-	}
+	// レベルアップ
+	AddLevel(pPlayer->nLevel, ITEM_CONST::aLevel[pItem->type]);
 }
 
 //=====================================================================
@@ -411,4 +529,102 @@ void RemoveItem(LPITEM pItem)
 	if (pItem == nullptr) return;	// NULLCHECK
 
 	pItem->bUse = false;
+}
+
+//=====================================================================
+// エフェクトのポインタ取得処理
+//=====================================================================
+LPLVUPEFFECT GetLvUpEffectPtr(void)
+{
+	return &g_aLvUpEffect[0];
+}
+
+//=====================================================================
+// レベルアップ演出の更新
+//=====================================================================
+void UpdateLvUpEffect(LPLVUPEFFECT pLvUp)			
+{
+	if (pLvUp == NULL) return;
+
+	if (!pLvUp->bUse) return;
+
+	pLvUp->obj.pos.y -= ITEM_CONST::fYIncrease;
+	pLvUp->obj.color.a -= ITEM_CONST::fAlphaDecrease;
+	if (pLvUp->obj.color.a <= 0.0f)
+	{
+		pLvUp->bUse = false;
+	}
+}
+
+//=====================================================================
+// 演出の描画
+//=====================================================================
+void DrawLvUpEffect(void)							
+{
+	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	LPLVUPEFFECT pLvUp = GetLvUpEffectPtr();		// アイテムのポインタ取得
+
+	// 頂点バッファをデータストリームに設定
+	pDevice->SetStreamSource(0, g_lvupBuffer.pVtxBuff, 0, sizeof(VERTEX_2D));
+
+	// 頂点フォーマットの設定
+	pDevice->SetFVF(FVF_VERTEX_2D);
+
+	for (int nCntItem = 0; nCntItem < ITEM_CONST::nMaxItem; nCntItem++, pLvUp++)
+	{
+		if (pLvUp->obj.bVisible && pLvUp->bUse)
+		{// 表示状態
+			// テクスチャの設定
+			pDevice->SetTexture(0, g_lvupBuffer.apTex[pLvUp->type]);
+
+			// ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCntItem, 2);
+		}
+	}
+}
+
+//=====================================================================
+// 演出の設置
+//=====================================================================
+void SetLvUpEffect(D3DXVECTOR3 pos, ITEMTYPE type)							
+{
+	LPLVUPEFFECT pLvUp = GetLvUpEffectPtr();		// アイテムのポインタ取得
+
+	for (int nCntBullet = 0; nCntBullet < ITEM_CONST::nMaxItem; nCntBullet++, pLvUp++)
+	{
+		if (pLvUp->bUse) continue;
+
+		pLvUp->type = type;
+		pLvUp->obj.pos = pos;
+		pLvUp->obj.color = ITEM_CONST::DefColor;
+		pLvUp->bUse = true;
+		break;
+	}
+}
+
+//=====================================================================
+// 頂点バッファ設定処理
+//=====================================================================
+void SetVertexLvUp(void)
+{
+	VERTEX_2D* pVtx = NULL;				// 頂点情報へのポインタ
+	LPLVUPEFFECT pLvUp = GetLvUpEffectPtr();		// アイテムのポインタ取得
+
+	// 頂点バッファをロックして頂点情報へのポインタを取得
+	g_lvupBuffer.pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	for (int nCntBullet = 0; nCntBullet < ITEM_CONST::nMaxItem; nCntBullet++, pLvUp++)
+	{
+		// 頂点情報を設定
+		SetVertexPos(pVtx, pLvUp->obj);
+		SetVertexRHW(pVtx, 1.0f);
+		SetVertexColor(pVtx, pLvUp->obj.color);
+		SetVertexTexturePos(pVtx);
+
+		pVtx += 4;
+	}
+
+	// 頂点バッファをアンロック
+	g_lvupBuffer.pVtxBuff->Unlock();
 }
