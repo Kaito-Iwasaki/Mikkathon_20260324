@@ -40,5 +40,5 @@
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void GenerateBullet(D3DXVECTOR3 start, D3DXVECTOR3 rot, float fSpeed, float fRotSpeed, BULLETTYPE type);
+void GenerateBullet(D3DXVECTOR3 start, D3DXVECTOR3 rot, float fSpeed, float fRotSpeed, int nLife, BULLETTYPE type);
 #endif

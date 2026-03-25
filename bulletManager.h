@@ -47,6 +47,8 @@ typedef struct Bullet
 	D3DXVECTOR3 rotMove;	// 回転の移動量
 	BULLETTYPE type;		// 弾の種類
 	float fSpeed;			// 速度
+	int nLife;				// 現在の残存時間
+	int nMaxLife;			// 設定された残存時間
 	bool bUse;				// 使用されているか
 } Bullet;
 

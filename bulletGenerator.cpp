@@ -50,7 +50,7 @@
 //=====================================================================
 // 出現処理処理
 //=====================================================================
-void GenerateBullet(D3DXVECTOR3 start, D3DXVECTOR3 rot, float fSpeed, float fRotSpeed, BULLETTYPE type)
+void GenerateBullet(D3DXVECTOR3 start, D3DXVECTOR3 rot, float fSpeed, float fRotSpeed, int nLife, BULLETTYPE type)
 {
 	LPBULLET pBullet = GetBulletPtr();
 
@@ -63,11 +63,14 @@ void GenerateBullet(D3DXVECTOR3 start, D3DXVECTOR3 rot, float fSpeed, float fRot
 		pBullet->rotMove = D3DXVECTOR3(0, fRotSpeed, 0);
 		pBullet->move = Direction(rot.z) * fSpeed;	// 移動量
 		pBullet->fSpeed = fSpeed;				// 速度
+		pBullet->nLife = nLife;
+		pBullet->nMaxLife = nLife;
 		pBullet->type = type;					// 種類
 		pBullet->obj.color = D3DXCOLOR_WHITE;
 		pBullet->obj.bVisible = true;
-		pBullet->obj.size = D3DXVECTOR3(50, 50, 0);
+		pBullet->obj.size = D3DXVECTOR3(50, 100, 0);
 		pBullet->bUse = true;					// 使用済みに変更
+		pBullet->obj.bInversed = (bool)(rand() % 2);	// 左右反転をランダムに設定
 		break;
 	}
 }

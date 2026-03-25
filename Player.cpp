@@ -145,7 +145,7 @@ void UpdatePlayer(void)
 	{// マウス
 		// マウス位置はスクリーン座標上にあるのでスクリーン中心値からマウス位置までの
 		// 方向ベクトルを移動先にする
-		direction = Vector2To3(GetMousePos()) - D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0);
+		direction = Normalize(Vector2To3(GetMousePos()) - D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0));
 
 		// コントローラーの入力があった場合入力方法を変える
 		if (fabsf(vecThumbL.x + vecThumbL.y) > 0)
@@ -155,7 +155,7 @@ void UpdatePlayer(void)
 	}
 	else if (g_ctrlType == PLAYER_CONTROLTYPE_JOYSTICK)
 	{// ジョイスティック
-		direction = D3DXVECTOR3(vecThumbL.x, -vecThumbL.y, 0);
+		direction = Normalize(D3DXVECTOR3(vecThumbL.x, -vecThumbL.y, 0));
 
 		// マウスの入力があった場合入力方法を変える
 		if (fabsf(vecMouseMove.x + vecMouseMove.y) > 0)
@@ -267,10 +267,12 @@ void _OnEnemyEnteredAttackZone(ENEMY* pEnemy)
 	}
 
 	// パンチエフェクトの生成
-	D3DXVECTOR3 punch_start = g_Player.obj.pos + Vector2To3(GetRandomVector2() * 100);
-	D3DXVECTOR3 punch_dir = Direction(punch_start, pEnemy->obj.pos);
-	D3DXVECTOR3 punch_rot = D3DXVECTOR3(0, 0, atan2f(punch_dir.x, punch_dir.y));
-	GenerateBullet(punch_start, punch_rot, 10, 0, BT_TEST);
+	float fPunchOffset = g_Player.obj.size.x;
+	D3DXVECTOR3 vecPlrToEnemy = Direction(g_Player.obj.pos, pEnemy->obj.pos);
+	D3DXVECTOR3 punchStart = g_Player.obj.pos + (vecPlrToEnemy * fPunchOffset) + Vector2To3(GetRandomVector2() * 100);
+	D3DXVECTOR3 punchDir = Direction(punchStart, pEnemy->obj.pos);
+	D3DXVECTOR3 punchRot = D3DXVECTOR3(0, 0, atan2f(punchDir.x, punchDir.y));
+	GenerateBullet(punchStart, punchRot, 10, 0, 10, BT_TEST);
 }
 
 void _OnEnemyKilled(ENEMY* pEnemy)

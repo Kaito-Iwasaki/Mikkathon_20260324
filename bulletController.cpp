@@ -61,4 +61,16 @@ void BulletController(LPBULLET pBullet)
 
 	pBullet->obj.rot += pBullet->rotMove;	// ŠeˆÚ“®—Ê•ª‰ñ“]‚ð‰ÁŽZ
 	pBullet->obj.rot = GetFixedRotation(pBullet->obj.rot);	// Šp“x‚ðC³
+
+	// ƒ‰ƒCƒtŒ¸­i‚O‚É‚È‚Á‚½‚çÁ‚·j
+	// ƒ‰ƒCƒt‚É‰ž‚¶‚Ä“§–¾“x‚ð‘å‚«‚­‚µ‚Ä‚¢‚­
+	pBullet->nLife--;
+	if (pBullet->nLife <= 0)
+	{
+		pBullet->bUse = false;
+	}
+	else
+	{
+		pBullet->obj.color.a = (pBullet->nLife / (float)pBullet->nMaxLife);
+	}
 }
