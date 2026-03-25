@@ -63,6 +63,7 @@ bool g_bPauseGame = false;
 void InitGame(void)
 {
 	// -- Objects --
+	InitCamera();
 	InitPlayer();
 	InitEnemy();
 	InitItem();
@@ -87,6 +88,7 @@ void InitGame(void)
 void UninitGame(void)
 {
 	// -- Objects --
+	UninitCamera();
 	UninitPlayer();
 	UninitEnemy();
 	UninitItem();
@@ -133,6 +135,7 @@ void UpdateGame(void)
 	if (!g_bPauseGame)
 	{
 		// -- Objects --
+		UpdateCamera();
 		UpdatePlayer();
 		UpdateEnemy();
 		UpdateItem();

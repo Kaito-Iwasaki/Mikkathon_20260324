@@ -29,6 +29,10 @@
 typedef struct CAMERA
 {
 	D3DXVECTOR3 pos;
+
+	float fShakeMagnitude;
+	float fShakeDecay;
+	D3DXVECTOR3 shakeOffset;
 };
 
 //*********************************************************************
@@ -48,5 +52,8 @@ void UninitCamera(void);
 void UpdateCamera(void);
 CAMERA* GetCamera(void);
 void AddCameraOffset(VERTEX_2D* pVtx);
+D3DXVECTOR3 GetCameraPos(void);
+D3DXVECTOR3 GetRawCameraPos(void);
+void ShakeCamera(float fMagnitude, float fShakeDecay = 0.1f);
 
 #endif
