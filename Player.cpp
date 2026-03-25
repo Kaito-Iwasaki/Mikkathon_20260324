@@ -28,7 +28,7 @@
 #define NUM_TEXTURE_Y		(2)
 #define INIT_POS			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
 #define INIT_SIZE			D3DXVECTOR3(75.0f, 75.0f, 75.0f)
-#define INIT_COLOR			D3DXCOLOR(1.0, 0.847, 0.58, 1.0)
+#define INIT_COLOR			D3DXCOLOR_WHITE/*D3DXCOLOR(1.0, 0.847, 0.58, 1.0)*/
 
 //*********************************************************************
 // 
