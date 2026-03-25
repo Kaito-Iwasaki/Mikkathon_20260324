@@ -37,6 +37,7 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] = {
 	{"data\\SOUND\\punch01.wav", 0},
 	{"data\\SOUND\\punch02.wav", 0},
 	{"data\\SOUND\\smash.wav", 0},
+	{"data\\SOUND\\player_smash.wav", 0},
 	{"data\\SOUND\\explosion.wav", 0},
 	{"data\\SOUND\\eat.wav", 0},
 };

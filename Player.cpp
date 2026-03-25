@@ -17,6 +17,9 @@
 #include "Enemy.h"
 #include "LevelGenerator.h"
 #include "sound.h"
+#include "fade.h"
+#include "effect.h"
+#include "particle.h"
 
 //*********************************************************************
 // 
@@ -55,6 +58,7 @@ typedef enum
 // 
 //*********************************************************************
 void _PlayerControl();
+void _OnPlayerState();
 
 ENEMY* _GetNearestEnemy(void);
 void _AttackNearestEnemy(void);
@@ -93,6 +97,8 @@ void InitPlayer(void)
 	g_Player.nBulletLeft = PLAYER_MAX_HOLDABLE_BULLET;
 	g_Player.fSpeed = PLAYER_INIT_SPEED;
 	g_Player.nPower = PLAYER_INIT_POWER;
+	g_Player.state = PLAYERSTATE_NORMAL;
+	g_Player.bControlEnabled = true;
 
 	// テクスチャの読み込み
 	if (TEXTURE_FILENAME)
@@ -145,24 +151,7 @@ void UpdatePlayer(void)
 {
 	_PlayerControl();
 
-	// カメラをプレイヤーに追従させる
-	// 若干向いてる方向にオフセットする
-	float fCamOffsetMagnitude = 100.0f;
-	D3DXVECTOR3 vecCamOffset = Direction(g_Player.obj.rot.z) * fCamOffsetMagnitude;
-	GetCamera()->pos = g_Player.obj.pos + vecCamOffset;
-
-	// レベル表示をプレイヤーの頭上に追従させる
-	D3DXVECTOR3 vecLevelOffset = D3DXVECTOR3(0, -g_Player.obj.size.y, 0);
-	SetPositionLevel(
-		g_Player.nIdxLevel,
-		g_Player.obj.pos + vecLevelOffset
-	);
-
-	// テクスチャアニメーション（現在のテクスチャ位置を更新）
-	g_Player.nTexture = (g_Player.nTexture + 1) % (NUM_TEXTURE_X * NUM_TEXTURE_Y);
-
-	// 一番近くの敵１人だけを攻撃
-	_AttackNearestEnemy();
+	_OnPlayerState();
 }
 
 //=====================================================================
@@ -218,8 +207,25 @@ PLAYER* GetPlayer(void)
 	return &g_Player;
 }
 
+void SetPlayerState(PLAYERSTATE newState)
+{
+	g_Player.state = newState;
+	g_Player.nCounterState = 0;
+}
+
+void SmashPlayer(D3DXVECTOR3 dir)
+{
+	g_Player.bControlEnabled = false;
+	g_Player.move = dir * 10.0f;
+	ShakeCamera(30);
+	SetPlayerState(PLAYERSTATE_SMASH);
+	PlaySound(SOUND_LABEL_SE_PLAYERSMASH);
+}
+
 void _PlayerControl()
 {
+	if (g_Player.bControlEnabled == false) return;
+
 	DIMOUSESTATE mouse = GetMouse();
 	XINPUT_STATE* joypad = GetJoypad();
 	XINPUT_GAMEPAD gamepad = joypad->Gamepad;
@@ -265,6 +271,70 @@ void _PlayerControl()
 	g_Player.obj.rot.z = GetFixedRotation(g_Player.obj.rot.z);
 
 	g_Player.obj.pos += Direction(g_Player.obj.rot.z) * g_Player.fSpeed;
+}
+
+void _OnPlayerState()
+{
+	switch (g_Player.state)
+	{
+	case PLAYERSTATE_NORMAL:
+	{
+		// カメラをプレイヤーに追従させる
+		// 若干向いてる方向にオフセットする
+		float fCamOffsetMagnitude = 100.0f;
+		D3DXVECTOR3 vecCamOffset = Direction(g_Player.obj.rot.z) * fCamOffsetMagnitude;
+		GetCamera()->pos = g_Player.obj.pos + vecCamOffset;
+
+		// レベル表示をプレイヤーの頭上に追従させる
+		D3DXVECTOR3 vecLevelOffset = D3DXVECTOR3(0, -g_Player.obj.size.y, 0);
+		SetPositionLevel(
+			g_Player.nIdxLevel,
+			g_Player.obj.pos + vecLevelOffset
+		);
+
+		// テクスチャアニメーション（現在のテクスチャ位置を更新）
+		g_Player.nTexture = (g_Player.nTexture + 1) % (NUM_TEXTURE_X * NUM_TEXTURE_Y);
+
+		// 一番近くの敵１人だけを攻撃
+		_AttackNearestEnemy();
+		break;
+	}
+	
+	case PLAYERSTATE_SMASH:
+	{
+		// SmashPlayer()で設定されたベクトルに向かって回転しながら吹き飛ぶ
+		g_Player.obj.pos += g_Player.move;
+		g_Player.obj.rot.z += 0.5f;
+
+		if (g_Player.nCounterState > 90)
+		{
+			SetFade(SCENE_RESULT);
+		}
+
+		EFFECTINFO info;
+		info.col = D3DXCOLOR(1.0f, 0.7f, 0.0f, 1.0f);
+		info.fMaxAlpha = 0.1f;
+		info.fMaxScale = 0.7f;
+		info.fRotSpeed = 0.1f;
+		info.fSpeed = 0.5f;
+		info.nMaxLife = 120;
+
+		SetParticle(info, g_Player.obj.pos, 0, D3DX_PI, 1, 1);
+
+		// レベル表示をプレイヤーの頭上に追従させる
+		D3DXVECTOR3 vecLevelOffset = D3DXVECTOR3(0, -g_Player.obj.size.y, 0);
+		SetPositionLevel(
+			g_Player.nIdxLevel,
+			g_Player.obj.pos + vecLevelOffset
+		);
+		break;
+	}
+
+	default:
+		break;
+	}
+
+	g_Player.nCounterState++;
 }
 
 ENEMY* _GetNearestEnemy(void)

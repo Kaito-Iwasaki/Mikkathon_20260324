@@ -54,6 +54,7 @@
 //*********************************************************************
 void _OnEnemyType(ENEMY* pEnemy);
 void _OnEnemyState(ENEMY* pEnemy);
+void _CollisionEnemyPlayer(ENEMY* pEnemy);
 void _CollisionEnemyEnemy(ENEMY* pEnemy);
 
 //*********************************************************************
@@ -138,6 +139,9 @@ void UpdateEnemy(void)
 
 		// “G‚Ìó‘Ô•Êˆ—
 		_OnEnemyState(&g_aEnemy[i]);
+
+		// ƒvƒŒƒCƒ„[‚Æ‚ÌÕ“Ë”»’è
+		_CollisionEnemyPlayer(&g_aEnemy[i]);
 
 		// “G“¯Žm‚Å‰Ÿ‚µo‚µ‡‚Á‚Äd‚È‚ç‚È‚¢‚æ‚¤‚É‚·‚é
 		_CollisionEnemyEnemy(&g_aEnemy[i]);
@@ -367,6 +371,21 @@ void _OnEnemyState(ENEMY* pEnemy)
 	pEnemy->nConunterState++;
 }
 
+void _CollisionEnemyPlayer(ENEMY* pEnemy)
+{
+	PLAYER* pPlayer = GetPlayer();
+
+	if (pPlayer->state == PLAYERSTATE_SMASH) return;
+
+	D3DXVECTOR3 vecEnemyToPlayer = pPlayer->obj.pos - pEnemy->obj.pos;
+	float sizeAAndB = pEnemy->obj.size.x * 0.5f + pPlayer->obj.size.x * 0.5f;
+
+	if (Magnitude(vecEnemyToPlayer) < sizeAAndB)
+	{
+		SmashPlayer(Normalize(vecEnemyToPlayer));
+	}
+}
+
 void _CollisionEnemyEnemy(ENEMY* pEnemyA)
 {
 	ENEMY* pEnemyB;
@@ -374,8 +393,6 @@ void _CollisionEnemyEnemy(ENEMY* pEnemyA)
 	for (int i = 0; i < MAX_ENEMY; i++)
 	{
 		pEnemyB = &g_aEnemy[i];
-
-		if (pEnemyB->bUsed == false) continue;
 		if (pEnemyA == pEnemyB) continue;
 
 		D3DXVECTOR3 vecEnemyAToEnemyB = pEnemyB->obj.pos - pEnemyA->obj.pos;
