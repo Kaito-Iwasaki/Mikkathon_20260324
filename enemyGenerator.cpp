@@ -60,6 +60,30 @@ void InitEnemyGenerator(void)
 	SetEnemy(D3DXVECTOR3(500, 300, 0));
 	SetEnemy(D3DXVECTOR3(600, 200, 0));
 	SetEnemy(D3DXVECTOR3(600, 100, 0));
+	SetEnemy(D3DXVECTOR3(700, 100, 0));
+	SetEnemy(D3DXVECTOR3(-700, -100, 0));
+	SetEnemy(D3DXVECTOR3(-700, -100, 0));
+	SetEnemy(D3DXVECTOR3(-700, -100, 0));
+	SetEnemy(D3DXVECTOR3(-700, -100, 0));
+	SetEnemy(D3DXVECTOR3(-700, -100, 0));
+	SetEnemy(D3DXVECTOR3(-700, -700, 0));
+	SetEnemy(D3DXVECTOR3(-700, -700, 0));
+	SetEnemy(D3DXVECTOR3(-700, -700, 0));
+	SetEnemy(D3DXVECTOR3(-700, -700, 0));
+	SetEnemy(D3DXVECTOR3(-700, -700, 0));
+	SetEnemy(D3DXVECTOR3(+700, +700, 0));
+	SetEnemy(D3DXVECTOR3(+700, +700, 0));
+	SetEnemy(D3DXVECTOR3(+700, +700, 0));
+	SetEnemy(D3DXVECTOR3(+700, +700, 0));
+	SetEnemy(D3DXVECTOR3(+700, +700, 0));
+	SetEnemy(D3DXVECTOR3(-700, +100, 0));
+	SetEnemy(D3DXVECTOR3(-700, +100, 0));
+	SetEnemy(D3DXVECTOR3(-700, +100, 0));
+	SetEnemy(D3DXVECTOR3(-700, +100, 0));
+	SetEnemy(D3DXVECTOR3(-700, +700, 0));
+	SetEnemy(D3DXVECTOR3(-700, +700, 0));
+	SetEnemy(D3DXVECTOR3(-700, +700, 0));
+	SetEnemy(D3DXVECTOR3(-700, +700, 0));
 }
 
 //=====================================================================

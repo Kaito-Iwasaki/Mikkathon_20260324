@@ -138,6 +138,9 @@
     <ClCompile Include="font.cpp">
       <Filter>ソース ファイル\GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Background2.cpp">
+      <Filter>ソース ファイル\GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sound.h">
@@ -222,6 +225,9 @@
       <Filter>ヘッダー ファイル\GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="font.h">
+      <Filter>ヘッダー ファイル\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Background2.h">
       <Filter>ヘッダー ファイル\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>

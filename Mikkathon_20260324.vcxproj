@@ -142,6 +142,10 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Background2.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="baseObject.h" />
     <ClInclude Include="bulletController.h" />
     <ClInclude Include="effect.h" />
@@ -198,6 +202,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Background.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Background2.cpp">
       <SubType>
       </SubType>
     </ClCompile>

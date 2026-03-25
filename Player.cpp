@@ -88,6 +88,8 @@ void InitPlayer(void)
 	g_Player.nMaxBullet = PLAYER_MAX_HOLDABLE_BULLET;
 	g_Player.fBulletSpeed = PLAYER_INIT_BULLETSPEED;
 	g_Player.nBulletLeft = PLAYER_MAX_HOLDABLE_BULLET;
+	g_Player.fSpeed = PLAYER_INIT_SPEED;
+	g_Player.nPower = PLAYER_INIT_POWER;
 
 	// テクスチャの読み込み
 	if (TEXTURE_FILENAME)
@@ -109,7 +111,7 @@ void InitPlayer(void)
 		NULL
 	);
 
-	GeneratorLevel(g_Player.nLevel, g_Player.obj.pos + D3DXVECTOR3(0, g_Player.obj.size.y * 1.5f, 0));
+	GeneratorLevel(g_Player.nIdxLevel, g_Player.obj.pos + D3DXVECTOR3(0, g_Player.obj.size.y * 1.5f, 0));
 }
 
 //=====================================================================
@@ -179,7 +181,10 @@ void UpdatePlayer(void)
 	g_Player.obj.rot.z += (GetFixedRotation(fRotDest - g_Player.obj.rot.z)) * PLAYER_INIT_ROTSPEED;
 	g_Player.obj.rot.z = GetFixedRotation(g_Player.obj.rot.z);
 
-	g_Player.obj.pos += Direction(g_Player.obj.rot.z) * PLAYER_INIT_SPEED;
+	g_Player.obj.pos += Direction(g_Player.obj.rot.z) * g_Player.fSpeed;
+
+	Clampf(&g_Player.obj.pos.x, -1500.0f, 1500.0f);
+	Clampf(&g_Player.obj.pos.y, -1500.0f, 1500.0f);
 
 	GetCamera()->pos = g_Player.obj.pos + Direction(g_Player.obj.rot.z) * 100;
 
@@ -188,7 +193,7 @@ void UpdatePlayer(void)
 
 	_AttackNearEnemies();
 
-	SetPositionLevel(g_Player.nLevel, g_Player.obj.pos + D3DXVECTOR3(0, -g_Player.obj.size.y, 0));
+	SetPositionLevel(g_Player.nIdxLevel, g_Player.obj.pos + D3DXVECTOR3(0, -g_Player.obj.size.y, 0));
 }
 
 //=====================================================================
@@ -277,7 +282,7 @@ void _AttackNearEnemies(void)
 
 void _OnEnemyEnteredAttackZone(ENEMY* pEnemy)
 {
-	bool bHasEnemyDied = DamageEnemy(pEnemy);
+	bool bHasEnemyDied = DamageEnemy(pEnemy, g_Player.nPower);
 
 	if (bHasEnemyDied)
 	{
@@ -286,7 +291,7 @@ void _OnEnemyEnteredAttackZone(ENEMY* pEnemy)
 	else
 	{
 		// ノックバック（プレイヤーに向かって反対に方向に押し出す）
-		pEnemy->obj.pos += Direction(g_Player.obj.pos, pEnemy->obj.pos) * PLAYER_INIT_SPEED * 0.75f;
+		pEnemy->obj.pos += Direction(g_Player.obj.pos, pEnemy->obj.pos) * g_Player.fSpeed * 0.75f;
 
 		// 若干揺らす
 		pEnemy->obj.pos += Vector2To3(GetRandomVector2()) * pEnemy->obj.size.x * 0.05f;
@@ -304,5 +309,5 @@ void _OnEnemyEnteredAttackZone(ENEMY* pEnemy)
 void _OnEnemyKilled(ENEMY* pEnemy)
 {
 	ShakeCamera(10);
-	AddLevel(g_Player.nLevel, 1);
+	AddLevel(g_Player.nIdxLevel, 1);
 }

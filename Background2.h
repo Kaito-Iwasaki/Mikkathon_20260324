@@ -1,11 +1,11 @@
 //=====================================================================
 //
-// Player.cppのヘッダファイル [Player.h]
-// Author : Kaito Iwasaki
+// Background2.cppのヘッダファイル [Background2.h]
+// Author : 
 // 
 //=====================================================================
-#ifndef _Player_H_
-#define _Player_H_
+#ifndef _Background2_H_
+#define _Background2_H_
 
 //*********************************************************************
 // 
@@ -21,29 +21,16 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define PLAYER_INIT_SPEED			(5.0f)
-#define PLAYER_INIT_POWER			(1)
-#define PLAYER_INIT_ROTSPEED		(0.05f)
-#define PLAYER_INIT_BULLETSPEED		(10.0f)
-#define PLAYER_MAX_HOLDABLE_BULLET	(5)
+
 
 //*********************************************************************
 // 
 // ***** 構造体 *****
 // 
 //*********************************************************************
-typedef struct PLAYER
+typedef struct Background2Struct
 {
 	BASEOBJECT obj;
-	D3DXVECTOR3 move;
-	D3DXVECTOR3 rotMove;
-	int nTexture;
-	int nMaxBullet;
-	int nBulletLeft;
-	float fBulletSpeed;
-	int nPower;
-	float fSpeed;
-	int nIdxLevel;
 };
 
 //*********************************************************************
@@ -58,10 +45,9 @@ typedef struct PLAYER
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitPlayer(void);
-void UninitPlayer(void);
-void UpdatePlayer(void);
-void DrawPlayer(void);
-PLAYER* GetPlayer(void);
+void InitBackground2(void);
+void UninitBackground2(void);
+void UpdateBackground2(void);
+void DrawBackground2(void);
 
 #endif
