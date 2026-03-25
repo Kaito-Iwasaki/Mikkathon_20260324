@@ -36,6 +36,7 @@ typedef struct PLAYER
 	BASEOBJECT obj;
 	D3DXVECTOR3 move;
 	D3DXVECTOR3 rotMove;
+	int nTexture;
 	int nMaxBullet;
 	int nBulletLeft;
 	float fBulletSpeed;
