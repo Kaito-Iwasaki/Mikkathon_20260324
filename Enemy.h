@@ -73,6 +73,8 @@ typedef struct ENEMY
 	ENEMYSTATE state;
 	int nConunterState;
 	int nLife;
+	float fSpeed;
+	ENEMYTYPE type;
 };
 
 //*********************************************************************
@@ -84,7 +86,7 @@ void InitEnemy(void);
 void UninitEnemy(void);
 void UpdateEnemy(void);
 void DrawEnemy(void);
-ENEMY* SetEnemy(D3DXVECTOR3 pos);
+ENEMY* SetEnemy(ENEMYTYPE type, D3DXVECTOR3 pos);
 ENEMY* GetEnemy(void);
 bool DamageEnemy(ENEMY* pEnemy, int nDamage);
 void SmashEnemy(ENEMY* pEnemy);

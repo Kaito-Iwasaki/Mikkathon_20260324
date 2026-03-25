@@ -52,6 +52,7 @@
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
+void _OnEnemyType(ENEMY* pEnemy);
 void _OnEnemyState(ENEMY* pEnemy);
 void _CollisionEnemyEnemy(ENEMY* pEnemy);
 
@@ -132,6 +133,9 @@ void UpdateEnemy(void)
 	{
 		if (g_aEnemy[i].bUsed == false) continue;
 
+		// 敵の種類別処理
+		_OnEnemyType(&g_aEnemy[i]);
+
 		// 敵の状態別処理
 		_OnEnemyState(&g_aEnemy[i]);
 
@@ -186,7 +190,7 @@ void DrawEnemy(void)
 //=====================================================================
 // 敵設定処理
 //=====================================================================
-ENEMY* SetEnemy(D3DXVECTOR3 pos)
+ENEMY* SetEnemy(ENEMYTYPE type, D3DXVECTOR3 pos)
 {
 	for (int i = 0; i < MAX_ENEMY; i++)
 	{
@@ -199,6 +203,8 @@ ENEMY* SetEnemy(D3DXVECTOR3 pos)
 		g_aEnemy[i].obj.color = INIT_COLOR;
 		g_aEnemy[i].obj.bVisible = true;
 		g_aEnemy[i].nLife = ENEMY_INIT_LIFE;
+		g_aEnemy[i].fSpeed = 3.0f;
+		g_aEnemy[i].type = type;
 
 		return &g_aEnemy[i];
 	}
@@ -223,7 +229,7 @@ bool DamageEnemy(ENEMY* pEnemy, int nDamage)
 	SetEnemyState(pEnemy, ENEMYSTATE_DAMAGE);
 	pEnemy->nLife -= nDamage;
 
-	if (pEnemy->nLife < 0)
+	if (pEnemy->nLife <= 0)
 	{
 		SmashEnemy(pEnemy);
 		return true;
@@ -282,6 +288,30 @@ void SetEnemyState(ENEMY* pEnemy, ENEMYSTATE newState)
 	pEnemy->nConunterState = 0;
 }
 
+void _OnEnemyType(ENEMY* pEnemy)
+{
+	if (pEnemy->nLife <= 0) return;
+
+	PLAYER* pPlayer = GetPlayer();
+
+	switch (pEnemy->type)
+	{
+	case ENEMYTYPE_STATIC:
+
+		break;
+
+	case ENEMYTYPE_CHASER:
+	{
+		D3DXVECTOR3 vecMoveDir = Direction(pEnemy->obj.pos, pPlayer->obj.pos);
+		pEnemy->obj.pos += vecMoveDir * pEnemy->fSpeed;
+		pEnemy->obj.rot.z = atan2(vecMoveDir.x, vecMoveDir.y);
+		break;
+	}
+
+	}
+
+}
+
 void _OnEnemyState(ENEMY* pEnemy)
 {
 	PLAYER* pPlayer = GetPlayer();
@@ -291,7 +321,6 @@ void _OnEnemyState(ENEMY* pEnemy)
 	{
 	case ENEMYSTATE_NORMAL:
 		pEnemy->obj.color = COLOR_NORMAL;
-		pEnemy->obj.pos += Direction(pEnemy->obj.pos, pPlayer->obj.pos) * 3.0f;
 		break;
 
 	case ENEMYSTATE_DAMAGE:
