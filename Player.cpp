@@ -13,6 +13,7 @@
 #include "Player.h"
 #include "input.h"
 #include "bulletGenerator.h"
+#include "Camera.h"
 
 //*********************************************************************
 // 
@@ -22,7 +23,7 @@
 #define TEXTURE_FILENAME	NULL
 #define INIT_POS			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
 #define INIT_SIZE			D3DXVECTOR3(50.0f, 50.0f, 0.0f)
-#define INIT_COLOR			D3DXCOLOR_WHITE
+#define INIT_COLOR			D3DXCOLOR(1.0, 0.847, 0.58, 1.0)
 
 //*********************************************************************
 // 
@@ -118,9 +119,14 @@ void UpdatePlayer(void)
 {
 	D3DXVECTOR3 direction = D3DXVECTOR3_ZERO;
 
+	// 直前にキーボードとコントローラーどちらの入力があったか確認し
+	// それに応じて方向ベクトルの算出方法を変える
+
 	// マウス位置を目的地に設定
-	direction = Vector2To3(GetMousePos());
-	g_Player.move = Direction(g_Player.obj.pos, direction);
+	// マウス位置はスクリーン座標上にあるのでスクリーン中心値からマウス位置までの
+	// 方向ベクトルを移動先にする
+	direction = Vector2To3(GetMousePos()) - D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0);
+	g_Player.move = direction;
 
 	float fRotDest = atan2f(g_Player.move.x, g_Player.move.y);
 
@@ -130,10 +136,7 @@ void UpdatePlayer(void)
 
 	g_Player.obj.pos += Direction(g_Player.obj.rot.z) * PLAYER_SPEED;
 
-	if (GetKeyboardTrigger(DIK_SPACE))
-	{
-		GenerateBullet(g_Player.obj.pos, g_Player.obj.rot, 5, 0.1f, BT_TEST);
-	}
+	GetCamera()->pos = g_Player.obj.pos;
 }
 
 //=====================================================================
