@@ -33,7 +33,13 @@
 // ***** —ñ‹“Œ^ *****
 // 
 //*********************************************************************
-
+typedef enum
+{
+	ED_B,	// B RANK
+	ED_A,	// A RANK
+	ED_S,	// S RANK
+	ED_MAX
+} ENDINGTYPE;
 
 //*********************************************************************
 // 
@@ -45,4 +51,5 @@ void UninitResult(void);
 void UpdateResult(void);
 void DrawResult(void);
 
+ENDINGTYPE GetEndingType(void);
 #endif
