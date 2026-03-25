@@ -85,7 +85,6 @@ void InitGame(void)
 
 	// -- Ex --
 	SetCursorMid();
-	GeneratorLevel(100, D3DXVECTOR3(640, 360, 0));
 
 	// -- 構造体・グローバル変数 --
 	g_bPauseGame = false;
