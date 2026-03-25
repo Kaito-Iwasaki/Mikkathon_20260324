@@ -14,7 +14,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "bulletManager.h"
-#include "BulletFollow.h"
+#include "WeightFollow.h"
 #include "Background.h"
 
 //*********************************************************************
@@ -63,7 +63,7 @@ void InitGame(void)
   
   InitBulletManager();
 
-  InitBulletFollow();
+  InitWeightFollow();
 
   InitBackground();
 
@@ -81,7 +81,7 @@ void UninitGame(void)
 
 	UninitBulletManager();
 
-	UninitBulletFollow();
+	UninitWeightFollow();
 
 	UninitBackground();
 }
@@ -97,7 +97,7 @@ void UpdateGame(void)
   
   UpdateBulletManager();
 
-  UpdateBulletFollow();
+  UpdateWeightFollow();
 
   UpdateBackground();
 }
@@ -115,6 +115,6 @@ void DrawGame(void)
   
   DrawBulletManager();
 
-  DrawBulletFollow();
+  DrawWeightFollow();
 
 }
