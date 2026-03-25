@@ -53,7 +53,7 @@ CAMERA g_camera;
 //=====================================================================
 void InitCamera(void)
 {
-	g_camera.pos = D3DXVECTOR3_ZERO;
+	ZeroMemory(&g_camera, sizeof(CAMERA));
 }
 
 //=====================================================================
@@ -69,12 +69,34 @@ void UninitCamera(void)
 //=====================================================================
 void UpdateCamera(void)
 {
-
+	// 揺れの大きさが０より大きい場合はここでオフセットが設定されてカメラが揺れる
+	// 揺れの大きさは０に近づけていき最終的に無くす
+	g_camera.shakeOffset = Vector2To3(GetRandomVector2() * g_camera.fShakeMagnitude);
+	g_camera.fShakeMagnitude = Lerpf(g_camera.fShakeMagnitude, 0.0f, g_camera.fShakeDecay);
 }
 
+//=====================================================================
+// カメラ取得処理
+//=====================================================================
 CAMERA* GetCamera(void)
 {
 	return &g_camera;
+}
+
+//=====================================================================
+// カメラ位置（オフセット値含む）
+//=====================================================================
+D3DXVECTOR3 GetCameraPos(void)
+{
+	return g_camera.pos - g_camera.shakeOffset;
+}
+
+//=====================================================================
+// カメラ位置（オフセット値を含まない生の値）
+//=====================================================================
+D3DXVECTOR3 GetRawCameraPos(void)
+{
+	return g_camera.pos;
 }
 
 //=====================================================================
@@ -82,8 +104,17 @@ CAMERA* GetCamera(void)
 //=====================================================================
 void AddCameraOffset(VERTEX_2D* pVtx)
 {
-	pVtx[0].pos -= g_camera.pos - D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f);
-	pVtx[1].pos -= g_camera.pos - D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f);
-	pVtx[2].pos -= g_camera.pos - D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f);
-	pVtx[3].pos -= g_camera.pos - D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f);
+	pVtx[0].pos -= g_camera.pos - D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f) - g_camera.shakeOffset;
+	pVtx[1].pos -= g_camera.pos - D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f) - g_camera.shakeOffset;
+	pVtx[2].pos -= g_camera.pos - D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f) - g_camera.shakeOffset;
+	pVtx[3].pos -= g_camera.pos - D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f) - g_camera.shakeOffset;
+}
+
+//=====================================================================
+// カメラシェイク
+//=====================================================================
+void ShakeCamera(float fMagnitude, float fShakeDecay)
+{
+	g_camera.fShakeMagnitude = fMagnitude;
+	g_camera.fShakeDecay = fShakeDecay;
 }

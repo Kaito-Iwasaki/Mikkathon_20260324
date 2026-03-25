@@ -136,7 +136,7 @@ void UpdateWeightFollow(void)
 
 		if (Magnitude(g_aWeightFollow[i].obj.pos, destination) > WEIGHTFOLLOW_GAP)
 		{
-			g_aWeightFollow[i].obj.pos += direction * PLAYER_SPEED;
+			g_aWeightFollow[i].obj.pos += direction * PLAYER_INIT_SPEED;
 		}
 
 		g_aWeightFollow[i].obj.rot.z = atan2f(direction.x, direction.y);

@@ -48,7 +48,7 @@
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-
+void _OnEnemyState(ENEMY* pEnemy);
 
 //*********************************************************************
 // 
@@ -125,41 +125,7 @@ void UpdateEnemy(void)
 
 	for (int i = 0; i < MAX_ENEMY; i++)
 	{
-		if (!g_aEnemy[i].bUsed) continue;
-
-		if (g_aEnemy[i].state == ENEMYSTATE_DAMAGE)
-		{
-			SetEnemyState(&g_aEnemy[i], ENEMYSTATE_NORMAL);
-		}
-		else if (Magnitude(g_aEnemy[i].obj.pos, pPlayer->obj.pos) < (g_aEnemy[i].obj.size.x * 0.5f + pPlayer->obj.size.x * 0.5f) * 2)
-		{
-			DamageEnemy(&g_aEnemy[i]);
-			g_aEnemy[i].obj.pos += Direction(pPlayer->obj.pos, g_aEnemy[i].obj.pos) * PLAYER_SPEED * 0.75f;
-
-			D3DXVECTOR3 punch_start = pPlayer->obj.pos + Vector2To3(GetRandomVector2() * 100);
-			D3DXVECTOR3 punch_dir = Direction(punch_start, g_aEnemy[i].obj.pos);
-			D3DXVECTOR3 punch_rot = D3DXVECTOR3(0, 0, atan2f(punch_dir.x, punch_dir.y));
-			//D3DXVECTOR3 moveDir = Vector2To3(GetRandomVector2());
-			//D3DXVECTOR3 moveRot = D3DXVECTOR3(0, 0, )
-
-			GenerateBullet(punch_start, punch_rot, 10, 0, BT_TEST);
-		}
-
-
-
-		switch (g_aEnemy[i].state)
-		{
-		case ENEMYSTATE_NORMAL:
-			g_aEnemy[i].obj.color = COLOR_NORMAL;
-			break;
-
-		case ENEMYSTATE_DAMAGE:
-			g_aEnemy[i].obj.color = COLOR_DAMAGED;
-			break;
-
-		default:
-			break;
-		}
+		_OnEnemyState(&g_aEnemy[i]);
 	}
 }
 
@@ -232,7 +198,7 @@ ENEMY* SetEnemy(D3DXVECTOR3 pos)
 //=====================================================================
 // 敵取得処理
 //=====================================================================
-ENEMY* GetEnemy(D3DXVECTOR3 pos)
+ENEMY* GetEnemy(void)
 {
 	return &g_aEnemy[0];
 }
@@ -240,7 +206,7 @@ ENEMY* GetEnemy(D3DXVECTOR3 pos)
 //=====================================================================
 // 敵ダメージ処理
 //=====================================================================
-void DamageEnemy(ENEMY* pEnemy)
+bool DamageEnemy(ENEMY* pEnemy)
 {
 	SetEnemyState(pEnemy, ENEMYSTATE_DAMAGE);
 	pEnemy->nLife--;
@@ -249,6 +215,8 @@ void DamageEnemy(ENEMY* pEnemy)
 	{
 		pEnemy->bUsed = false;
 	}
+
+	return !pEnemy->bUsed;
 }
 
 //=====================================================================
@@ -258,4 +226,33 @@ void SetEnemyState(ENEMY* pEnemy, ENEMYSTATE newState)
 {
 	pEnemy->state = newState;
 	pEnemy->nConunterState = 0;
+}
+
+void _OnEnemyState(ENEMY* pEnemy)
+{
+	switch (pEnemy->state)
+	{
+	case ENEMYSTATE_NORMAL:
+		pEnemy->obj.color = COLOR_NORMAL;
+		break;
+
+	case ENEMYSTATE_DAMAGE:
+		if (pEnemy->obj.color != COLOR_DAMAGED)
+		{
+			pEnemy->obj.color = COLOR_DAMAGED;
+		}
+		else
+		{
+			pEnemy->obj.color = COLOR_NORMAL;
+		}
+
+		SetEnemyState(pEnemy, ENEMYSTATE_NORMAL);
+
+		break;
+
+	default:
+		break;
+	}
+	
+	pEnemy->nConunterState++;
 }

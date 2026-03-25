@@ -28,10 +28,34 @@
 // ***** 列挙型 *****
 // 
 //*********************************************************************
+//*********************************************************************
+// 敵の種類（タイプ）
+//*********************************************************************
 typedef enum
 {
+	// 動かない敵
+	ENEMYTYPE_STATIC = 0,
+
+	// プレイヤー方向に向かって追いかけてくる敵
+	ENEMYTYPE_CHASER,
+
+	ENEMYTYPE_MAX
+}ENEMYTYPE;
+
+//*********************************************************************
+// 敵の状態（ステート）
+//*********************************************************************
+typedef enum
+{
+	// 通常
 	ENEMYSTATE_NORMAL = 0,
+
+	// ダメージを受けた直後
 	ENEMYSTATE_DAMAGE,
+
+	// 死んだ直後
+	ENEMYSTATE_DIED,
+
 	ENEMYSTATE_MAX
 }ENEMYSTATE;
 
@@ -44,9 +68,9 @@ typedef struct ENEMY
 {
 	BASEOBJECT obj;
 	bool bUsed;
+	ENEMYSTATE state;
 	int nConunterState;
 	int nLife;
-	ENEMYSTATE state;
 };
 
 //*********************************************************************
@@ -59,8 +83,8 @@ void UninitEnemy(void);
 void UpdateEnemy(void);
 void DrawEnemy(void);
 ENEMY* SetEnemy(D3DXVECTOR3 pos);
-ENEMY* GetEnemy(D3DXVECTOR3 pos);
-void DamageEnemy(ENEMY* pEnemy);
+ENEMY* GetEnemy(void);
+bool DamageEnemy(ENEMY* pEnemy);
 void SetEnemyState(ENEMY* pEnemy, ENEMYSTATE newState);
 
 #endif

@@ -63,13 +63,12 @@ bool g_bPauseGame = false;
 void InitGame(void)
 {
 	// -- Objects --
+	InitCamera();
 	InitPlayer();
 	InitEnemy();
 	InitItem();
 	InitWeightFollow();
 	InitBackground();
-  
-	SetEnemy(D3DXVECTOR3(500, 500, 0));
   
 	// -- Managers --
 	InitBulletManager();
@@ -87,6 +86,7 @@ void InitGame(void)
 void UninitGame(void)
 {
 	// -- Objects --
+	UninitCamera();
 	UninitPlayer();
 	UninitEnemy();
 	UninitItem();
@@ -133,6 +133,7 @@ void UpdateGame(void)
 	if (!g_bPauseGame)
 	{
 		// -- Objects --
+		UpdateCamera();
 		UpdatePlayer();
 		UpdateEnemy();
 		UpdateItem();
