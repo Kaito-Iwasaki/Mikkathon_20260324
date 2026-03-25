@@ -21,6 +21,8 @@
 #include "input.h"
 #include "camera.h"
 #include "DebugProc.h"
+#include "effect.h"
+#include "particle.h"
 
 //*********************************************************************
 // 
@@ -69,6 +71,8 @@ void InitGame(void)
 	InitItem();
 	InitWeightFollow();
 	InitBackground();
+	InitEffect();
+	InitParticle();
   
 	// -- Managers --
 	InitBulletManager();
@@ -96,6 +100,8 @@ void UninitGame(void)
 	UninitEnemy();
 	UninitWeightFollow();
 	UninitBackground();
+	UninitEffect();
+	UninitParticle();
 	
 	// -- Managers --
 	UninitBulletManager();
@@ -142,6 +148,8 @@ void UpdateGame(void)
 		UpdateItem();
 		UpdateWeightFollow();
 		UpdateBackground();
+		UpdateEffect();
+		UpdateParticle();
 
 		// -- Managers --
 		UpdateBulletManager();
@@ -167,9 +175,10 @@ void DrawGame(void)
 	DrawItem();
 	DrawWeightFollow();
 	DrawPlayer();
+	DrawEffect();
 
 	if (g_bPauseGame)
-	{
+	{// É|Å[ÉYâÊñ ï`âÊ
 
 	}
 }
