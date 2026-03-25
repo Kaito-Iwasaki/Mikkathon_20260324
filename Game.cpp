@@ -18,6 +18,7 @@
 #include "WeightFollow.h"
 #include "Background.h"
 #include "enemyGenerator.h"
+#include "input.h"
 
 //*********************************************************************
 // 
@@ -52,7 +53,7 @@
 // ***** グローバル変数 *****
 // 
 //*********************************************************************
-
+bool g_bPauseGame = false;
 
 //=====================================================================
 // 初期化処理
@@ -73,6 +74,9 @@ void InitGame(void)
 	
 	// -- Generators --
 	InitEnemyGenerator();
+
+	// -- 構造体・グローバル変数 --
+	g_bPauseGame = false;
 }
 
 //=====================================================================
@@ -100,18 +104,36 @@ void UninitGame(void)
 //=====================================================================
 void UpdateGame(void)
 {
-	// -- Objects --
-	UpdatePlayer();
-	UpdateEnemy();
-	UpdateItem();
-	UpdateWeightFollow();
-	UpdateBackground();
-	
-	// -- Managers --
-	UpdateBulletManager();
-	
-	// -- Generators --
-	UpdateEnemyGenerator();
+	// -- ポーズ切り替え --
+	if (
+		GetKeyboardTrigger(DIK_P) ||
+		GetJoypadTrigger(JOYKEY_START)
+		)
+	{
+		g_bPauseGame ^= 1;
+	}
+
+	//------------------------------------------------------------------
+
+	if (!g_bPauseGame)
+	{
+		// -- Objects --
+		UpdatePlayer();
+		UpdateEnemy();
+		UpdateItem();
+		UpdateWeightFollow();
+		UpdateBackground();
+
+		// -- Managers --
+		UpdateBulletManager();
+
+		// -- Generators --
+		UpdateEnemyGenerator();
+	}
+	else
+	{
+
+	}
 }
 
 //=====================================================================
@@ -126,4 +148,9 @@ void DrawGame(void)
 	DrawItem();
 	DrawWeightFollow();
 	DrawPlayer();
+
+	if (g_bPauseGame)
+	{
+
+	}
 }
