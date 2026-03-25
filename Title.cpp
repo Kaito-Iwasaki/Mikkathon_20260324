@@ -11,6 +11,8 @@
 // 
 //*********************************************************************
 #include "Title.h"
+#include "fade.h"
+#include "input.h"
 
 //*********************************************************************
 // 
@@ -68,7 +70,13 @@ void UninitTitle(void)
 //=====================================================================
 void UpdateTitle(void)
 {
-
+	// ‰æ–Ê‘JˆÚ
+	if (GetMouseTrigger(MOUSE_LEFT)
+		|| GetJoypadTrigger(JOYKEY_A)
+		|| GetJoypadTrigger(JOYKEY_START))
+	{
+		SetFade(SCENE_GAME);
+	}
 }
 
 //=====================================================================

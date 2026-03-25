@@ -48,7 +48,7 @@
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-
+void SetCursorMid(void);
 
 //*********************************************************************
 // 
@@ -76,6 +76,9 @@ void InitGame(void)
 	
 	// -- Generators --
 	InitEnemyGenerator();
+
+	// -- Ex --
+	SetCursorMid();
 
 	// -- 構造体・グローバル変数 --
 	g_bPauseGame = false;
@@ -168,4 +171,23 @@ void DrawGame(void)
 	{
 
 	}
+}
+
+//=====================================================================
+// マウスカーソルの初期位置中央移動処理
+//=====================================================================
+void SetCursorMid(void)
+{
+	WINDOWPLACEMENT place = {};		// ウィンドウの位置情報
+	POINT winmid;					// ウィンドウの中央
+
+	// ウィンドウの位置情報を取得
+	GetWindowPlacement(GetMainWindow(), &place);
+
+	// ウィンドウの中央を計算
+	winmid.x = place.rcNormalPosition.right - SCREEN_CENTER;
+	winmid.y = place.rcNormalPosition.bottom - SCREEN_VCENTER;
+
+	// ウィンドウの中央にマウスカーソルを表示
+	SetCursorPos(winmid.x, winmid.y);
 }
