@@ -32,7 +32,15 @@ BYTE *g_apDataAudio[SOUND_LABEL_MAX] = {};					// オーディオデータ
 DWORD g_aSizeAudio[SOUND_LABEL_MAX] = {};					// オーディオデータサイズ
 
 // サウンドの情報
-SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] = {};
+SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] = {
+	{"data\\SOUND\\punch00.wav", 0},
+	{"data\\SOUND\\punch01.wav", 0},
+	{"data\\SOUND\\punch02.wav", 0},
+	{"data\\SOUND\\smash.wav", 0},
+	{"data\\SOUND\\player_smash.wav", 0},
+	{"data\\SOUND\\explosion.wav", 0},
+	{"data\\SOUND\\eat.wav", 0},
+};
 
 //=============================================================================
 // 初期化処理

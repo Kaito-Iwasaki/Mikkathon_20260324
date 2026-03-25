@@ -16,6 +16,7 @@
 #include "camera.h"
 #include "effect.h"
 #include "particle.h"
+#include "sound.h"
 
 //*********************************************************************
 // 
@@ -30,7 +31,7 @@
 #define COLOR_NORMAL		INIT_COLOR
 #define COLOR_DAMAGED		D3DXCOLOR(1, 0, 0, 1)
 
-#define ENEMY_INIT_LIFE		(100)
+#define ENEMY_INIT_LIFE		(10)
 
 //*********************************************************************
 // 
@@ -51,7 +52,10 @@
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
+void _OnEnemyType(ENEMY* pEnemy);
 void _OnEnemyState(ENEMY* pEnemy);
+void _CollisionEnemyPlayer(ENEMY* pEnemy);
+void _CollisionEnemyEnemy(ENEMY* pEnemy);
 
 //*********************************************************************
 // 
@@ -130,21 +134,17 @@ void UpdateEnemy(void)
 	{
 		if (g_aEnemy[i].bUsed == false) continue;
 
+		// 敵の種類別処理
+		_OnEnemyType(&g_aEnemy[i]);
+
+		// 敵の状態別処理
 		_OnEnemyState(&g_aEnemy[i]);
 
-		for (int j = 0; j < MAX_ENEMY; j++)
-		{
-			if (g_aEnemy[j].bUsed == false) continue;
-			if (j == i) continue;
+		// プレイヤーとの衝突判定
+		_CollisionEnemyPlayer(&g_aEnemy[i]);
 
-			D3DXVECTOR3 vecEnemyAToEnemyB = g_aEnemy[j].obj.pos - g_aEnemy[i].obj.pos;
-			float sizeAAndB = g_aEnemy[i].obj.size.x * 0.5f + g_aEnemy[j].obj.size.x * 0.5f;
-
-			if (Magnitude(vecEnemyAToEnemyB) < sizeAAndB)
-			{
-				g_aEnemy[j].obj.pos += Normalize(vecEnemyAToEnemyB);
-			}
-		}
+		// 敵同士で押し出し合って重ならないようにする
+		_CollisionEnemyEnemy(&g_aEnemy[i]);
 	}
 }
 
@@ -194,7 +194,7 @@ void DrawEnemy(void)
 //=====================================================================
 // 敵設定処理
 //=====================================================================
-ENEMY* SetEnemy(D3DXVECTOR3 pos)
+ENEMY* SetEnemy(ENEMYTYPE type, D3DXVECTOR3 pos)
 {
 	for (int i = 0; i < MAX_ENEMY; i++)
 	{
@@ -207,6 +207,8 @@ ENEMY* SetEnemy(D3DXVECTOR3 pos)
 		g_aEnemy[i].obj.color = INIT_COLOR;
 		g_aEnemy[i].obj.bVisible = true;
 		g_aEnemy[i].nLife = ENEMY_INIT_LIFE;
+		g_aEnemy[i].fSpeed = 3.0f;
+		g_aEnemy[i].type = type;
 
 		return &g_aEnemy[i];
 	}
@@ -231,12 +233,15 @@ bool DamageEnemy(ENEMY* pEnemy, int nDamage)
 	SetEnemyState(pEnemy, ENEMYSTATE_DAMAGE);
 	pEnemy->nLife -= nDamage;
 
-	if (pEnemy->nLife < 0)
+	if (pEnemy->nLife <= 0)
 	{
 		SmashEnemy(pEnemy);
+		return true;
 	}
-
-	return !pEnemy->bUsed;
+	else
+	{
+		return false;
+	}
 }
 
 //=====================================================================
@@ -273,6 +278,8 @@ void KillEnemy(ENEMY* pEnemy)
 
 	SetParticle(info, pEnemy->obj.pos, 0, D3DX_PI, 1, 15);
 
+	PlaySound(SOUND_LABEL_SE_EXPLOSION);
+
 	pEnemy->bUsed = false;
 }
 
@@ -285,6 +292,31 @@ void SetEnemyState(ENEMY* pEnemy, ENEMYSTATE newState)
 	pEnemy->nConunterState = 0;
 }
 
+void _OnEnemyType(ENEMY* pEnemy)
+{
+	if (pEnemy->nLife <= 0) return;
+
+	PLAYER* pPlayer = GetPlayer();
+
+	switch (pEnemy->type)
+	{
+	case ENEMYTYPE_STATIC:
+
+		break;
+
+	case ENEMYTYPE_CHASER:
+	{
+		if (pPlayer->state == PLAYERSTATE_SMASH) return;
+		D3DXVECTOR3 vecMoveDir = Direction(pEnemy->obj.pos, pPlayer->obj.pos);
+		pEnemy->obj.pos += vecMoveDir * pEnemy->fSpeed;
+		pEnemy->obj.rot.z = atan2(vecMoveDir.x, vecMoveDir.y);
+		break;
+	}
+
+	}
+
+}
+
 void _OnEnemyState(ENEMY* pEnemy)
 {
 	PLAYER* pPlayer = GetPlayer();
@@ -294,7 +326,6 @@ void _OnEnemyState(ENEMY* pEnemy)
 	{
 	case ENEMYSTATE_NORMAL:
 		pEnemy->obj.color = COLOR_NORMAL;
-		pEnemy->obj.pos += Direction(pEnemy->obj.pos, pPlayer->obj.pos) * 3.0f;
 		break;
 
 	case ENEMYSTATE_DAMAGE:
@@ -339,4 +370,38 @@ void _OnEnemyState(ENEMY* pEnemy)
 	}
 	
 	pEnemy->nConunterState++;
+}
+
+void _CollisionEnemyPlayer(ENEMY* pEnemy)
+{
+	PLAYER* pPlayer = GetPlayer();
+
+	if (pPlayer->state == PLAYERSTATE_SMASH) return;
+
+	D3DXVECTOR3 vecEnemyToPlayer = pPlayer->obj.pos - pEnemy->obj.pos;
+	float sizeAAndB = pEnemy->obj.size.x * 0.5f + pPlayer->obj.size.x * 0.5f;
+
+	if (Magnitude(vecEnemyToPlayer) < sizeAAndB)
+	{
+		SmashPlayer(Normalize(vecEnemyToPlayer));
+	}
+}
+
+void _CollisionEnemyEnemy(ENEMY* pEnemyA)
+{
+	ENEMY* pEnemyB;
+
+	for (int i = 0; i < MAX_ENEMY; i++)
+	{
+		pEnemyB = &g_aEnemy[i];
+		if (pEnemyA == pEnemyB) continue;
+
+		D3DXVECTOR3 vecEnemyAToEnemyB = pEnemyB->obj.pos - pEnemyA->obj.pos;
+		float sizeAAndB = pEnemyA->obj.size.x * 0.5f + pEnemyB->obj.size.x * 0.5f;
+
+		if (Magnitude(vecEnemyAToEnemyB) < sizeAAndB)
+		{
+			pEnemyB->obj.pos += Normalize(vecEnemyAToEnemyB);
+		}
+	}
 }

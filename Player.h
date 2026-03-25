@@ -29,6 +29,19 @@
 
 //*********************************************************************
 // 
+// ***** óÒãìå^ *****
+// 
+//*********************************************************************
+typedef enum
+{
+	PLAYERSTATE_NORMAL = 0,
+	PLAYERSTATE_SUPER,
+	PLAYERSTATE_SMASH,
+	PLAYERSTATE_MAX
+}PLAYERSTATE;
+
+//*********************************************************************
+// 
 // ***** ç\ë¢ëÃ *****
 // 
 //*********************************************************************
@@ -44,14 +57,10 @@ typedef struct PLAYER
 	int nPower;
 	float fSpeed;
 	int nIdxLevel;
+	PLAYERSTATE state;
+	int nCounterState;
+	bool bControlEnabled;
 };
-
-//*********************************************************************
-// 
-// ***** óÒãìå^ *****
-// 
-//*********************************************************************
-
 
 //*********************************************************************
 // 
@@ -63,5 +72,8 @@ void UninitPlayer(void);
 void UpdatePlayer(void);
 void DrawPlayer(void);
 PLAYER* GetPlayer(void);
+void SetPlayerState(PLAYERSTATE newState);
+PLAYERSTATE GetPlayerState(void);
+void SmashPlayer(D3DXVECTOR3 dir);
 
 #endif

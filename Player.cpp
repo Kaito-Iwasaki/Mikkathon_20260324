@@ -16,6 +16,10 @@
 #include "Camera.h"
 #include "Enemy.h"
 #include "LevelGenerator.h"
+#include "sound.h"
+#include "fade.h"
+#include "effect.h"
+#include "particle.h"
 
 //*********************************************************************
 // 
@@ -27,7 +31,7 @@
 #define NUM_TEXTURE_Y		(2)
 #define INIT_POS			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
 #define INIT_SIZE			D3DXVECTOR3(75.0f, 75.0f, 75.0f)
-#define INIT_COLOR			D3DXCOLOR(1.0, 0.847, 0.58, 1.0)
+#define INIT_COLOR			D3DXCOLOR_WHITE/*D3DXCOLOR(1.0, 0.847, 0.58, 1.0)*/
 
 //*********************************************************************
 // 
@@ -53,9 +57,12 @@ typedef enum
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
+void _PlayerControl();
+void _OnPlayerState();
+
 ENEMY* _GetNearestEnemy(void);
-void _AttackNearEnemies(void);
-void _OnEnemyEnteredAttackZone(ENEMY* pEnemy);
+void _AttackNearestEnemy(void);
+void _OnEnemyEnteredAttackRange(ENEMY* pEnemy);
 void _OnEnemyKilled(ENEMY* pEnemy);
 
 //*********************************************************************
@@ -90,6 +97,8 @@ void InitPlayer(void)
 	g_Player.nBulletLeft = PLAYER_MAX_HOLDABLE_BULLET;
 	g_Player.fSpeed = PLAYER_INIT_SPEED;
 	g_Player.nPower = PLAYER_INIT_POWER;
+	g_Player.state = PLAYERSTATE_NORMAL;
+	g_Player.bControlEnabled = true;
 
 	// テクスチャの読み込み
 	if (TEXTURE_FILENAME)
@@ -111,7 +120,10 @@ void InitPlayer(void)
 		NULL
 	);
 
-	GeneratorLevel(g_Player.nIdxLevel, g_Player.obj.pos + D3DXVECTOR3(0, g_Player.obj.size.y * 1.5f, 0));
+	GeneratorLevel(
+		g_Player.nIdxLevel,
+		g_Player.obj.pos
+	);
 }
 
 //=====================================================================
@@ -137,6 +149,88 @@ void UninitPlayer(void)
 //=====================================================================
 void UpdatePlayer(void)
 {
+	_PlayerControl();
+
+	_OnPlayerState();
+}
+
+//=====================================================================
+// 描画処理
+//=====================================================================
+void DrawPlayer(void)
+{
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	VERTEX_2D* pVtx;
+
+	// 頂点バッファをロックして頂点情報へのポインタを取得
+	g_pVtxBuffPlayer->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 頂点情報を設定
+	SetVertexPos(pVtx, g_Player.obj);
+	SetVertexRHW(pVtx, 1.0f);
+	SetVertexColor(pVtx, g_Player.obj.color);
+	int nTextureX = g_Player.nTexture % NUM_TEXTURE_X;
+	int nTextureY = g_Player.nTexture / NUM_TEXTURE_X;
+	SetVertexTexturePos(
+		pVtx,
+		nTextureX,
+		nTextureY,
+		NUM_TEXTURE_X,
+		NUM_TEXTURE_Y, 
+		g_Player.obj.bInversed
+	);
+
+	// 頂点バッファをアンロック
+	g_pVtxBuffPlayer->Unlock();
+
+	// 頂点バッファをデータストリームに設定
+	pDevice->SetStreamSource(0, g_pVtxBuffPlayer, 0, sizeof(VERTEX_2D));
+
+	// 頂点フォーマットの設定
+	pDevice->SetFVF(FVF_VERTEX_2D);
+
+	if (g_Player.obj.bVisible)
+	{// 表示状態
+		// テクスチャの設定
+		pDevice->SetTexture(0, g_pTexBuffPlayer);
+
+		// ポリゴンの描画
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+	}
+}
+
+//=====================================================================
+// プレイヤー取得処理
+//=====================================================================
+PLAYER* GetPlayer(void)
+{
+	return &g_Player;
+}
+
+void SetPlayerState(PLAYERSTATE newState)
+{
+	g_Player.state = newState;
+	g_Player.nCounterState = 0;
+}
+
+PLAYERSTATE GetPlayerState(void)
+{
+	return g_Player.state;
+}
+
+void SmashPlayer(D3DXVECTOR3 dir)
+{
+	g_Player.bControlEnabled = false;
+	g_Player.move = dir * 10.0f;
+	ShakeCamera(30);
+	SetPlayerState(PLAYERSTATE_SMASH);
+	PlaySound(SOUND_LABEL_SE_PLAYERSMASH);
+}
+
+void _PlayerControl()
+{
+	if (g_Player.bControlEnabled == false) return;
+
 	DIMOUSESTATE mouse = GetMouse();
 	XINPUT_STATE* joypad = GetJoypad();
 	XINPUT_GAMEPAD gamepad = joypad->Gamepad;
@@ -168,7 +262,7 @@ void UpdatePlayer(void)
 			g_ctrlType = PLAYER_CONTROLTYPE_MOUSE;
 		}
 	}
-	
+
 	// 入力方向が変わった時だけ移動方向も変える
 	if (fabsf(direction.x + direction.y) > 0)
 	{
@@ -182,65 +276,70 @@ void UpdatePlayer(void)
 	g_Player.obj.rot.z = GetFixedRotation(g_Player.obj.rot.z);
 
 	g_Player.obj.pos += Direction(g_Player.obj.rot.z) * g_Player.fSpeed;
-
-	Clampf(&g_Player.obj.pos.x, -1500.0f, 1500.0f);
-	Clampf(&g_Player.obj.pos.y, -1500.0f, 1500.0f);
-
-	GetCamera()->pos = g_Player.obj.pos + Direction(g_Player.obj.rot.z) * 100;
-
-	// テクスチャアニメーション（現在のテクスチャ位置を更新）
-	g_Player.nTexture = (g_Player.nTexture + 1) % (NUM_TEXTURE_X * NUM_TEXTURE_Y);
-
-	_AttackNearEnemies();
-
-	SetPositionLevel(g_Player.nIdxLevel, g_Player.obj.pos + D3DXVECTOR3(0, -g_Player.obj.size.y, 0));
 }
 
-//=====================================================================
-// 描画処理
-//=====================================================================
-void DrawPlayer(void)
+void _OnPlayerState()
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-	VERTEX_2D* pVtx;
+	switch (g_Player.state)
+	{
+	case PLAYERSTATE_NORMAL:
+	{
+		// カメラをプレイヤーに追従させる
+		// 若干向いてる方向にオフセットする
+		float fCamOffsetMagnitude = 100.0f;
+		D3DXVECTOR3 vecCamOffset = Direction(g_Player.obj.rot.z) * fCamOffsetMagnitude;
+		GetCamera()->pos = g_Player.obj.pos + vecCamOffset;
 
-	// 頂点バッファをロックして頂点情報へのポインタを取得
-	g_pVtxBuffPlayer->Lock(0, 0, (void**)&pVtx, 0);
+		// レベル表示をプレイヤーの頭上に追従させる
+		D3DXVECTOR3 vecLevelOffset = D3DXVECTOR3(0, -g_Player.obj.size.y, 0);
+		SetPositionLevel(
+			g_Player.nIdxLevel,
+			g_Player.obj.pos + vecLevelOffset
+		);
 
-	// 頂点情報を設定
-	SetVertexPos(pVtx, g_Player.obj);
-	SetVertexRHW(pVtx, 1.0f);
-	SetVertexColor(pVtx, g_Player.obj.color);
+		// テクスチャアニメーション（現在のテクスチャ位置を更新）
+		g_Player.nTexture = (g_Player.nTexture + 1) % (NUM_TEXTURE_X * NUM_TEXTURE_Y);
 
-	int nTextureX = g_Player.nTexture % NUM_TEXTURE_X;
-	int nTextureY = g_Player.nTexture / NUM_TEXTURE_X;
-	SetVertexTexturePos(pVtx, nTextureX, nTextureY, NUM_TEXTURE_X, NUM_TEXTURE_Y, g_Player.obj.bInversed);
-
-	// 頂点バッファをアンロック
-	g_pVtxBuffPlayer->Unlock();
-
-	// 頂点バッファをデータストリームに設定
-	pDevice->SetStreamSource(0, g_pVtxBuffPlayer, 0, sizeof(VERTEX_2D));
-
-	// 頂点フォーマットの設定
-	pDevice->SetFVF(FVF_VERTEX_2D);
-
-	if (g_Player.obj.bVisible)
-	{// 表示状態
-		// テクスチャの設定
-		pDevice->SetTexture(0, g_pTexBuffPlayer);
-
-		// ポリゴンの描画
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+		// 一番近くの敵１人だけを攻撃
+		_AttackNearestEnemy();
+		break;
 	}
-}
+	
+	case PLAYERSTATE_SMASH:
+	{
+		// SmashPlayer()で設定されたベクトルに向かって回転しながら吹き飛ぶ
+		g_Player.obj.pos += g_Player.move;
+		g_Player.obj.rot.z += 0.5f;
 
-//=====================================================================
-// プレイヤー取得処理
-//=====================================================================
-PLAYER* GetPlayer(void)
-{
-	return &g_Player;
+		if (g_Player.nCounterState > 90)
+		{
+			SetFade(SCENE_RESULT);
+		}
+
+		EFFECTINFO info;
+		info.col = D3DXCOLOR(1.0f, 0.7f, 0.0f, 1.0f);
+		info.fMaxAlpha = 0.1f;
+		info.fMaxScale = 0.7f;
+		info.fRotSpeed = 0.1f;
+		info.fSpeed = 0.5f;
+		info.nMaxLife = 120;
+
+		SetParticle(info, g_Player.obj.pos, 0, D3DX_PI, 1, 1);
+
+		// レベル表示をプレイヤーの頭上に追従させる
+		D3DXVECTOR3 vecLevelOffset = D3DXVECTOR3(0, -g_Player.obj.size.y, 0);
+		SetPositionLevel(
+			g_Player.nIdxLevel,
+			g_Player.obj.pos + vecLevelOffset
+		);
+		break;
+	}
+
+	default:
+		break;
+	}
+
+	g_Player.nCounterState++;
 }
 
 ENEMY* _GetNearestEnemy(void)
@@ -265,7 +364,7 @@ ENEMY* _GetNearestEnemy(void)
 	return pNearestEnemy;
 }
 
-void _AttackNearEnemies(void)
+void _AttackNearestEnemy(void)
 {
 	ENEMY* pEnemy = _GetNearestEnemy();
 
@@ -276,11 +375,11 @@ void _AttackNearEnemies(void)
 
 	if (Magnitude(pEnemy->obj.pos, g_Player.obj.pos) < fAttackRange)
 	{
-		_OnEnemyEnteredAttackZone(pEnemy);
+		_OnEnemyEnteredAttackRange(pEnemy);
 	}
 }
 
-void _OnEnemyEnteredAttackZone(ENEMY* pEnemy)
+void _OnEnemyEnteredAttackRange(ENEMY* pEnemy)
 {
 	bool bHasEnemyDied = DamageEnemy(pEnemy, g_Player.nPower);
 
@@ -304,10 +403,30 @@ void _OnEnemyEnteredAttackZone(ENEMY* pEnemy)
 	D3DXVECTOR3 punchDir = Direction(punchStart, pEnemy->obj.pos);
 	D3DXVECTOR3 punchRot = D3DXVECTOR3(0, 0, atan2f(punchDir.x, punchDir.y));
 	GenerateBullet(punchStart, punchRot, 10, 0, 10, BT_TEST);
+
+	// 効果音
+	switch (rand() % 3)
+	{
+	case 0:
+		PlaySound(SOUND_LABEL_SE_PUNCH_00);
+		break;
+
+	case 1:
+		PlaySound(SOUND_LABEL_SE_PUNCH_01);
+		break;
+
+	case 2:
+		PlaySound(SOUND_LABEL_SE_PUNCH_02);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void _OnEnemyKilled(ENEMY* pEnemy)
 {
 	ShakeCamera(10);
 	AddLevel(g_Player.nIdxLevel, 1);
+	PlaySound(SOUND_LABEL_SE_SMASH);
 }

@@ -17,10 +17,10 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define TEXTURE_FILENAME	NULL
+#define TEXTURE_FILENAME	"data\\TEXTURE\\Dumbbell.png"
 #define INIT_POS			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
-#define INIT_SIZE			D3DXVECTOR3(10.0f, 10.0f, 0.0f)
-#define INIT_COLOR			D3DXCOLOR(1, 0, 0, 1)
+#define INIT_SIZE			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
+#define INIT_COLOR			D3DXCOLOR_WHITE
 
 #define WEIGHTFOLLOW_GAP	(30.0f)
 
@@ -117,6 +117,7 @@ void UninitWeightFollow(void)
 void UpdateWeightFollow(void)
 {
 	PLAYER* pPlayer = GetPlayer();
+	if (pPlayer->state == PLAYERSTATE_SMASH) return;
 
 	for (int i = 0; i < pPlayer->nBulletLeft; i++)
 	{
@@ -136,7 +137,7 @@ void UpdateWeightFollow(void)
 
 		if (Magnitude(g_aWeightFollow[i].obj.pos, destination) > WEIGHTFOLLOW_GAP)
 		{
-			g_aWeightFollow[i].obj.pos += direction * PLAYER_INIT_SPEED;
+			g_aWeightFollow[i].obj.pos += direction * pPlayer->fSpeed;
 		}
 
 		g_aWeightFollow[i].obj.rot.z = atan2f(direction.x, direction.y);
@@ -178,7 +179,7 @@ void DrawWeightFollow(void)
 		if (g_aWeightFollow[i].obj.bVisible)
 		{// 表示状態
 			// テクスチャの設定
-			pDevice->SetTexture(0, NULL);
+			pDevice->SetTexture(0, g_pTexBuffWeightFollow);
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, i * 4, 2);

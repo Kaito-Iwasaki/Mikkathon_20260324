@@ -14,6 +14,7 @@
 #include "Player.h"
 #include "itemGenerator.h"
 #include "LevelGenerator.h"
+#include "sound.h"
 
 //*********************************************************************
 // 
@@ -512,6 +513,8 @@ void UpdateItemState(LPITEM pItem)
 
 		// ñ≥Ç…ê›íË
 		SetItemState(pItem, ITEMSTATE_NONE);
+
+		PlaySound(SOUND_LABEL_SE_EAT);
 
 		break;
 	}

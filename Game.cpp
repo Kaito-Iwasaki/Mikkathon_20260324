@@ -25,6 +25,7 @@
 #include "particle.h"
 #include "LevelGenerator.h"
 #include "Background2.h"
+#include "pause.h"
 
 //*********************************************************************
 // 
@@ -81,6 +82,7 @@ void InitGame(void)
 	InitBackground2();
 	InitEffect();
 	InitParticle();
+	InitPause();
 
 	// -- Generators --
 	InitEnemyGenerator();
@@ -108,6 +110,7 @@ void UninitGame(void)
 	UninitBackground2();
 	UninitEffect();
 	UninitParticle();
+	UninitPause();
 	
 	// -- Managers --
 	UninitBulletManager();
@@ -165,10 +168,15 @@ void UpdateGame(void)
 		// -- Generators --
 		UpdateEnemyGenerator();
 		UpdateLevelGenerator();
+
+		// プレイヤー位置の制限
+		// 範囲をシーン依存にするためここで処理する
+		Clampf(&pPlayer->obj.pos.x, -1500.0f, 1500.0f);
+		Clampf(&pPlayer->obj.pos.y, -1500.0f, 1500.0f);
 	}
 	else
 	{
-
+		UpdatePause();
 	}
 }
 
@@ -190,8 +198,17 @@ void DrawGame(void)
 
 	if (g_bPauseGame)
 	{// ポーズ画面描画
-
+		DrawPause();
 	}
+}
+
+//=====================================================================
+//ポーズ画面切り替え処理
+//=====================================================================
+void TogglePauseGame(bool bPause)
+{
+	g_bPauseGame = bPause;
+	SetPauseMenuCursor(0);
 }
 
 //=====================================================================
