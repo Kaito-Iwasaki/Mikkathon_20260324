@@ -106,6 +106,8 @@
       <Filter>ソース ファイル\GameObjects</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
+      <Filter>ソース ファイル\Base</Filter>
+    </ClCompile>
     <ClCompile Include="Title.cpp">
       <Filter>ソース ファイル\Scenes</Filter>
     </ClCompile>
@@ -168,7 +170,9 @@
     <ClInclude Include="BulletFollow.h">
       <Filter>ヘッダー ファイル\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
+    <ClCompile Include="Camera.cpp">
+      <Filter>ソース ファイル\Base</Filter>
+    </ClCompile>
     <ClInclude Include="Title.h">
       <Filter>ヘッダー ファイル\Scenes</Filter>
     </ClInclude>
