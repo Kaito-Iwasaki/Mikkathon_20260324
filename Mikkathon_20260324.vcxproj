@@ -149,6 +149,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="bulletManager.h" />
+    <ClInclude Include="Camera.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="DebugProc.h" />
     <ClInclude Include="Enemy.h">
       <SubType>
@@ -195,6 +199,10 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="bulletManager.cpp" />
+    <ClCompile Include="Camera.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="DebugProc.cpp" />
     <ClCompile Include="Enemy.cpp">
       <SubType>
