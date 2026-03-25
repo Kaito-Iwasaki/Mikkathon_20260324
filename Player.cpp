@@ -30,7 +30,12 @@
 // ***** 列挙型 *****
 // 
 //*********************************************************************
-
+typedef enum
+{
+	PLAYER_CONTROLTYPE_MOUSE = 0,
+	PLAYER_CONTROLTYPE_JOYSTICK,
+	PLAYER_CONTROLTYPE_MAX
+}PLAYER_CONTROLTYPE;
 
 //*********************************************************************
 // 
@@ -54,6 +59,7 @@
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPlayer = NULL;
 LPDIRECT3DTEXTURE9 g_pTexBuffPlayer = NULL;
 PLAYER g_Player;
+PLAYER_CONTROLTYPE g_ctrlType = PLAYER_CONTROLTYPE_MOUSE;
 
 //=====================================================================
 // 初期化処理
@@ -117,16 +123,43 @@ void UninitPlayer(void)
 //=====================================================================
 void UpdatePlayer(void)
 {
+	DIMOUSESTATE mouse = GetMouse();
+	XINPUT_STATE* joypad = GetJoypad();
+	XINPUT_GAMEPAD gamepad = joypad->Gamepad;
+	D3DXVECTOR2 vecThumbL = GetJoystickThumbLMagnitude();
+	D3DXVECTOR2 vecMouseMove = D3DXVECTOR2(mouse.lX, mouse.lY);
 	D3DXVECTOR3 direction = D3DXVECTOR3_ZERO;
 
 	// 直前にキーボードとコントローラーどちらの入力があったか確認し
 	// それに応じて方向ベクトルの算出方法を変える
+	if (g_ctrlType == PLAYER_CONTROLTYPE_MOUSE)
+	{
+		// マウス位置はスクリーン座標上にあるのでスクリーン中心値からマウス位置までの
+		// 方向ベクトルを移動先にする
+		direction = Vector2To3(GetMousePos()) - D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0);
 
-	// マウス位置を目的地に設定
-	// マウス位置はスクリーン座標上にあるのでスクリーン中心値からマウス位置までの
-	// 方向ベクトルを移動先にする
-	direction = Vector2To3(GetMousePos()) - D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0);
-	g_Player.move = direction;
+		// コントローラーの入力があった場合入力方法を変える
+		if (fabsf(vecThumbL.x + vecThumbL.y) > 0)
+		{
+			g_ctrlType = PLAYER_CONTROLTYPE_JOYSTICK;
+		}
+	}
+	else if (g_ctrlType == PLAYER_CONTROLTYPE_JOYSTICK)
+	{
+		direction = D3DXVECTOR3(vecThumbL.x, -vecThumbL.y, 0);
+
+		// キーボードの入力があった場合入力方法を変える
+		if (fabsf(vecMouseMove.x + vecMouseMove.y) > 0)
+		{
+			g_ctrlType = PLAYER_CONTROLTYPE_MOUSE;
+		}
+	}
+	
+	// 入力方向が変わった時だけ移動方向も変える
+	if (fabsf(direction.x + direction.y) > 0)
+	{
+		g_Player.move = direction;
+	}
 
 	float fRotDest = atan2f(g_Player.move.x, g_Player.move.y);
 

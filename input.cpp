@@ -519,6 +519,25 @@ bool GetJoystickRepeat(JOYSTICK stick, int nInterval)
 }
 
 //=====================================================================
+// 右スティックの値を取得
+//=====================================================================
+D3DXVECTOR2 GetJoystickThumbLMagnitude(void)
+{
+	XINPUT_GAMEPAD gamepad = GetJoypad()->Gamepad;
+	D3DXVECTOR2 vecThumbL = D3DXVECTOR2(gamepad.sThumbLX, gamepad.sThumbLY);
+
+	// スティックの入力値がデッドゾーンを超えているか？
+	if (vecThumbL.x * vecThumbL.x + vecThumbL.y * vecThumbL.y >= INPUT_DEADZONE * INPUT_DEADZONE)
+	{
+		return vecThumbL;
+	}
+	else
+	{// false→入力を無効に
+		return D3DXVECTOR2(0, 0);
+	}
+}
+
+//=====================================================================
 // 振動情報の設定処理
 //=====================================================================
 void SetVibration(WORD wLeftMotorSpeed, WORD wRightMotorSpeed, int nCountVibration)

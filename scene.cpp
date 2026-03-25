@@ -18,6 +18,7 @@
 #include "Title.h"
 #include "Game.h"
 #include "Result.h"
+#include "DebugProc.h"
 
 //*********************************************************************
 // 
@@ -43,6 +44,8 @@ void InitScene(void)
 {
 	// フェード＆シーンの初期化処理
 	InitFade(g_currentScene);
+
+	InitDebugProc();
 }
 
 //=====================================================================
@@ -58,6 +61,8 @@ void UninitScene(void)
 
 	// フェードのの終了処理
 	UninitFade();
+
+	UninitDebugProc();
 }
 
 //=====================================================================
@@ -70,6 +75,8 @@ void UpdateScene(void)
 
 	// フェードの更新処理
 	UpdateFade();
+
+	UpdateDebugProc();
 }
 
 //=====================================================================
@@ -82,6 +89,8 @@ void DrawScene(void)
 
 	// フェードの描画処理
 	DrawFade();
+
+	DrawDebugProc();
 }
 
 //=====================================================================
