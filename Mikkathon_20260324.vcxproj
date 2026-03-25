@@ -144,7 +144,7 @@
     </ClInclude>
     <ClInclude Include="baseObject.h" />
     <ClInclude Include="bulletController.h" />
-    <ClInclude Include="BulletFollow.h">
+    <ClInclude Include="WeightFollow.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -198,7 +198,7 @@
     </ClCompile>
     <ClCompile Include="baseObject.cpp" />
     <ClCompile Include="bulletController.cpp" />
-    <ClCompile Include="BulletFollow.cpp">
+    <ClCompile Include="WeightFollow.cpp">
       <SubType>
       </SubType>
     </ClCompile>

@@ -1,6 +1,6 @@
 //=====================================================================
 //
-// BulletFollow [BulletFollow.cpp]
+// WeightFollow [WeightFollow.cpp]
 // Author : Kaito Iwasaki
 // 
 //=====================================================================
@@ -10,7 +10,7 @@
 // ***** インクルードファイル *****
 // 
 //*********************************************************************
-#include "BulletFollow.h"
+#include "WeightFollow.h"
 
 //*********************************************************************
 // 
@@ -22,7 +22,7 @@
 #define INIT_SIZE			D3DXVECTOR3(10.0f, 10.0f, 0.0f)
 #define INIT_COLOR			D3DXCOLOR(1, 0, 0, 1)
 
-#define BULLETFOLLOW_GAP	(30.0f)
+#define WEIGHTFOLLOW_GAP	(30.0f)
 
 //*********************************************************************
 // 
@@ -50,25 +50,25 @@
 // ***** グローバル変数 *****
 // 
 //*********************************************************************
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBulletFollow = NULL;
-LPDIRECT3DTEXTURE9 g_pTexBuffBulletFollow = NULL;
-BULLETFOLLOW g_aBulletFollow[PLAYER_MAX_HOLDABLE_BULLET];
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffWeightFollow = NULL;
+LPDIRECT3DTEXTURE9 g_pTexBuffWeightFollow = NULL;
+WEIGHTFOLLOW g_aWeightFollow[PLAYER_MAX_HOLDABLE_BULLET];
 
 //=====================================================================
 // 初期化処理
 //=====================================================================
-void InitBulletFollow(void)
+void InitWeightFollow(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	// 構造体の初期化
-	memset(&g_aBulletFollow[0], 0, sizeof(BULLETFOLLOW) * MAX_BULLETFOLLOW);
-	for (int i = 0; i < MAX_BULLETFOLLOW; i++)
+	memset(&g_aWeightFollow[0], 0, sizeof(WEIGHTFOLLOW) * MAX_WEIGHTFOLLOW);
+	for (int i = 0; i < MAX_WEIGHTFOLLOW; i++)
 	{
-		g_aBulletFollow[i].obj.pos = INIT_POS;
-		g_aBulletFollow[i].obj.size = INIT_SIZE;
-		g_aBulletFollow[i].obj.color = INIT_COLOR;
-		g_aBulletFollow[i].obj.bVisible = true;
+		g_aWeightFollow[i].obj.pos = INIT_POS;
+		g_aWeightFollow[i].obj.size = INIT_SIZE;
+		g_aWeightFollow[i].obj.color = INIT_COLOR;
+		g_aWeightFollow[i].obj.bVisible = true;
 	}
 
 	// テクスチャの読み込み
@@ -77,17 +77,17 @@ void InitBulletFollow(void)
 		D3DXCreateTextureFromFile(
 			pDevice,
 			TEXTURE_FILENAME,
-			&g_pTexBuffBulletFollow
+			&g_pTexBuffWeightFollow
 		);
 	}
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(
-		sizeof(VERTEX_2D) * 4 * MAX_BULLETFOLLOW,
+		sizeof(VERTEX_2D) * 4 * MAX_WEIGHTFOLLOW,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
-		&g_pVtxBuffBulletFollow,
+		&g_pVtxBuffWeightFollow,
 		NULL
 	);
 
@@ -96,25 +96,25 @@ void InitBulletFollow(void)
 //=====================================================================
 // 終了処理
 //=====================================================================
-void UninitBulletFollow(void)
+void UninitWeightFollow(void)
 {
-	if (g_pTexBuffBulletFollow != NULL)
+	if (g_pTexBuffWeightFollow != NULL)
 	{// テクスチャの破棄
-		g_pTexBuffBulletFollow->Release();
-		g_pTexBuffBulletFollow = NULL;
+		g_pTexBuffWeightFollow->Release();
+		g_pTexBuffWeightFollow = NULL;
 	}
 
-	if (g_pVtxBuffBulletFollow != NULL)
+	if (g_pVtxBuffWeightFollow != NULL)
 	{// 頂点バッファの破棄
-		g_pVtxBuffBulletFollow->Release();
-		g_pVtxBuffBulletFollow = NULL;
+		g_pVtxBuffWeightFollow->Release();
+		g_pVtxBuffWeightFollow = NULL;
 	}
 }
 
 //=====================================================================
 // 更新処理
 //=====================================================================
-void UpdateBulletFollow(void)
+void UpdateWeightFollow(void)
 {
 	PLAYER* pPlayer = GetPlayer();
 
@@ -129,53 +129,53 @@ void UpdateBulletFollow(void)
 		}
 		else
 		{
-			destination = g_aBulletFollow[i - 1].obj.pos;
+			destination = g_aWeightFollow[i - 1].obj.pos;
 		}
 
-		direction = Normalize(destination - g_aBulletFollow[i].obj.pos);
+		direction = Normalize(destination - g_aWeightFollow[i].obj.pos);
 
-		if (Magnitude(g_aBulletFollow[i].obj.pos, destination) > BULLETFOLLOW_GAP)
+		if (Magnitude(g_aWeightFollow[i].obj.pos, destination) > WEIGHTFOLLOW_GAP)
 		{
-			g_aBulletFollow[i].obj.pos += direction * PLAYER_SPEED;
+			g_aWeightFollow[i].obj.pos += direction * PLAYER_SPEED;
 		}
 
-		g_aBulletFollow[i].obj.rot.z = atan2f(direction.x, direction.y);
+		g_aWeightFollow[i].obj.rot.z = atan2f(direction.x, direction.y);
 	}
 }
 
 //=====================================================================
 // 描画処理
 //=====================================================================
-void DrawBulletFollow(void)
+void DrawWeightFollow(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	VERTEX_2D* pVtx;
 	PLAYER* pPlayer = GetPlayer();
 
 	// 頂点バッファをロックして頂点情報へのポインタを取得
-	g_pVtxBuffBulletFollow->Lock(0, 0, (void**)&pVtx, 0);
+	g_pVtxBuffWeightFollow->Lock(0, 0, (void**)&pVtx, 0);
 
 	// 頂点情報を設定
 	for (int i = 0; i < pPlayer->nBulletLeft; i++, pVtx += 4)
 	{
-		SetVertexPos(pVtx, g_aBulletFollow[i].obj);
+		SetVertexPos(pVtx, g_aWeightFollow[i].obj);
 		SetVertexRHW(pVtx, 1.0f);
-		SetVertexColor(pVtx, g_aBulletFollow[i].obj.color);
+		SetVertexColor(pVtx, g_aWeightFollow[i].obj.color);
 		SetVertexTexturePos(pVtx);
 	}
 
 	// 頂点バッファをアンロック
-	g_pVtxBuffBulletFollow->Unlock();
+	g_pVtxBuffWeightFollow->Unlock();
 
 	// 頂点バッファをデータストリームに設定
-	pDevice->SetStreamSource(0, g_pVtxBuffBulletFollow, 0, sizeof(VERTEX_2D));
+	pDevice->SetStreamSource(0, g_pVtxBuffWeightFollow, 0, sizeof(VERTEX_2D));
 
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
 	for (int i = 0; i < pPlayer->nBulletLeft; i++)
 	{
-		if (g_aBulletFollow[i].obj.bVisible)
+		if (g_aWeightFollow[i].obj.bVisible)
 		{// 表示状態
 			// テクスチャの設定
 			pDevice->SetTexture(0, NULL);

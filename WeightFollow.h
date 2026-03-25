@@ -1,11 +1,11 @@
 //=====================================================================
 //
-// BulletFollow.cppのヘッダファイル [BulletFollow.h]
+// WeightFollow.cppのヘッダファイル [WeightFollow.h]
 // Author : Kaito Iwasaki
 // 
 //=====================================================================
-#ifndef _BulletFollow_H_
-#define _BulletFollow_H_
+#ifndef _WeightFollow_H_
+#define _WeightFollow_H_
 
 //*********************************************************************
 // 
@@ -22,14 +22,14 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define MAX_BULLETFOLLOW	PLAYER_MAX_HOLDABLE_BULLET
+#define MAX_WEIGHTFOLLOW	PLAYER_MAX_HOLDABLE_BULLET
 
 //*********************************************************************
 // 
 // ***** 構造体 *****
 // 
 //*********************************************************************
-typedef struct BULLETFOLLOW
+typedef struct WEIGHTFOLLOW
 {
 	BASEOBJECT obj;
 };
@@ -46,9 +46,9 @@ typedef struct BULLETFOLLOW
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitBulletFollow(void);
-void UninitBulletFollow(void);
-void UpdateBulletFollow(void);
-void DrawBulletFollow(void);
+void InitWeightFollow(void);
+void UninitWeightFollow(void);
+void UpdateWeightFollow(void);
+void DrawWeightFollow(void);
 
 #endif
