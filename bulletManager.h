@@ -20,7 +20,7 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define DYNAMIC_ASSERT(expr) if(!expr){ OutputDebugString(TEXT("Assertion Failed!")); __debugbreak(); }	// 動的なアサ―ト感知
+#define DYNAMIC_ASSERT(expr, outstr) if(!expr){ OutputDebugString(TEXT(outstr)); __debugbreak(); }	// 動的なアサ―ト感知
 
 //*********************************************************************
 // 

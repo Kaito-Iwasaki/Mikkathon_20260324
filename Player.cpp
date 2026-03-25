@@ -20,9 +20,11 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define TEXTURE_FILENAME	NULL
+#define TEXTURE_FILENAME	"data\\TEXTURE\\PlayerAnimation.png"
+#define NUM_TEXTURE_X		(4)
+#define NUM_TEXTURE_Y		(2)
 #define INIT_POS			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
-#define INIT_SIZE			D3DXVECTOR3(25.0f, 25.0f, 0.0f)
+#define INIT_SIZE			D3DXVECTOR3(75.0f, 75.0f, 75.0f)
 #define INIT_COLOR			D3DXCOLOR(1.0, 0.847, 0.58, 1.0)
 
 //*********************************************************************
@@ -130,10 +132,10 @@ void UpdatePlayer(void)
 	D3DXVECTOR2 vecMouseMove = D3DXVECTOR2(mouse.lX, mouse.lY);
 	D3DXVECTOR3 direction = D3DXVECTOR3_ZERO;
 
-	// 直前にキーボードとコントローラーどちらの入力があったか確認し
+	// 直前にマウスとコントローラーどちらの入力があったか確認し
 	// それに応じて方向ベクトルの算出方法を変える
 	if (g_ctrlType == PLAYER_CONTROLTYPE_MOUSE)
-	{
+	{// マウス
 		// マウス位置はスクリーン座標上にあるのでスクリーン中心値からマウス位置までの
 		// 方向ベクトルを移動先にする
 		direction = Vector2To3(GetMousePos()) - D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0);
@@ -145,10 +147,10 @@ void UpdatePlayer(void)
 		}
 	}
 	else if (g_ctrlType == PLAYER_CONTROLTYPE_JOYSTICK)
-	{
+	{// ジョイスティック
 		direction = D3DXVECTOR3(vecThumbL.x, -vecThumbL.y, 0);
 
-		// キーボードの入力があった場合入力方法を変える
+		// マウスの入力があった場合入力方法を変える
 		if (fabsf(vecMouseMove.x + vecMouseMove.y) > 0)
 		{
 			g_ctrlType = PLAYER_CONTROLTYPE_MOUSE;
@@ -170,6 +172,9 @@ void UpdatePlayer(void)
 	g_Player.obj.pos += Direction(g_Player.obj.rot.z) * PLAYER_SPEED;
 
 	GetCamera()->pos = g_Player.obj.pos;
+
+	// テクスチャアニメーション（現在のテクスチャ位置を更新）
+	g_Player.nTexture = (g_Player.nTexture + 1) % (NUM_TEXTURE_X * NUM_TEXTURE_Y);
 }
 
 //=====================================================================
@@ -187,7 +192,10 @@ void DrawPlayer(void)
 	SetVertexPos(pVtx, g_Player.obj);
 	SetVertexRHW(pVtx, 1.0f);
 	SetVertexColor(pVtx, g_Player.obj.color);
-	SetVertexTexturePos(pVtx);
+
+	int nTextureX = g_Player.nTexture % NUM_TEXTURE_X;
+	int nTextureY = g_Player.nTexture / NUM_TEXTURE_X;
+	SetVertexTexturePos(pVtx, nTextureX, nTextureY, NUM_TEXTURE_X, NUM_TEXTURE_Y, g_Player.obj.bInversed);
 
 	// 頂点バッファをアンロック
 	g_pVtxBuffPlayer->Unlock();
