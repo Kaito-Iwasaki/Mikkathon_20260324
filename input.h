@@ -119,6 +119,7 @@ bool GetJoypadRelease(JOYKEY key);
 bool GetJoypadRepeat(JOYKEY key, int nInterval = INPUT_REPEAT_INTERVAL);
 bool GetJoystickPress(JOYSTICK stick);
 bool GetJoystickRepeat(JOYSTICK stick, int nInterval = INPUT_REPEAT_INTERVAL);
+D3DXVECTOR2 GetJoystickThumbLMagnitude(void);
 void SetVibration(WORD wLeftMotorSpeed, WORD wRightMotorSpeed, int nCountVibration = -1);
 
 #endif
