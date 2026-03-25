@@ -134,7 +134,7 @@ void UpdateEnemy(void)
 		else if (Magnitude(g_aEnemy[i].obj.pos, pPlayer->obj.pos) < (g_aEnemy[i].obj.size.x * 0.5f + pPlayer->obj.size.x * 0.5f) * 2)
 		{
 			DamageEnemy(&g_aEnemy[i]);
-			g_aEnemy[i].obj.pos += Direction(pPlayer->obj.pos, g_aEnemy[i].obj.pos) * PLAYER_SPEED * 0.75f;
+			g_aEnemy[i].obj.pos += Direction(pPlayer->obj.pos, g_aEnemy[i].obj.pos) * PLAYER_INIT_SPEED * 0.75f;
 
 			D3DXVECTOR3 punch_start = pPlayer->obj.pos + Vector2To3(GetRandomVector2() * 100);
 			D3DXVECTOR3 punch_dir = Direction(punch_start, g_aEnemy[i].obj.pos);

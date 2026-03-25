@@ -76,8 +76,9 @@ void InitPlayer(void)
 	g_Player.obj.size = INIT_SIZE;
 	g_Player.obj.color = INIT_COLOR;
 	g_Player.obj.bVisible = true;
+	g_Player.move = g_Player.obj.pos + D3DXVECTOR3(0, 1, 0);
 	g_Player.nMaxBullet = PLAYER_MAX_HOLDABLE_BULLET;
-	g_Player.fBulletSpeed = PLAYER_BULLETSPEED;
+	g_Player.fBulletSpeed = PLAYER_INIT_BULLETSPEED;
 	g_Player.nBulletLeft = PLAYER_MAX_HOLDABLE_BULLET;
 
 	// テクスチャの読み込み
@@ -166,10 +167,10 @@ void UpdatePlayer(void)
 	float fRotDest = atan2f(g_Player.move.x, g_Player.move.y);
 
 	// プレイヤーをマウス方向に傾ける（角度値は-pi~piに補正）
-	g_Player.obj.rot.z += (GetFixedRotation(fRotDest - g_Player.obj.rot.z)) * PLAYER_ROTSPEED;
+	g_Player.obj.rot.z += (GetFixedRotation(fRotDest - g_Player.obj.rot.z)) * PLAYER_INIT_ROTSPEED;
 	g_Player.obj.rot.z = GetFixedRotation(g_Player.obj.rot.z);
 
-	g_Player.obj.pos += Direction(g_Player.obj.rot.z) * PLAYER_SPEED;
+	g_Player.obj.pos += Direction(g_Player.obj.rot.z) * PLAYER_INIT_SPEED;
 
 	GetCamera()->pos = g_Player.obj.pos;
 
