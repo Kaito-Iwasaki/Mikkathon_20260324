@@ -56,6 +56,9 @@ void InitEnemyGenerator(void)
 	g_nCountEnemyGen = 0;
 
 	SetEnemy(D3DXVECTOR3(500, 500, 0));
+	SetEnemy(D3DXVECTOR3(500, 400, 0));
+	SetEnemy(D3DXVECTOR3(500, 300, 0));
+	SetEnemy(D3DXVECTOR3(600, 200, 0));
 	SetEnemy(D3DXVECTOR3(600, 100, 0));
 }
 

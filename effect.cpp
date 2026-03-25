@@ -6,6 +6,7 @@
 //=====================================================================
 #include "effect.h"
 #include "util.h"
+#include "camera.h"
 
 //*********************************************************************
 // 
@@ -91,11 +92,11 @@ void UpdateEffect(void)
 	{
 		if (pEffect->bUsed == false) continue;
 
-		if (IsObjectOutOfScreen(pEffect->obj) || pEffect->nLife < 1)
-		{
-			pEffect->bUsed = false;
-			continue;
-		}
+		//if (IsObjectOutOfScreen(pEffect->obj, GetCameraRect()) || pEffect->nLife < 1)
+		//{
+		//	pEffect->bUsed = false;
+		//	continue;
+		//}
 
 		pEffect->obj.pos += D3DXVECTOR3(sinf(pEffect->fAngle), cosf(pEffect->fAngle), 0.0f) * pEffect->info.fSpeed;
 		pEffect->fScale = pEffect->info.fMaxScale * ((float)pEffect->nLife / (float)pEffect->info.nMaxLife);

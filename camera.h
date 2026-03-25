@@ -55,5 +55,6 @@ void AddCameraOffset(VERTEX_2D* pVtx);
 D3DXVECTOR3 GetCameraPos(void);
 D3DXVECTOR3 GetRawCameraPos(void);
 void ShakeCamera(float fMagnitude, float fShakeDecay = 0.1f);
+RECT GetCameraRect();
 
 #endif
