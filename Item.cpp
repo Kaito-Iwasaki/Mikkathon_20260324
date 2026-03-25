@@ -449,7 +449,7 @@ void HitItem(LPITEM pItem, PLAYER *pPlayer)
 	SetLvUpEffect(pItem->obj.pos, pItem->type);
 
 	// レベルアップ
-	AddLevel(pPlayer->nLevel, ITEM_CONST::aLevel[pItem->type]);
+	AddLevel(pPlayer->nIdxLevel, ITEM_CONST::aLevel[pItem->type]);
 }
 
 //=====================================================================

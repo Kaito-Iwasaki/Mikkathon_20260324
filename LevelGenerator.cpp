@@ -520,7 +520,7 @@ int GetLevel(int nIdxLevel)
 	LPLEVEL pLevel = GetLevelPtr();	// レベルのポインタ取得
 
 	pLevel += nIdxLevel;
-	if (pLevel->bUse == false) return;
+	if (pLevel->bUse == false) return 0;
 
 	return pLevel->nLevel;
 }
