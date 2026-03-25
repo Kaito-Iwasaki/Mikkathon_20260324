@@ -29,8 +29,8 @@
 //*********************************************************************
 typedef enum
 {
-	IT_PROTEIN_ALPHA = 0,	// PROTEINタイプα
-	IT_MAX
+	ITEMTYPE_PROTEIN_ALPHA = 0,	// PROTEINタイプα
+	ITEMTYPE_MAX
 } ITEMTYPE;
 
 //*********************************************************************
@@ -38,6 +38,7 @@ typedef enum
 // ***** 構造体 *****
 // 
 //*********************************************************************
+// --- アイテムの情報 --- //
 typedef struct Item
 {
 	BASEOBJECT obj;		// オブジェクト情報
@@ -45,6 +46,15 @@ typedef struct Item
 	bool bUse;			// 使用済みか
 } Item;
 
+typedef Item *LPITEM, *PITEM;
+
+// --- アイテムに関する定数まとめ --- //
+typedef struct ITEM_CONST
+{
+	static const int nMaxItem;			// アイテムの最大数
+	static const D3DXVECTOR2 DefSize;	// 基本サイズ
+	static const D3DXCOLOR DefColor;	// 基本色
+}ITEM_CONST;
 
 //*********************************************************************
 // 
@@ -55,4 +65,6 @@ void InitItem(void);
 void UninitItem(void);
 void UpdateItem(void);
 void DrawItem(void);
+
+LPITEM GetItemPtr(void);
 #endif
