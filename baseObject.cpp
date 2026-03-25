@@ -11,6 +11,7 @@
 // 
 //*********************************************************************
 #include "baseObject.h"
+#include "Camera.h"
 
 //=====================================================================
 // 頂点位置の設定処理（自動）
@@ -35,6 +36,8 @@ void SetVertexPos(VERTEX_2D* pVtx, BASEOBJECT obj)
 	pVtx[3].pos.x = obj.pos.x + sinf(obj.rot.z + fAngle) * fLength;
 	pVtx[3].pos.y = obj.pos.y + cosf(obj.rot.z + fAngle) * fLength;
 	pVtx[3].pos.z = 0.0f;
+
+	AddCameraOffset(pVtx);
 }
 
 //=====================================================================
@@ -60,6 +63,8 @@ void SetVertexPos(VERTEX_2D* pVtx, D3DXVECTOR3 pos, D3DXVECTOR3 size, float fRot
 	pVtx[3].pos.x = pos.x + sinf(fRot + fAngle) * fLength;
 	pVtx[3].pos.y = pos.y + cosf(fRot + fAngle) * fLength;
 	pVtx[3].pos.z = 0.0f;
+
+	AddCameraOffset(pVtx);
 }
 
 //=====================================================================
@@ -82,6 +87,8 @@ void SetVertexPos(VERTEX_2D* pVtx, D3DXVECTOR3 leftTop, D3DXVECTOR3 rightTop, D3
 	pVtx[3].pos.x = rightBottom.x;
 	pVtx[3].pos.y = rightBottom.y;
 	pVtx[3].pos.z = 0.0f;
+
+	AddCameraOffset(pVtx);
 }
 
 //=====================================================================

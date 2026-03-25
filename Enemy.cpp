@@ -12,6 +12,7 @@
 //*********************************************************************
 #include "Enemy.h"
 #include "Player.h"
+#include "bulletGenerator.h"
 
 //*********************************************************************
 // 
@@ -25,6 +26,8 @@
 
 #define COLOR_NORMAL		INIT_COLOR
 #define COLOR_DAMAGED		D3DXCOLOR(1, 0, 0, 1)
+
+#define ENEMY_INIT_LIFE		(100)
 
 //*********************************************************************
 // 
@@ -122,10 +125,27 @@ void UpdateEnemy(void)
 
 	for (int i = 0; i < MAX_ENEMY; i++)
 	{
+		if (!g_aEnemy[i].bUsed) continue;
+
 		if (g_aEnemy[i].state == ENEMYSTATE_DAMAGE)
 		{
 			SetEnemyState(&g_aEnemy[i], ENEMYSTATE_NORMAL);
 		}
+		else if (Magnitude(g_aEnemy[i].obj.pos, pPlayer->obj.pos) < (g_aEnemy[i].obj.size.x * 0.5f + pPlayer->obj.size.x * 0.5f) * 2)
+		{
+			DamageEnemy(&g_aEnemy[i]);
+			g_aEnemy[i].obj.pos += Direction(pPlayer->obj.pos, g_aEnemy[i].obj.pos) * PLAYER_SPEED * 0.75f;
+
+			D3DXVECTOR3 punch_start = pPlayer->obj.pos + Vector2To3(GetRandomVector2() * 100);
+			D3DXVECTOR3 punch_dir = Direction(punch_start, g_aEnemy[i].obj.pos);
+			D3DXVECTOR3 punch_rot = D3DXVECTOR3(0, 0, atan2f(punch_dir.x, punch_dir.y));
+			//D3DXVECTOR3 moveDir = Vector2To3(GetRandomVector2());
+			//D3DXVECTOR3 moveRot = D3DXVECTOR3(0, 0, )
+
+			GenerateBullet(punch_start, punch_rot, 10, 0, BT_TEST);
+		}
+
+
 
 		switch (g_aEnemy[i].state)
 		{
@@ -201,6 +221,7 @@ ENEMY* SetEnemy(D3DXVECTOR3 pos)
 		g_aEnemy[i].obj.size = INIT_SIZE;
 		g_aEnemy[i].obj.color = INIT_COLOR;
 		g_aEnemy[i].obj.bVisible = true;
+		g_aEnemy[i].nLife = ENEMY_INIT_LIFE;
 
 		return &g_aEnemy[i];
 	}
@@ -223,6 +244,11 @@ void DamageEnemy(ENEMY* pEnemy)
 {
 	SetEnemyState(pEnemy, ENEMYSTATE_DAMAGE);
 	pEnemy->nLife--;
+
+	if (pEnemy->nLife < 0)
+	{
+		pEnemy->bUsed = false;
+	}
 }
 
 //=====================================================================
