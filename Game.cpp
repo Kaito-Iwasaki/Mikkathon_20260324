@@ -21,6 +21,7 @@
 #include "input.h"
 #include "camera.h"
 #include "DebugProc.h"
+#include "LevelGenerator.h"
 
 //*********************************************************************
 // 
@@ -75,9 +76,11 @@ void InitGame(void)
 	
 	// -- Generators --
 	InitEnemyGenerator();
+	InitLevelGenerator();
 
 	// -- Ex --
 	SetCursorMid();
+	GeneratorLevel(100, D3DXVECTOR3(640, 360, 0));
 
 	// -- 構造体・グローバル変数 --
 	g_bPauseGame = false;
@@ -102,6 +105,7 @@ void UninitGame(void)
 	
 	// -- Generators --
 	UninitEnemyGenerator();
+	UninitLevelGenerator();
 }
 
 //=====================================================================
@@ -148,6 +152,7 @@ void UpdateGame(void)
 
 		// -- Generators --
 		UpdateEnemyGenerator();
+		UpdateLevelGenerator();
 	}
 	else
 	{
@@ -167,6 +172,7 @@ void DrawGame(void)
 	DrawItem();
 	DrawWeightFollow();
 	DrawPlayer();
+	DrawLevelGenerator();
 
 	if (g_bPauseGame)
 	{

@@ -39,10 +39,14 @@
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitLevel(void);
-void UninitLevel(void);
-void UpdateLevel(void);
-void DrawLevel(void);
+void InitLevelGenerator(void);
+void UninitLevelGenerator(void);
+void UpdateLevelGenerator(void);
+void DrawLevelGenerator(void);
 
 int GeneratorLevel(int nScore, D3DXVECTOR3 posCenter);
+void SetPositionLevel(int nIdxLevel, D3DXVECTOR3 pos);
+void AddLevel(int nIdxLevel, int nValue);
+void SetLevel(int nIdxLevel, int nElem);
+void RemoveLevel(int nIdxLevel);
 #endif
