@@ -1,11 +1,11 @@
 //=====================================================================
 //
-// BulletFollow.cppのヘッダファイル [BulletFollow.h]
+// Background.cppのヘッダファイル [Background.h]
 // Author : Kaito Iwasaki
 // 
 //=====================================================================
-#ifndef _BulletFollow_H_
-#define _BulletFollow_H_
+#ifndef _Background_H_
+#define _Background_H_
 
 //*********************************************************************
 // 
@@ -15,21 +15,20 @@
 #include "main.h"
 #include "baseObject.h"
 #include "util.h"
-#include "Player.h"
 
 //*********************************************************************
 // 
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define MAX_BULLETFOLLOW	PLAYER_MAX_HOLDABLE_BULLET
+
 
 //*********************************************************************
 // 
 // ***** 構造体 *****
 // 
 //*********************************************************************
-typedef struct BULLETFOLLOW
+typedef struct BackgroundStruct
 {
 	BASEOBJECT obj;
 };
@@ -46,9 +45,9 @@ typedef struct BULLETFOLLOW
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitBulletFollow(void);
-void UninitBulletFollow(void);
-void UpdateBulletFollow(void);
-void DrawBulletFollow(void);
+void InitBackground(void);
+void UninitBackground(void);
+void UpdateBackground(void);
+void DrawBackground(void);
 
 #endif
