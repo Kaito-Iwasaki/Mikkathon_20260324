@@ -11,7 +11,9 @@
 // 
 //*********************************************************************
 #include "Item.h"
+#include "Player.h"
 #include "itemGenerator.h"
+#include "util.h"
 
 //*********************************************************************
 // 
@@ -19,7 +21,10 @@
 // 
 //*********************************************************************
 #define ToVector3(Vec2)		D3DXVECTOR3(Vec2.x, Vec2.y, 0.0f)		// ベクトルの昇格変換
+#pragma push_macro("RELEASE")
+#undef RELEASE
 #define RELEASE(p) do{ if(p != nullptr){ (p)->Release(); (p) = nullptr;} }while(0)				// バッファ解放
+#pragma pop_macro("RELEASE")
 #define RELEASE_ARRAY(pp, num) do{ for(int i = 0; i < num; i++){ RELEASE(pp[i]); } }while(0)	// 配列バッファ解放(配列の先頭アドレス, 配列数)
 
 //*********************************************************************
@@ -31,6 +36,7 @@ typedef struct
 {
 	LPDIRECT3DVERTEXBUFFER9 pVtxBuff;	// 頂点バッファへのポインタ
 	LPDIRECT3DTEXTURE9 apTex[ITEMTYPE_MAX];	// テクスチャバッファへのポインタ
+	void (*CollisionedFunction)(void);	// 当たり判定時実行する関数へのポインタ
 	bool bSafeVtx;		// 頂点バッファの獲得状況
 }ITEMBUFFER;
 
@@ -46,6 +52,11 @@ typedef struct
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
+void ItemController(LPITEM pItem);		// 各アイテムの更新処理
+void CollisionItem(LPITEM pItem);		// 当たり判定処理
+void SetItemState(LPITEM pItem, ITEMSTATE state);		// ステート設定
+void UpdateItemState(LPITEM pItem);		// ステートの更新
+void RemoveItem(LPITEM pItem);			// アイテムの消去処理
 bool CreateItemBuffer(_Out_ ITEMBUFFER *pOut);	// バッファ作成
 void SetVertexItem(void);	// 頂点設定
 
@@ -56,6 +67,14 @@ void SetVertexItem(void);	// 頂点設定
 //*********************************************************************
 // --- static const変数の値設定 --- //
 const int ITEM_CONST::nMaxItem = 256;		// アイテムの最大数
+const unsigned int ITEM_CONST::aStateCount[ITEMSTATE_MAX] = 
+{
+	0,
+	INFINITE,
+	30,
+	0
+};
+
 const D3DXVECTOR2 ITEM_CONST::DefSize = D3DXVECTOR2(30, 30);	// 基本サイズ
 const D3DXCOLOR ITEM_CONST::DefColor = D3DXCOLOR(1, 0, 1, 1);	// 基本色
 
@@ -74,10 +93,12 @@ Item g_aItem[ITEM_CONST::nMaxItem] = {};	// アイテムの情報
 //=====================================================================
 void InitItem(void)
 {
-	LPITEM pItem = GetItemPtr();	// アイテムへのポインタ
+	LPITEM pItem = GetItemPtr();			// アイテムへのポインタ
+	ITEMBUFFER *pBuffer = &g_itemBuffer;	// バッファ構造体へのポインタ
 
 	// 初期化
 	ZeroMemory(pItem, sizeof(Item) * ITEM_CONST::nMaxItem);
+	ZeroMemory(pBuffer, sizeof(ITEMBUFFER));
 
 	// 各初期値を設定
 	for (int nCntItem = 0; nCntItem < ITEM_CONST::nMaxItem; nCntItem++, pItem++)
@@ -119,6 +140,14 @@ void UpdateItem(void)
 {
 	// アイテム発生処理
 	UpdateItemGenerator();
+
+	LPITEM pItem = GetItemPtr();
+
+	// 各アイテムの更新処理
+	for (int nCntItem = 0; nCntItem < ITEM_CONST::nMaxItem; nCntItem++, pItem++)
+	{
+		ItemController(pItem);
+	}
 
 	// 頂点設定
 	SetVertexItem();
@@ -178,10 +207,23 @@ void SetItem(D3DXVECTOR3 pos, ITEMTYPE type, D3DXCOLOR color, D3DXVECTOR2 size)
 		pItem->obj.rot = D3DXVECTOR3(0, 0, 0);		// 角度を初期化
 		pItem->obj.size = ToVector3(size);			// サイズを保存
 		pItem->obj.bVisible = true;					// 描画状態を保存
+		pItem->state = ITEMSTATE_SPAWN;				// 出現状態
+		pItem->nCounterState = ITEM_CONST::aStateCount[ITEMSTATE_SPAWN];	// 状態カウンタを設定
 
 		pItem->bUse = true;							// 使用済みに変更
 		break;
 	}
+}
+
+//=====================================================================
+// 当たり判定成功時実行する関数へのポインタ設定処理
+//=====================================================================
+void SetCollisionedFunctionPtr(void (*CollisionedFunction)(void))
+{
+	if (CollisionedFunction == nullptr) return;
+
+	// 関数へのポインタを保存
+	g_itemBuffer.CollisionedFunction = CollisionedFunction;
 }
 
 //=====================================================================
@@ -259,4 +301,123 @@ void SetVertexItem(void)
 
 	// 頂点バッファをアンロック
 	g_itemBuffer.pVtxBuff->Unlock();
+}
+
+//=====================================================================
+// 各アイテムの更新処理
+//=====================================================================
+void ItemController(LPITEM pItem)
+{
+	// NULLCHECK
+	if (pItem == nullptr) return;
+
+	// 当たり判定
+	CollisionItem(pItem);
+
+	// 状態更新
+	UpdateItemState(pItem);
+}
+
+//=====================================================================
+// 当たり判定処理
+//=====================================================================
+void CollisionItem(LPITEM pItem)
+{
+	// NULLCHECK
+	if (pItem == nullptr) return;
+
+	PLAYER* pPlayer = GetPlayer();	// プレイヤーへのポインタ
+	if (pPlayer == nullptr) return;	// NULLCHECK
+
+	// アイテムとプレイヤーの位置を判定
+	float fLength = Magnitude(pItem->obj.pos, pPlayer->obj.pos);
+	if (fLength <= ((pItem->obj.size.x * 0.5f) + (pPlayer->obj.size.x * 0.5f)))
+	{ // 取得判定
+		SetItemState(pItem, ITEMSTATE_GET);
+	}
+}
+
+//=====================================================================
+// ステート設定
+//=====================================================================
+void SetItemState(LPITEM pItem, ITEMSTATE state)		
+{
+	// NULLCHECK
+	if (pItem == nullptr) return;
+
+	// 状態を設定
+	pItem->state = state;
+	pItem->nCounterState = ITEM_CONST::aStateCount[state];
+}
+
+//=====================================================================
+// ステートの更新
+//=====================================================================
+void UpdateItemState(LPITEM pItem)
+{
+	// NULLCHECK
+	if (pItem == nullptr) return;
+
+	// 状態により処理分け
+	switch (pItem->state)
+	{
+	case ITEMSTATE_NONE:
+	{
+		break;
+	}
+
+	case ITEMSTATE_NORMAL:
+	{
+		pItem->nCounterState--;
+		if (pItem->nCounterState == 0)
+		{
+			// 再度通常状態に設定
+			SetItemState(pItem, ITEMSTATE_NORMAL);
+		}
+
+		break;
+	}
+
+	case ITEMSTATE_SPAWN:
+	{
+		pItem->nCounterState--;
+		if (pItem->nCounterState == 0)
+		{
+			// 通常状態に設定
+			SetItemState(pItem, ITEMSTATE_NORMAL);
+		}
+
+		break;
+	}
+
+	case ITEMSTATE_GET:
+	{
+		// 当たり判定時の処理実行
+		if (g_itemBuffer.CollisionedFunction)	// NULLCHECK
+		{
+			g_itemBuffer.CollisionedFunction();
+		}
+
+		// アイテムの消去処理
+		RemoveItem(pItem);
+
+		// 無に設定
+		SetItemState(pItem, ITEMSTATE_NONE);
+
+		break;
+	}
+
+	default:
+		break;
+	}
+}
+
+//=====================================================================
+// アイテムの消去処理
+//=====================================================================
+void RemoveItem(LPITEM pItem)	
+{
+	if (pItem == nullptr) return;	// NULLCHECK
+
+	pItem->bUse = false;
 }
