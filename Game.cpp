@@ -16,6 +16,7 @@
 #include "bulletManager.h"
 #include "WeightFollow.h"
 #include "Background.h"
+#include "enemyGenerator.h"
 
 //*********************************************************************
 // 
@@ -57,17 +58,17 @@
 //=====================================================================
 void InitGame(void)
 {
+	// -- Objects --
 	InitPlayer();
-  
 	InitEnemy();
-  
-  InitBulletManager();
-
-  InitWeightFollow();
-
-  InitBackground();
-
-	SetEnemy(D3DXVECTOR3(500, 500, 0));
+	InitWeightFollow();
+	InitBackground();
+	
+	// -- Managers --
+	InitBulletManager();
+	
+	// -- Generators --
+	InitEnemyGenerator();
 }
 
 //=====================================================================
@@ -75,15 +76,17 @@ void InitGame(void)
 //=====================================================================
 void UninitGame(void)
 {
+	// -- Objects --
 	UninitPlayer();
-  
-  UninitEnemy();
-
-	UninitBulletManager();
-
+	UninitEnemy();
 	UninitWeightFollow();
-
 	UninitBackground();
+	
+	// -- Managers --
+	UninitBulletManager();
+	
+	// -- Generators --
+	UninitEnemyGenerator();
 }
 
 //=====================================================================
@@ -91,15 +94,17 @@ void UninitGame(void)
 //=====================================================================
 void UpdateGame(void)
 {
+	// -- Objects --
 	UpdatePlayer();
-
 	UpdateEnemy();
-  
-  UpdateBulletManager();
-
-  UpdateWeightFollow();
-
-  UpdateBackground();
+	UpdateWeightFollow();
+	UpdateBackground();
+	
+	// -- Managers --
+	UpdateBulletManager();
+	
+	// -- Generators --
+	UpdateEnemyGenerator();
 }
 
 //=====================================================================
@@ -107,14 +112,10 @@ void UpdateGame(void)
 //=====================================================================
 void DrawGame(void)
 {
+	// -- 2D Objects --
 	DrawBackground();
-
-	DrawPlayer();
-  
 	DrawEnemy();
-  
-  DrawBulletManager();
-
-  DrawWeightFollow();
-
+	DrawBulletManager();
+	DrawWeightFollow();
+	DrawPlayer();
 }
