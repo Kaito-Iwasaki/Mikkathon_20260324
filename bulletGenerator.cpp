@@ -68,7 +68,6 @@ void GenerateBullet(D3DXVECTOR3 start, D3DXVECTOR3 rot, float fSpeed, float fRot
 		pBullet->obj.bVisible = true;
 		pBullet->obj.size = D3DXVECTOR3(50, 50, 0);
 		pBullet->bUse = true;					// g—pÏ‚İ‚É•ÏX
-
 		break;
 	}
 }
