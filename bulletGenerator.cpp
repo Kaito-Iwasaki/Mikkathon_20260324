@@ -1,18 +1,17 @@
 //=====================================================================
 //
-// scene.cppのヘッダファイル [scene.h]
-// Author : Kaito Iwasaki
+// bulletGenerator [bulletGenerator.cpp]
+// Author : 
 // 
 //=====================================================================
-#ifndef _SCENE_H_
-#define _SCENE_H_
 
 //*********************************************************************
 // 
 // ***** インクルードファイル *****
 // 
 //*********************************************************************
-#include "main.h"
+#include "bulletGenerator.h"
+#include "util.h"
 
 //*********************************************************************
 // 
@@ -23,47 +22,53 @@
 
 //*********************************************************************
 // 
-// ***** 列挙型 *****
-// 
-//*********************************************************************
-//*********************************************************************
-// シーン列挙型
-//*********************************************************************
-typedef enum
-{
-	SCENE_TITLE = 0,
-	SCENE_GAME,
-	SCENE_RESULT,
-	SCENE_MAX
-}SCENE;	
-
-//*********************************************************************
-// 
 // ***** 構造体 *****
 // 
 //*********************************************************************
+
+
 //*********************************************************************
-// シーン処理関数構造体
+// 
+// ***** 列挙型 *****
+// 
 //*********************************************************************
-typedef struct SCENEDATA
-{
-	void (*Init)(void);		// 初期化処理
-	void (*Uninit)(void);	// 終了処理
-	void (*Update)(void);	// 更新処理
-	void (*Draw)(void);		// 描画処理
-};
+
 
 //*********************************************************************
 // 
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitScene(void);
-void UninitScene(void);
-void UpdateScene(void);
-void DrawScene(void);
-SCENE SetScene(SCENE nextScene, bool bStopSound = true);
-SCENE GetCurrentScene(void);
-SCENE GetPreviousScene(void);
 
-#endif
+
+//*********************************************************************
+// 
+// ***** グローバル変数 *****
+// 
+//*********************************************************************
+
+//=====================================================================
+// 出現処理処理
+//=====================================================================
+void GenerateBullet(D3DXVECTOR3 start, D3DXVECTOR3 rot, float fSpeed, float fRotSpeed, BULLETTYPE type)
+{
+	LPBULLET pBullet = GetBulletPtr();
+
+	for (int nCntBullet = 0; nCntBullet < BULLET_CONST::nBulletMax; nCntBullet++, pBullet++)
+	{
+		if (pBullet->bUse) continue;	// 使用時スキップ
+
+		pBullet->obj.pos = start;				// 開始位置
+		pBullet->obj.rot = rot;					// 角度
+		pBullet->rotMove = D3DXVECTOR3(0, fRotSpeed, 0);
+		pBullet->move = Direction(rot.z) * fSpeed;	// 移動量
+		pBullet->fSpeed = fSpeed;				// 速度
+		pBullet->type = type;					// 種類
+		pBullet->obj.color = D3DXCOLOR_WHITE;
+		pBullet->obj.bVisible = true;
+		pBullet->obj.size = D3DXVECTOR3(50, 50, 0);
+		pBullet->bUse = true;					// 使用済みに変更
+
+		break;
+	}
+}

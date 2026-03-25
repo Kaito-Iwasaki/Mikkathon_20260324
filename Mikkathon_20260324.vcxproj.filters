@@ -37,6 +37,24 @@
     <Filter Include="ヘッダー ファイル\Scenes">
       <UniqueIdentifier>{dd0ea1b0-32cd-4909-9cf3-5451e1fb4dd4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Generators">
+      <UniqueIdentifier>{58abd9bd-e90b-426a-9f95-6430378fe425}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Controllers">
+      <UniqueIdentifier>{b8de8532-3148-4826-ad90-530f25a98007}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Generators">
+      <UniqueIdentifier>{d45bac19-2c0c-4614-9470-f74dad994e32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Controllers">
+      <UniqueIdentifier>{fbf75d02-01b4-4201-8546-cd964e06081a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Managers">
+      <UniqueIdentifier>{17486c28-b8ff-43ea-984c-5796dc2bf678}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Managers">
+      <UniqueIdentifier>{10f037db-eb20-4864-a07b-4d81a62b3856}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sound.cpp">
@@ -66,6 +84,45 @@
     <ClCompile Include="util.cpp">
       <Filter>ソース ファイル\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>ソース ファイル\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="bulletController.cpp">
+      <Filter>ソース ファイル\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="playerController.cpp">
+      <Filter>ソース ファイル\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="bulletGenerator.cpp">
+      <Filter>ソース ファイル\Generators</Filter>
+    </ClCompile>
+    <ClCompile Include="bulletManager.cpp">
+      <Filter>ソース ファイル\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="enemyGenerator.cpp">
+      <Filter>ソース ファイル\Generators</Filter>
+    </ClCompile>
+    <ClCompile Include="WeightFollow.cpp">
+      <Filter>ソース ファイル\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>ソース ファイル\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Title.cpp">
+      <Filter>ソース ファイル\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Result.cpp">
+      <Filter>ソース ファイル\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugProc.cpp">
+      <Filter>ソース ファイル\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>ソース ファイル\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Background.cpp">
+      <Filter>ソース ファイル\GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sound.h">
@@ -94,6 +151,48 @@
     </ClInclude>
     <ClInclude Include="util.h">
       <Filter>ヘッダー ファイル\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>ヘッダー ファイル\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="bulletController.h">
+      <Filter>ヘッダー ファイル\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="playerController.h">
+      <Filter>ヘッダー ファイル\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="bulletGenerator.h">
+      <Filter>ヘッダー ファイル\Generators</Filter>
+    </ClInclude>
+    <ClInclude Include="bulletManager.h">
+      <Filter>ヘッダー ファイル\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="enemyGenerator.h">
+      <Filter>ヘッダー ファイル\Generators</Filter>
+    </ClInclude>
+    <ClInclude Include="WeightFollow.h">
+      <Filter>ヘッダー ファイル\GameObjects</Filter>
+    </ClInclude>
+    <ClCompile Include="Camera.cpp">
+      <Filter>ソース ファイル\Base</Filter>
+    </ClCompile>
+    <ClInclude Include="Title.h">
+      <Filter>ヘッダー ファイル\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Result.h">
+      <Filter>ヘッダー ファイル\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugProc.h">
+      <Filter>ヘッダー ファイル\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>ヘッダー ファイル\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Background.h">
+      <Filter>ヘッダー ファイル\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

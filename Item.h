@@ -1,11 +1,11 @@
 //=====================================================================
 //
-// Player.cppのヘッダファイル [Player.h]
-// Author : Kaito Iwasaki
+// enemyGenerator.cppのヘッダファイル [enemyGenerator.h]
+// Author : 
 // 
 //=====================================================================
-#ifndef _Player_H_
-#define _Player_H_
+#ifndef _Item_H_
+#define _Item_H_
 
 //*********************************************************************
 // 
@@ -14,49 +14,57 @@
 //*********************************************************************
 #include "main.h"
 #include "baseObject.h"
-#include "util.h"
 
 //*********************************************************************
 // 
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define PLAYER_SPEED				(5.0f)
-#define PLAYER_ROTSPEED				(0.05f)
-#define PLAYER_BULLETSPEED			(10.0f)
-#define PLAYER_MAX_HOLDABLE_BULLET	(5)
 
-//*********************************************************************
-// 
-// ***** 構造体 *****
-// 
-//*********************************************************************
-typedef struct PLAYER
-{
-	BASEOBJECT obj;
-	D3DXVECTOR3 move;
-	D3DXVECTOR3 rotMove;
-	int nMaxBullet;
-	int nBulletLeft;
-	float fBulletSpeed;
-};
 
 //*********************************************************************
 // 
 // ***** 列挙型 *****
 // 
 //*********************************************************************
+typedef enum
+{
+	ITEMTYPE_PROTEIN_ALPHA = 0,	// PROTEINタイプα
+	ITEMTYPE_MAX
+} ITEMTYPE;
 
+//*********************************************************************
+// 
+// ***** 構造体 *****
+// 
+//*********************************************************************
+// --- アイテムの情報 --- //
+typedef struct Item
+{
+	BASEOBJECT obj;		// オブジェクト情報
+	ITEMTYPE type;		// アイテムの種類
+	bool bUse;			// 使用済みか
+} Item;
+
+typedef Item *LPITEM, *PITEM;
+
+// --- アイテムに関する定数まとめ --- //
+typedef struct ITEM_CONST
+{
+	static const int nMaxItem;			// アイテムの最大数
+	static const D3DXVECTOR2 DefSize;	// 基本サイズ
+	static const D3DXCOLOR DefColor;	// 基本色
+}ITEM_CONST;
 
 //*********************************************************************
 // 
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitPlayer(void);
-void UninitPlayer(void);
-void UpdatePlayer(void);
-void DrawPlayer(void);
-PLAYER* GetPlayer(void);
+void InitItem(void);
+void UninitItem(void);
+void UpdateItem(void);
+void DrawItem(void);
 
+LPITEM GetItemPtr(void);
 #endif

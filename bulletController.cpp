@@ -1,19 +1,16 @@
 //=====================================================================
 //
-// Player.cppのヘッダファイル [Player.h]
-// Author : Kaito Iwasaki
+// bulletController [bulletController.cpp]
+// Author : 
 // 
 //=====================================================================
-#ifndef _Player_H_
-#define _Player_H_
 
 //*********************************************************************
 // 
 // ***** インクルードファイル *****
 // 
 //*********************************************************************
-#include "main.h"
-#include "baseObject.h"
+#include "bulletController.h"
 #include "util.h"
 
 //*********************************************************************
@@ -21,25 +18,14 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define PLAYER_SPEED				(5.0f)
-#define PLAYER_ROTSPEED				(0.05f)
-#define PLAYER_BULLETSPEED			(10.0f)
-#define PLAYER_MAX_HOLDABLE_BULLET	(5)
+
 
 //*********************************************************************
 // 
 // ***** 構造体 *****
 // 
 //*********************************************************************
-typedef struct PLAYER
-{
-	BASEOBJECT obj;
-	D3DXVECTOR3 move;
-	D3DXVECTOR3 rotMove;
-	int nMaxBullet;
-	int nBulletLeft;
-	float fBulletSpeed;
-};
+
 
 //*********************************************************************
 // 
@@ -53,10 +39,26 @@ typedef struct PLAYER
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitPlayer(void);
-void UninitPlayer(void);
-void UpdatePlayer(void);
-void DrawPlayer(void);
-PLAYER* GetPlayer(void);
 
-#endif
+
+//*********************************************************************
+// 
+// ***** グローバル変数 *****
+// 
+//*********************************************************************
+
+//=====================================================================
+// 弾の更新処理
+//=====================================================================
+void BulletController(LPBULLET pBullet)
+{
+	// NULLCHECK
+	if (pBullet == nullptr) return;
+
+	// 位置の更新
+	pBullet->obj.pos.x += pBullet->move.x;	// 各移動量分位置を移動
+	pBullet->obj.pos.y += pBullet->move.y;	// 各移動量分位置を移動
+
+	pBullet->obj.rot += pBullet->rotMove;	// 各移動量分回転を加算
+	pBullet->obj.rot = GetFixedRotation(pBullet->obj.rot);	// 角度を修正
+}

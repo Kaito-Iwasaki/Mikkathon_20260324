@@ -1,11 +1,11 @@
 //=====================================================================
 //
-// Player.cppのヘッダファイル [Player.h]
+// Enemy.cppのヘッダファイル [Enemy.h]
 // Author : Kaito Iwasaki
 // 
 //=====================================================================
-#ifndef _Player_H_
-#define _Player_H_
+#ifndef _Enemy_H_
+#define _Enemy_H_
 
 //*********************************************************************
 // 
@@ -21,42 +21,46 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define PLAYER_SPEED				(5.0f)
-#define PLAYER_ROTSPEED				(0.05f)
-#define PLAYER_BULLETSPEED			(10.0f)
-#define PLAYER_MAX_HOLDABLE_BULLET	(5)
-
-//*********************************************************************
-// 
-// ***** 構造体 *****
-// 
-//*********************************************************************
-typedef struct PLAYER
-{
-	BASEOBJECT obj;
-	D3DXVECTOR3 move;
-	D3DXVECTOR3 rotMove;
-	int nMaxBullet;
-	int nBulletLeft;
-	float fBulletSpeed;
-};
+#define MAX_ENEMY	(256)
 
 //*********************************************************************
 // 
 // ***** 列挙型 *****
 // 
 //*********************************************************************
+typedef enum
+{
+	ENEMYSTATE_NORMAL = 0,
+	ENEMYSTATE_DAMAGE,
+	ENEMYSTATE_MAX
+}ENEMYSTATE;
 
+//*********************************************************************
+// 
+// ***** 構造体 *****
+// 
+//*********************************************************************
+typedef struct ENEMY
+{
+	BASEOBJECT obj;
+	bool bUsed;
+	int nConunterState;
+	int nLife;
+	ENEMYSTATE state;
+};
 
 //*********************************************************************
 // 
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitPlayer(void);
-void UninitPlayer(void);
-void UpdatePlayer(void);
-void DrawPlayer(void);
-PLAYER* GetPlayer(void);
+void InitEnemy(void);
+void UninitEnemy(void);
+void UpdateEnemy(void);
+void DrawEnemy(void);
+ENEMY* SetEnemy(D3DXVECTOR3 pos);
+ENEMY* GetEnemy(D3DXVECTOR3 pos);
+void DamageEnemy(ENEMY* pEnemy);
+void SetEnemyState(ENEMY* pEnemy, ENEMYSTATE newState);
 
 #endif
