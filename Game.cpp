@@ -165,6 +165,11 @@ void UpdateGame(void)
 		// -- Generators --
 		UpdateEnemyGenerator();
 		UpdateLevelGenerator();
+
+		// プレイヤー位置の制限
+		// 範囲をシーン依存にするためここで処理する
+		Clampf(pPlayer->obj.pos.x, -1500.0f, 1500.0f);
+		Clampf(pPlayer->obj.pos.y, -1500.0f, 1500.0f);
 	}
 	else
 	{

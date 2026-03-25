@@ -183,9 +183,6 @@ void UpdatePlayer(void)
 
 	g_Player.obj.pos += Direction(g_Player.obj.rot.z) * g_Player.fSpeed;
 
-	Clampf(&g_Player.obj.pos.x, -1500.0f, 1500.0f);
-	Clampf(&g_Player.obj.pos.y, -1500.0f, 1500.0f);
-
 	GetCamera()->pos = g_Player.obj.pos + Direction(g_Player.obj.rot.z) * 100;
 
 	// テクスチャアニメーション（現在のテクスチャ位置を更新）
