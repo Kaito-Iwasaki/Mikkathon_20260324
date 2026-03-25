@@ -19,10 +19,10 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define TEXTURE_FILENAME	NULL
+#define TEXTURE_FILENAME	"data\\TEXTURE\\Enemy.png"
 #define INIT_POS			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
 #define INIT_SIZE			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
-#define INIT_COLOR			D3DXCOLOR(0, 0, 1, 1)
+#define INIT_COLOR			D3DXCOLOR(1, 1, 1, 1)
 
 #define COLOR_NORMAL		INIT_COLOR
 #define COLOR_DAMAGED		D3DXCOLOR(1, 0, 0, 1)
@@ -165,7 +165,7 @@ void DrawEnemy(void)
 		if (!g_aEnemy[i].obj.bVisible || !g_aEnemy[i].bUsed) continue;
 
 		// テクスチャの設定
-		pDevice->SetTexture(0, NULL);
+		pDevice->SetTexture(0, g_pTexBuffEnemy);
 
 		// ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, i * 4, 2);
