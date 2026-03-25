@@ -13,7 +13,6 @@
 #include "Item.h"
 #include "Player.h"
 #include "itemGenerator.h"
-#include "util.h"
 
 //*********************************************************************
 // 
@@ -21,10 +20,7 @@
 // 
 //*********************************************************************
 #define ToVector3(Vec2)		D3DXVECTOR3(Vec2.x, Vec2.y, 0.0f)		// ベクトルの昇格変換
-#pragma push_macro("RELEASE")
-#undef RELEASE
 #define RELEASE(p) do{ if(p != nullptr){ (p)->Release(); (p) = nullptr;} }while(0)				// バッファ解放
-#pragma pop_macro("RELEASE")
 #define RELEASE_ARRAY(pp, num) do{ for(int i = 0; i < num; i++){ RELEASE(pp[i]); } }while(0)	// 配列バッファ解放(配列の先頭アドレス, 配列数)
 
 //*********************************************************************
@@ -36,7 +32,6 @@ typedef struct
 {
 	LPDIRECT3DVERTEXBUFFER9 pVtxBuff;	// 頂点バッファへのポインタ
 	LPDIRECT3DTEXTURE9 apTex[ITEMTYPE_MAX];	// テクスチャバッファへのポインタ
-	void (*CollisionedFunction)(void);	// 当たり判定時実行する関数へのポインタ
 	bool bSafeVtx;		// 頂点バッファの獲得状況
 }ITEMBUFFER;
 
@@ -52,13 +47,13 @@ typedef struct
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void ItemController(LPITEM pItem);		// 各アイテムの更新処理
-void CollisionItem(LPITEM pItem);		// 当たり判定処理
-void SetItemState(LPITEM pItem, ITEMSTATE state);		// ステート設定
-void UpdateItemState(LPITEM pItem);		// ステートの更新
-void RemoveItem(LPITEM pItem);			// アイテムの消去処理
-bool CreateItemBuffer(_Out_ ITEMBUFFER *pOut);	// バッファ作成
-void SetVertexItem(void);	// 頂点設定
+void CollisionItem(LPITEM pItem);					// 当たり判定処理
+void HitItem(LPITEM pItem, PLAYER *pPlayer);		// 獲得時の処理
+void SetItemState(LPITEM pItem, ITEMSTATE state);	// ステート設定
+void UpdateItemState(LPITEM pItem);					// ステートの更新
+void RemoveItem(LPITEM pItem);						// アイテムの消去処理
+bool CreateItemBuffer(_Out_ ITEMBUFFER *pOut);		// バッファ作成
+void SetVertexItem(void);							// 頂点設定
 
 //*********************************************************************
 // 
@@ -146,7 +141,11 @@ void UpdateItem(void)
 	// 各アイテムの更新処理
 	for (int nCntItem = 0; nCntItem < ITEM_CONST::nMaxItem; nCntItem++, pItem++)
 	{
-		ItemController(pItem);
+		// 当たり判定
+		CollisionItem(pItem);
+
+		// 状態更新
+		UpdateItemState(pItem);
 	}
 
 	// 頂点設定
@@ -213,17 +212,6 @@ void SetItem(D3DXVECTOR3 pos, ITEMTYPE type, D3DXCOLOR color, D3DXVECTOR2 size)
 		pItem->bUse = true;							// 使用済みに変更
 		break;
 	}
-}
-
-//=====================================================================
-// 当たり判定成功時実行する関数へのポインタ設定処理
-//=====================================================================
-void SetCollisionedFunctionPtr(void (*CollisionedFunction)(void))
-{
-	if (CollisionedFunction == nullptr) return;
-
-	// 関数へのポインタを保存
-	g_itemBuffer.CollisionedFunction = CollisionedFunction;
 }
 
 //=====================================================================
@@ -304,21 +292,6 @@ void SetVertexItem(void)
 }
 
 //=====================================================================
-// 各アイテムの更新処理
-//=====================================================================
-void ItemController(LPITEM pItem)
-{
-	// NULLCHECK
-	if (pItem == nullptr) return;
-
-	// 当たり判定
-	CollisionItem(pItem);
-
-	// 状態更新
-	UpdateItemState(pItem);
-}
-
-//=====================================================================
 // 当たり判定処理
 //=====================================================================
 void CollisionItem(LPITEM pItem)
@@ -330,10 +303,34 @@ void CollisionItem(LPITEM pItem)
 	if (pPlayer == nullptr) return;	// NULLCHECK
 
 	// アイテムとプレイヤーの位置を判定
-	float fLength = Magnitude(pItem->obj.pos, pPlayer->obj.pos);
-	if (fLength <= ((pItem->obj.size.x * 0.5f) + (pPlayer->obj.size.x * 0.5f)))
+	D3DXVECTOR3 length = pPlayer->obj.pos - pItem->obj.pos;
+	float fLength = D3DXVec3LengthSq(&length);		// 二点間の距離
+	if (fLength <= powf((pItem->obj.size.x * 0.5f) + (pPlayer->obj.size.x * 0.5f), 2.0f))
 	{ // 取得判定
+		HitItem(pItem, pPlayer);
+
 		SetItemState(pItem, ITEMSTATE_GET);
+	}
+}
+
+//=====================================================================
+// 獲得時の処理
+//=====================================================================
+void HitItem(LPITEM pItem, PLAYER *pPlayer)
+{
+	// NULLCHECK
+	if (pItem == nullptr || pPlayer == nullptr) return;
+
+	// 種類によって場合分け
+	switch (pItem->type)
+	{
+	case ITEMTYPE_PROTEIN_ALPHA:
+	{
+		break;
+	}
+
+	default:
+		break;
 	}
 }
 
@@ -392,12 +389,6 @@ void UpdateItemState(LPITEM pItem)
 
 	case ITEMSTATE_GET:
 	{
-		// 当たり判定時の処理実行
-		if (g_itemBuffer.CollisionedFunction)	// NULLCHECK
-		{
-			g_itemBuffer.CollisionedFunction();
-		}
-
 		// アイテムの消去処理
 		RemoveItem(pItem);
 
