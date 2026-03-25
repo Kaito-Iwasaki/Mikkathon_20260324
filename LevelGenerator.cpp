@@ -511,3 +511,16 @@ void RemoveLevel(int nIdxLevel)
 	pLevel->bUse = false;
 	pLevel->nLevel = 0;
 }
+
+//=====================================================================
+// レベル取得処理
+//=====================================================================
+int GetLevel(int nIdxLevel)
+{
+	LPLEVEL pLevel = GetLevelPtr();	// レベルのポインタ取得
+
+	pLevel += nIdxLevel;
+	if (pLevel->bUse == false) return;
+
+	return pLevel->nLevel;
+}

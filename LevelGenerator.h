@@ -49,4 +49,5 @@ void SetPositionLevel(int nIdxLevel, D3DXVECTOR3 pos);
 void AddLevel(int nIdxLevel, int nValue);
 void SetLevel(int nIdxLevel, int nElem);
 void RemoveLevel(int nIdxLevel);
+int GetLevel(int nIdxLevel);
 #endif
