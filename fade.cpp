@@ -13,6 +13,7 @@
 #include "fade.h"
 #include "input.h"
 #include "util.h"
+#include "camera.h"
 
 //*********************************************************************
 // 
@@ -132,7 +133,7 @@ void DrawFade(void)
 	g_pVtxBuffFade->Lock(0, 0, (void**)&pVtx, 0);
 
 	// ’¸“_î•ñ‚ÌÝ’è
-	SetVertexPos(pVtx, g_fade.obj);
+	SetVertexPos(pVtx, g_fade.obj.pos + GetCamera()->pos - D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0.0f), g_fade.obj.size);
 	SetVertexRHW(pVtx, 1.0f);
 	SetVertexColor(pVtx, g_fade.obj.color);
 	SetVertexTexturePos(pVtx);
