@@ -51,6 +51,10 @@ typedef struct
 // 
 //*********************************************************************
 ItemGenerator g_itemGenerator = {};		// ジェネレーターの情報
+int g_aLineGenerator[ITEMTYPE_MAX] =	// ジェネレータのアイテム選択の条件
+{
+	60, 90, 100
+};
 
 //=====================================================================
 // 更新処理
@@ -75,7 +79,20 @@ void UpdateItemGenerator(void)
 			float fYPos = (float)(rand() % nYMax + nYMin);
 
 			// 種類を設定
+			int nType = rand() % 100;
 			ITEMTYPE type = (ITEMTYPE)(rand() % ITEMTYPE_MAX);
+			if (nType < g_aLineGenerator[ITEMTYPE_PROTEIN_ALPHA])
+			{
+				ITEMTYPE type = ITEMTYPE_PROTEIN_ALPHA;
+			}
+			else if(nType < g_aLineGenerator[ITEMTYPE_PROTEIN_BETA])
+			{
+				ITEMTYPE type = ITEMTYPE_PROTEIN_BETA;
+			}
+			else
+			{
+				ITEMTYPE type = ITEMTYPE_PROTEIN_GAMMA;
+			}
 
 			SetItem(D3DXVECTOR3(fXPos, fYPos, 0), type);
 		}
@@ -93,4 +110,18 @@ void SetItemGenerator(ITEM_GENERATE_SETTING igs)
 
 	// 設定保存
 	g_itemGenerator.IGS = igs;
+}
+
+//=====================================================================
+// 出現確率変更処理
+//=====================================================================
+void ChengeGenerateRand(float alpha, float beta, float gamma)
+{
+	int nAlpha = (int)(alpha * 100.0f);
+	int nBeta = (int)(beta * 100.0f);
+	int nGamma = (int)(gamma * 100.0f);
+
+	g_aLineGenerator[ITEMTYPE_PROTEIN_ALPHA] = nAlpha;
+	g_aLineGenerator[ITEMTYPE_PROTEIN_BETA] = nBeta;
+	g_aLineGenerator[ITEMTYPE_PROTEIN_GAMMA] = nGamma;
 }
