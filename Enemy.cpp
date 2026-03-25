@@ -52,6 +52,7 @@
 // 
 //*********************************************************************
 void _OnEnemyState(ENEMY* pEnemy);
+void _CollisionEnemyEnemy(ENEMY* pEnemy);
 
 //*********************************************************************
 // 
@@ -130,21 +131,11 @@ void UpdateEnemy(void)
 	{
 		if (g_aEnemy[i].bUsed == false) continue;
 
+		// ìGÇÃèÛë‘ï èàóù
 		_OnEnemyState(&g_aEnemy[i]);
 
-		for (int j = 0; j < MAX_ENEMY; j++)
-		{
-			if (g_aEnemy[j].bUsed == false) continue;
-			if (j == i) continue;
-
-			D3DXVECTOR3 vecEnemyAToEnemyB = g_aEnemy[j].obj.pos - g_aEnemy[i].obj.pos;
-			float sizeAAndB = g_aEnemy[i].obj.size.x * 0.5f + g_aEnemy[j].obj.size.x * 0.5f;
-
-			if (Magnitude(vecEnemyAToEnemyB) < sizeAAndB)
-			{
-				g_aEnemy[j].obj.pos += Normalize(vecEnemyAToEnemyB);
-			}
-		}
+		// ìGìØémÇ≈âüÇµèoÇµçáÇ¡ÇƒèdÇ»ÇÁÇ»Ç¢ÇÊÇ§Ç…Ç∑ÇÈ
+		_CollisionEnemyEnemy(&g_aEnemy[i]);
 	}
 }
 
@@ -339,4 +330,25 @@ void _OnEnemyState(ENEMY* pEnemy)
 	}
 	
 	pEnemy->nConunterState++;
+}
+
+void _CollisionEnemyEnemy(ENEMY* pEnemyA)
+{
+	ENEMY* pEnemyB;
+
+	for (int i = 0; i < MAX_ENEMY; i++)
+	{
+		pEnemyB = &g_aEnemy[i];
+
+		if (pEnemyB->bUsed == false) continue;
+		if (pEnemyA == pEnemyB) continue;
+
+		D3DXVECTOR3 vecEnemyAToEnemyB = pEnemyB->obj.pos - pEnemyA->obj.pos;
+		float sizeAAndB = pEnemyA->obj.size.x * 0.5f + pEnemyB->obj.size.x * 0.5f;
+
+		if (Magnitude(vecEnemyAToEnemyB) < sizeAAndB)
+		{
+			pEnemyB->obj.pos += Normalize(vecEnemyAToEnemyB);
+		}
+	}
 }
