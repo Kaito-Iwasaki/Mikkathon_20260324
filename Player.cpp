@@ -53,7 +53,8 @@ typedef enum
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void _AttackNearEnemies();
+ENEMY* _GetNearestEnemy(void);
+void _AttackNearEnemies(void);
 void _OnEnemyEnteredAttackZone(ENEMY* pEnemy);
 void _OnEnemyKilled(ENEMY* pEnemy);
 
@@ -237,20 +238,40 @@ PLAYER* GetPlayer(void)
 	return &g_Player;
 }
 
-void _AttackNearEnemies()
+ENEMY* _GetNearestEnemy(void)
 {
 	ENEMY* pEnemy = GetEnemy();
+	ENEMY* pNearestEnemy = pEnemy;
+	float fMaxDistance = 100000.0f;
 
 	for (int i = 0; i < MAX_ENEMY; i++, pEnemy++)
 	{
 		if (pEnemy->bUsed == false) continue;
 
-		float fAttackRange = (pEnemy->obj.size.x * 0.5f + pEnemy->obj.size.x * 0.5f) * 2;
+		float fDistance = Magnitude(g_Player.obj.pos, pEnemy->obj.pos);
 
-		if (Magnitude(pEnemy->obj.pos, g_Player.obj.pos) < fAttackRange)
+		if (fDistance < fMaxDistance)
 		{
-			_OnEnemyEnteredAttackZone(pEnemy);
+			fMaxDistance = fDistance;
+			pNearestEnemy = pEnemy;
 		}
+	}
+
+	return pNearestEnemy;
+}
+
+void _AttackNearEnemies(void)
+{
+	ENEMY* pEnemy = _GetNearestEnemy();
+
+	if (pEnemy == NULL) return;
+	if (pEnemy->bUsed == false) return;
+
+	float fAttackRange = (pEnemy->obj.size.x * 0.5f + pEnemy->obj.size.x * 0.5f) * 2;
+
+	if (Magnitude(pEnemy->obj.pos, g_Player.obj.pos) < fAttackRange)
+	{
+		_OnEnemyEnteredAttackZone(pEnemy);
 	}
 }
 
@@ -283,4 +304,5 @@ void _OnEnemyEnteredAttackZone(ENEMY* pEnemy)
 void _OnEnemyKilled(ENEMY* pEnemy)
 {
 	ShakeCamera(10);
+	AddLevel(g_Player.nLevel, 1);
 }

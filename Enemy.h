@@ -54,7 +54,7 @@ typedef enum
 	ENEMYSTATE_DAMAGE,
 
 	// Ž€‚ñ‚¾’¼Œã
-	ENEMYSTATE_DIED,
+	ENEMYSTATE_SMASH,
 
 	ENEMYSTATE_MAX
 }ENEMYSTATE;
@@ -68,6 +68,8 @@ typedef struct ENEMY
 {
 	BASEOBJECT obj;
 	bool bUsed;
+	D3DXVECTOR3 move;
+	float fRotMove;
 	ENEMYSTATE state;
 	int nConunterState;
 	int nLife;
@@ -85,6 +87,8 @@ void DrawEnemy(void);
 ENEMY* SetEnemy(D3DXVECTOR3 pos);
 ENEMY* GetEnemy(void);
 bool DamageEnemy(ENEMY* pEnemy);
+void SmashEnemy(ENEMY* pEnemy);
+void KillEnemy(ENEMY* pEnemy);
 void SetEnemyState(ENEMY* pEnemy, ENEMYSTATE newState);
 
 #endif

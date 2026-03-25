@@ -13,6 +13,9 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "bulletGenerator.h"
+#include "camera.h"
+#include "effect.h"
+#include "particle.h"
 
 //*********************************************************************
 // 
@@ -125,6 +128,8 @@ void UpdateEnemy(void)
 
 	for (int i = 0; i < MAX_ENEMY; i++)
 	{
+		if (g_aEnemy[i].bUsed == false) continue;
+
 		_OnEnemyState(&g_aEnemy[i]);
 	}
 }
@@ -208,15 +213,53 @@ ENEMY* GetEnemy(void)
 //=====================================================================
 bool DamageEnemy(ENEMY* pEnemy)
 {
+	ShakeCamera(1);
 	SetEnemyState(pEnemy, ENEMYSTATE_DAMAGE);
 	pEnemy->nLife--;
 
 	if (pEnemy->nLife < 0)
 	{
-		pEnemy->bUsed = false;
+		SmashEnemy(pEnemy);
 	}
 
 	return !pEnemy->bUsed;
+}
+
+//=====================================================================
+// “G‚Á”ò‚Î‚µˆ—
+//=====================================================================
+void SmashEnemy(ENEMY* pEnemy)
+{
+	PLAYER* pPlayer = GetPlayer();
+
+	ShakeCamera(2);
+
+	SetEnemyState(pEnemy, ENEMYSTATE_SMASH);
+	pEnemy->obj.color = COLOR_NORMAL;
+	pEnemy->move = Direction(pPlayer->obj.pos, pEnemy->obj.pos) * 20; 
+	pEnemy->fRotMove = rand() % 2 == 0 ? 0.5f : -0.5f;
+}
+
+//=====================================================================
+// “GŽ€–Sˆ—
+//=====================================================================
+void KillEnemy(ENEMY* pEnemy)
+{
+	PLAYER* pPlayer = GetPlayer();
+
+	ShakeCamera(10);
+
+	EFFECTINFO info;
+	info.col = D3DXCOLOR_WHITE;
+	info.fMaxAlpha = 0.1f;
+	info.fMaxScale = 1.3f;
+	info.fRotSpeed = 0;
+	info.fSpeed = 7.0f;
+	info.nMaxLife = 60;
+
+	SetParticle(info, pEnemy->obj.pos, 0, D3DX_PI, 1, 15);
+
+	pEnemy->bUsed = false;
 }
 
 //=====================================================================
@@ -230,10 +273,14 @@ void SetEnemyState(ENEMY* pEnemy, ENEMYSTATE newState)
 
 void _OnEnemyState(ENEMY* pEnemy)
 {
+	PLAYER* pPlayer = GetPlayer();
+	D3DXVECTOR3 vecCameraPos = GetCameraPos();
+
 	switch (pEnemy->state)
 	{
 	case ENEMYSTATE_NORMAL:
 		pEnemy->obj.color = COLOR_NORMAL;
+		pEnemy->obj.pos += Direction(pEnemy->obj.pos, pPlayer->obj.pos) * 3.0f;
 		break;
 
 	case ENEMYSTATE_DAMAGE:
@@ -249,6 +296,29 @@ void _OnEnemyState(ENEMY* pEnemy)
 		SetEnemyState(pEnemy, ENEMYSTATE_NORMAL);
 
 		break;
+
+	case ENEMYSTATE_SMASH:
+	{
+		pEnemy->obj.pos += pEnemy->move;
+		pEnemy->obj.rot.z += pEnemy->fRotMove;
+
+		EFFECTINFO info;
+		info.col = D3DXCOLOR_WHITE;
+		info.fMaxAlpha = 0.1f;
+		info.fMaxScale = 0.7f;
+		info.fRotSpeed = 0.1f;
+		info.fSpeed = 0.5f;
+		info.nMaxLife = 120;
+
+		SetParticle(info, pEnemy->obj.pos, 0, D3DX_PI, 1, 1);
+
+		if (IsObjectOutOfScreen(pEnemy->obj, GetCameraRect()))
+		{
+			KillEnemy(pEnemy);
+		}
+
+		break;
+	}
 
 	default:
 		break;

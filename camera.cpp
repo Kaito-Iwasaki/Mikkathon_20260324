@@ -118,3 +118,20 @@ void ShakeCamera(float fMagnitude, float fShakeDecay)
 	g_camera.fShakeMagnitude = fMagnitude;
 	g_camera.fShakeDecay = fShakeDecay;
 }
+
+//=====================================================================
+// カメラ位置のスクリーン範囲
+//=====================================================================
+RECT GetCameraRect()
+{
+	D3DXVECTOR3 vecCameraPos = GetCameraPos();
+
+	RECT screenRect = {
+		vecCameraPos.x - SCREEN_WIDTH * 0.5f,
+		vecCameraPos.y - SCREEN_HEIGHT * 0.5f,
+		vecCameraPos.x + SCREEN_WIDTH * 0.5f,
+		vecCameraPos.y + SCREEN_HEIGHT * 0.5f
+	};
+
+	return screenRect;
+}
