@@ -152,6 +152,7 @@
     <ClInclude Include="font.h" />
     <ClInclude Include="LevelGenerator.h" />
     <ClInclude Include="particle.h" />
+    <ClInclude Include="pause.h" />
     <ClInclude Include="WeightFollow.h">
       <SubType>
       </SubType>
@@ -215,6 +216,7 @@
     <ClCompile Include="font.cpp" />
     <ClCompile Include="LevelGenerator.cpp" />
     <ClCompile Include="particle.cpp" />
+    <ClCompile Include="pause.cpp" />
     <ClCompile Include="WeightFollow.cpp">
       <SubType>
       </SubType>
