@@ -16,6 +16,7 @@
 #include "fade.h"
 
 #include "Title.h"
+#include "Tutorial.h"
 #include "Game.h"
 #include "Result.h"
 #include "DebugProc.h"
@@ -33,6 +34,7 @@ SCENE g_previousScene = g_currentScene;		// íºëOÇÃÉVÅ[Éì
 //*********************************************************************
 SCENEDATA g_scenes[SCENE_MAX] = {
 	{ InitTitle, UninitTitle, UpdateTitle, DrawTitle },
+	{ InitTutorial, UninitTutorial, UpdateTutorial, DrawTutorial },
 	{ InitGame, UninitGame, UpdateGame, DrawGame },
 	{ InitResult, UninitResult, UpdateResult, DrawResult },
 };

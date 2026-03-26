@@ -1,6 +1,6 @@
 //=====================================================================
 //
-// Result [Result.cpp]
+// Tutorial [Tutorial.cpp]
 // Author : Tenma Saito
 // 
 //=====================================================================
@@ -10,13 +10,11 @@
 // ***** インクルードファイル *****
 // 
 //*********************************************************************
-#include "Result.h"
+#include "Tutorial.h"
 #include "fade.h"
 #include "input.h"
 #include "Background.h"
-#include "font.h"
-#include "Player.h"
-#include "LevelGenerator.h"
+#include "Background2.h"
 
 //*********************************************************************
 // 
@@ -37,12 +35,7 @@
 // ***** 列挙型 *****
 // 
 //*********************************************************************
-typedef enum
-{
-	RESULTTYPE_KCAL = 0,	// 消費カロリー
-	RESULTTYPE_KG,			// 体重
-	RESULTTYPE_MAX
-}RESULTTYPE;
+
 
 //*********************************************************************
 // 
@@ -56,86 +49,52 @@ typedef enum
 // ***** グローバル変数 *****
 // 
 //*********************************************************************
-ENDINGTYPE g_edType = ED_B;
-FONT *g_apFontResult[RESULTTYPE_MAX] = {};
+
 
 //=====================================================================
 // 初期化処理
 //=====================================================================
-void InitResult(void)
+void InitTutorial(void)
 {
 	// -- Objects --
 	InitBackground();
-	InitFont();
-
-	// -- 構造体・グローバル変数 --
-	g_apFontResult[RESULTTYPE_KCAL] = SetFont(
-		FONT_LABEL_TAMANEGI,
-		D3DXVECTOR3(180, 265, 0),
-		D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0),
-		D3DXCOLOR(0, 0, 0, 1),
-		50,
-		"",
-		DT_CENTER | DT_TOP
-	);
-
-	g_apFontResult[RESULTTYPE_KG] = SetFont(
-		FONT_LABEL_TAMANEGI,
-		D3DXVECTOR3(180, 330, 0),
-		D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0),
-		D3DXCOLOR(0, 0, 0, 1),
-		80,
-		"",
-		DT_CENTER | DT_TOP
-	);
+	InitBackground2();
 }
 
 //=====================================================================
 // 終了処理
 //=====================================================================
-void UninitResult(void)
+void UninitTutorial(void)
 {
 	// -- Objects --
-	UninitFont();
 	UninitBackground();
+	UninitBackground2();
 }
 
 //=====================================================================
 // 更新処理
 //=====================================================================
-void UpdateResult(void)
+void UpdateTutorial(void)
 {
 	// 画面遷移
 	if (GetMouseTrigger(MOUSE_LEFT)
 		|| GetJoypadTrigger(JOYKEY_A)
 		|| GetJoypadTrigger(JOYKEY_START))
 	{
-		SetFade(SCENE_TITLE);
+		SetFade(SCENE_GAME);
 	}
 
 	// -- Objects --
 	UpdateBackground();
-
-	// 各スコアを表示
-	sprintf(&g_apFontResult[RESULTTYPE_KCAL]->aText[0], "消費カロリー : %d Kcal", GetPlayer()->nScore);
-	sprintf(&g_apFontResult[RESULTTYPE_KG]->aText[0], "%d", GetLevel(GetPlayer()->nIdxLevel));
+	UpdateBackground2();
 }
 
 //=====================================================================
 // 描画処理
 //=====================================================================
-void DrawResult(void)
+void DrawTutorial(void)
 {
-	// -- Objects --
+	// -- 2D Objects --
+	DrawBackground2();
 	DrawBackground();
-	DrawFont(g_apFontResult[RESULTTYPE_KCAL]);
-	DrawFont(g_apFontResult[RESULTTYPE_KG]);
-}
-
-//=====================================================================
-// エンド取得処理
-//=====================================================================
-ENDINGTYPE GetEndingType(void)
-{
-	return g_edType;
 }
