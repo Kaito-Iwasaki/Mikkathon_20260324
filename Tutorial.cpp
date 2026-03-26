@@ -34,6 +34,7 @@
 // Generator
 #include "itemGenerator.h"
 #include "LevelGenerator.h"
+#include "sound.h"
 
 
 //*********************************************************************
@@ -77,6 +78,9 @@ FONT* g_pFontTutorial = NULL;
 //=====================================================================
 void InitTutorial(void)
 {
+	StopSound();
+	PlaySound(SOUND_LABEL_BGM_TUTORIAL);
+
 	// -- Generators --
 	InitLevelGenerator();
 
