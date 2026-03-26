@@ -16,6 +16,7 @@
 #include "LevelGenerator.h"
 #include "sound.h"
 #include "particle.h"
+#include "Game.h"
 
 //*********************************************************************
 // 
@@ -166,7 +167,7 @@ void InitItem(void)
 	igs.nFrameSpawn = 240;
 	igs.nUpperSpawn = 10;
 	igs.nLowerSpawn = 3;
-	igs.rect = FLOAT_RECT{ -500, -500, 2000, 2000 };
+	igs.rect = FLOAT_RECT{ -GAME_STAGE_SIZE.x, -GAME_STAGE_SIZE.y, GAME_STAGE_SIZE.x, GAME_STAGE_SIZE.y };
 
 	// ÉAÉCÉeÉÄî≠ê∂èàóùÇÃê›íË
 	SetItemGenerator(igs);
