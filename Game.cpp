@@ -27,6 +27,7 @@
 #include "Background2.h"
 #include "pause.h"
 #include "font.h"
+#include "gauge.h"
 
 //*********************************************************************
 // 
@@ -86,6 +87,7 @@ void InitGame(void)
 	InitParticle();
 	InitPause();
 	InitFont();
+	InitGauge();
 
 	// -- Generators --
 	InitEnemyGenerator();
@@ -125,6 +127,7 @@ void UninitGame(void)
 	UninitParticle();
 	UninitPause();
 	UninitFont();
+	UninitGauge();
 	
 	// -- Managers --
 	UninitBulletManager();
@@ -175,6 +178,7 @@ void UpdateGame(void)
 		UpdateBackground2();
 		UpdateEffect();
 		UpdateParticle();
+		UpdateGauge();
 
 		// -- Managers --
 		UpdateBulletManager();
@@ -212,6 +216,7 @@ void DrawGame(void)
 	DrawPlayer();
 	DrawLevelGenerator();
 	DrawFont(g_pFontScore);
+	DrawGauge();
 
 	if (g_bPauseGame)
 	{// É|Å[ÉYâÊñ ï`âÊ
