@@ -48,6 +48,8 @@ typedef struct Gauge
 	GAUGESTATE state;	// ゲージの状態
 	float fLerp;		// ラープ変換用変数
 	int nCounterState;	// 状態カウンター
+	int nAnimationCounter;	// アニメーションカウンター
+	bool bAlpha;		// α変動反転
 }Gauge;
 
 typedef Gauge *LPGAUGE, *PGAUGE;
@@ -58,6 +60,7 @@ typedef struct GAUGE_CONST
 	static const D3DXVECTOR2 DefSize;				// 基本サイズ
 	static const int aStateCount[GAUGESTATE_MAX];	// 各状態の状態カウント
 	static const int nGaugePhase;					// ゲージ段階数
+	static const float fAnimSpeed;					// アニメーションスピード
 } GAUGE_CONST;
 
 //*********************************************************************
