@@ -302,22 +302,44 @@ void _InitEnemyParamsByType(ENEMY* pEnemy)
 	switch (pEnemy->type)
 	{
 	case ENEMYTYPE_STATIC:
-		pEnemy->nLife = 200;
+		pEnemy->nLife = 2000;
 		pEnemy->nScore = 100;
 		pEnemy->fSpeed = 0;
 		break;
 
 	case ENEMYTYPE_CHASER:
-		pEnemy->nLife = 100;
-		pEnemy->nScore = 100;
+		pEnemy->nLife = 1000;
+		pEnemy->nScore = 300;
 		pEnemy->fSpeed = 3;
+		break;
+
+	case ENEMYTYPE_CHASER_SMALL:
+		pEnemy->obj.size = INIT_SIZE * 0.7f;
+		pEnemy->nLife = 90;
+		pEnemy->nScore = 100;
+		pEnemy->fSpeed = 6;
+		break;
+
+	case ENEMYTYPE_CHASER_BIG:
+		pEnemy->obj.size = INIT_SIZE * 2.0f;
+		pEnemy->nLife = 4000;
+		pEnemy->nScore = 3000;
+		pEnemy->fSpeed = 2;
 		break;
 
 	case ENEMYTYPE_REFRECT:
 		pEnemy->move = Vector2To3(GetRandomVector2());
-		pEnemy->nLife = 200;
-		pEnemy->nScore = 200;
+		pEnemy->nLife = 2000;
+		pEnemy->nScore = 1000;
 		pEnemy->fSpeed = 3;
+		break;
+
+	case ENEMYTYPE_REFRECT_SMALL:
+		pEnemy->move = Vector2To3(GetRandomVector2());
+		pEnemy->obj.size = INIT_SIZE * 0.8f;
+		pEnemy->nLife = 100;
+		pEnemy->nScore = 500;
+		pEnemy->fSpeed = 6;
 		break;
 
 	default:
@@ -346,7 +368,24 @@ void _OnEnemyType(ENEMY* pEnemy)
 		break;
 	}
 
+	case ENEMYTYPE_CHASER_SMALL:
+	{
+		D3DXVECTOR3 vecMoveDir = Direction(pEnemy->obj.pos, pPlayer->obj.pos);
+		pEnemy->obj.pos += vecMoveDir * pEnemy->fSpeed;
+		pEnemy->obj.rot.z = atan2(vecMoveDir.x, vecMoveDir.y);
+		break;
+	}
+
+	case ENEMYTYPE_CHASER_BIG:
+	{
+		D3DXVECTOR3 vecMoveDir = Direction(pEnemy->obj.pos, pPlayer->obj.pos);
+		pEnemy->obj.pos += vecMoveDir * pEnemy->fSpeed;
+		pEnemy->obj.rot.z = atan2(vecMoveDir.x, vecMoveDir.y);
+		break;
+	}
+
 	case ENEMYTYPE_REFRECT:
+	{
 		pEnemy->obj.pos += pEnemy->move * pEnemy->fSpeed;
 		pEnemy->obj.rot.z = atan2(pEnemy->move.x, pEnemy->move.y);
 
@@ -363,6 +402,47 @@ void _OnEnemyType(ENEMY* pEnemy)
 		}
 
 		break;
+	}
+
+	case ENEMYTYPE_REFRECT_SMALL:
+	{
+		pEnemy->obj.pos += pEnemy->move * pEnemy->fSpeed;
+		pEnemy->obj.rot.z = atan2(pEnemy->move.x, pEnemy->move.y);
+
+		int fRangeX = 1500.0f;
+		int fRangeY = 1500.0f;
+
+		if (pEnemy->obj.pos.x < -fRangeX || pEnemy->obj.pos.x > fRangeX)
+		{
+			pEnemy->move.x *= -1;
+		}
+		if (pEnemy->obj.pos.y < -fRangeY || pEnemy->obj.pos.y > fRangeY)
+		{
+			pEnemy->move.y *= -1;
+		}
+
+		break;
+	}
+
+	case ENEMYTYPE_REFRECT_BIG:
+	{
+		pEnemy->obj.pos += pEnemy->move * pEnemy->fSpeed;
+		pEnemy->obj.rot.z = atan2(pEnemy->move.x, pEnemy->move.y);
+
+		int fRangeX = 1500.0f;
+		int fRangeY = 1500.0f;
+
+		if (pEnemy->obj.pos.x < -fRangeX || pEnemy->obj.pos.x > fRangeX)
+		{
+			pEnemy->move.x *= -1;
+		}
+		if (pEnemy->obj.pos.y < -fRangeY || pEnemy->obj.pos.y > fRangeY)
+		{
+			pEnemy->move.y *= -1;
+		}
+
+		break;
+	}
 
 	}
 
@@ -432,6 +512,7 @@ void _CollisionEnemyPlayer(ENEMY* pEnemy)
 {
 	PLAYER* pPlayer = GetPlayer();
 
+	if (pPlayer->state == PLAYERSTATE_APPEAR) return;
 	if (pPlayer->state == PLAYERSTATE_SMASH) return;
 
 	D3DXVECTOR3 vecEnemyToPlayer = pPlayer->obj.pos - pEnemy->obj.pos;

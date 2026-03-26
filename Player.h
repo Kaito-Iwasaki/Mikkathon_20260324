@@ -22,10 +22,10 @@
 // 
 //*********************************************************************
 #define PLAYER_INIT_SPEED			(5.0f)
-#define PLAYER_INIT_POWER			(1)
+#define PLAYER_INIT_POWER			(10)
 #define PLAYER_INIT_ROTSPEED		(0.05f)
 #define PLAYER_INIT_BULLETSPEED		(10.0f)
-#define PLAYER_MAX_HOLDABLE_BULLET	(5)
+#define PLAYER_MAX_HOLDABLE_BULLET	(1024)
 
 //*********************************************************************
 // 
@@ -35,6 +35,7 @@
 typedef enum
 {
 	PLAYERSTATE_NORMAL = 0,
+	PLAYERSTATE_APPEAR,
 	PLAYERSTATE_SUPER,
 	PLAYERSTATE_SMASH,
 	PLAYERSTATE_MAX

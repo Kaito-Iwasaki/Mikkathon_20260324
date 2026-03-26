@@ -94,10 +94,10 @@ void InitPlayer(void)
 	g_Player.move = g_Player.obj.pos + D3DXVECTOR3(0, 1, 0);
 	g_Player.nMaxBullet = PLAYER_MAX_HOLDABLE_BULLET;
 	g_Player.fBulletSpeed = PLAYER_INIT_BULLETSPEED;
-	g_Player.nBulletLeft = PLAYER_MAX_HOLDABLE_BULLET;
+	g_Player.nBulletLeft = 0;
 	g_Player.fSpeed = PLAYER_INIT_SPEED;
 	g_Player.nPower = PLAYER_INIT_POWER;
-	g_Player.state = PLAYERSTATE_NORMAL;
+	g_Player.state = PLAYERSTATE_APPEAR;
 	g_Player.bControlEnabled = true;
 
 	// テクスチャの読み込み
@@ -310,6 +310,41 @@ void _OnPlayerState()
 		break;
 	}
 
+	case PLAYERSTATE_APPEAR:
+	{
+		// カメラをプレイヤーに追従させる
+		// 若干向いてる方向にオフセットする
+		float fCamOffsetMagnitude = 100.0f;
+		D3DXVECTOR3 vecCamOffset = Direction(g_Player.obj.rot.z) * fCamOffsetMagnitude;
+		GetCamera()->pos = g_Player.obj.pos + vecCamOffset;
+
+		// レベル表示をプレイヤーの頭上に追従させる
+		D3DXVECTOR3 vecLevelOffset = D3DXVECTOR3(0, -g_Player.obj.size.y, 0);
+		SetPositionLevel(
+			g_Player.nIdxLevel,
+			g_Player.obj.pos + vecLevelOffset
+		);
+
+		// テクスチャアニメーション（現在のテクスチャ位置を更新）
+		g_Player.nTexture = (g_Player.nTexture + 1) % (NUM_TEXTURE_X * NUM_TEXTURE_Y);
+
+		// 一番近くの敵１人だけを攻撃
+		_AttackNearestEnemy();
+
+		if (g_Player.nCounterState % 3 == 0)
+		{
+			g_Player.obj.bVisible ^= 1;
+		}
+
+		if (g_Player.nCounterState > 150)
+		{
+			g_Player.obj.bVisible = true;
+			SetPlayerState(PLAYERSTATE_NORMAL);
+		}
+
+		break;
+	}
+
 	case PLAYERSTATE_SUPER:
 	{
 		// カメラをプレイヤーに追従させる
@@ -463,5 +498,6 @@ void _OnEnemyKilled(ENEMY* pEnemy)
 {
 	ShakeCamera(10);
 	AddLevel(g_Player.nIdxLevel, 1);
+	AddScore(pEnemy->nScore);
 	PlaySound(SOUND_LABEL_SE_SMASH);
 }
