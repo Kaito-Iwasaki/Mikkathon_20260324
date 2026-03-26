@@ -92,6 +92,21 @@ void InitResult(void)
 		"",
 		DT_CENTER | DT_TOP
 	);
+
+	PLAYER* pPlayer = GetPlayer();
+
+	if (pPlayer->nScore >= 200000)
+	{
+		g_edType = ED_S;
+	}
+	else if (pPlayer->nScore >= 100000)
+	{
+		g_edType = ED_A;
+	}
+	else
+	{
+		g_edType = ED_B;
+	}
 }
 
 //=====================================================================
