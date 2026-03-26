@@ -383,7 +383,10 @@ void _CollisionEnemyPlayer(ENEMY* pEnemy)
 
 	if (Magnitude(vecEnemyToPlayer) < sizeAAndB)
 	{
-		SmashPlayer(Normalize(vecEnemyToPlayer));
+		if (pPlayer->state != PLAYERSTATE_SUPER)
+		{
+			SmashPlayer(Normalize(vecEnemyToPlayer));
+		}
 	}
 }
 

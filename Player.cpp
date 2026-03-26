@@ -304,6 +304,29 @@ void _OnPlayerState()
 		_AttackNearestEnemy();
 		break;
 	}
+
+	case PLAYERSTATE_SUPER:
+	{
+		// カメラをプレイヤーに追従させる
+		// 若干向いてる方向にオフセットする
+		float fCamOffsetMagnitude = 100.0f;
+		D3DXVECTOR3 vecCamOffset = Direction(g_Player.obj.rot.z) * fCamOffsetMagnitude;
+		GetCamera()->pos = g_Player.obj.pos + vecCamOffset;
+
+		// レベル表示をプレイヤーの頭上に追従させる
+		D3DXVECTOR3 vecLevelOffset = D3DXVECTOR3(0, -g_Player.obj.size.y, 0);
+		SetPositionLevel(
+			g_Player.nIdxLevel,
+			g_Player.obj.pos + vecLevelOffset
+		);
+
+		// テクスチャアニメーション（現在のテクスチャ位置を更新）
+		g_Player.nTexture = (g_Player.nTexture + 1) % (NUM_TEXTURE_X * NUM_TEXTURE_Y);
+
+		// 一番近くの敵１人だけを攻撃
+		_AttackNearestEnemy();
+		break;
+	}
 	
 	case PLAYERSTATE_SMASH:
 	{
