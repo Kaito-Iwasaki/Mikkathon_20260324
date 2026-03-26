@@ -60,6 +60,7 @@ typedef struct PLAYER
 	PLAYERSTATE state;
 	int nCounterState;
 	bool bControlEnabled;
+	int nScore;
 };
 
 //*********************************************************************
@@ -75,5 +76,6 @@ PLAYER* GetPlayer(void);
 void SetPlayerState(PLAYERSTATE newState);
 PLAYERSTATE GetPlayerState(void);
 void SmashPlayer(D3DXVECTOR3 dir);
+void AddScore(int nValue);
 
 #endif

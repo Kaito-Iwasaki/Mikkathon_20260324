@@ -62,6 +62,7 @@ void SetCursorMid(void);
 // 
 //*********************************************************************
 bool g_bPauseGame = false;
+FONT* g_pFontScore = NULL;
 
 //=====================================================================
 // 初期化処理
@@ -94,6 +95,16 @@ void InitGame(void)
 
 	// -- 構造体・グローバル変数 --
 	g_bPauseGame = false;
+
+	g_pFontScore = SetFont(
+		FONT_LABEL_DONGURI,
+		D3DXVECTOR3(0, 0, 0),
+		D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0),
+		D3DXCOLOR(1,1,0,1),
+		50,
+		"",
+		DT_LEFT | DT_TOP
+	);
 }
 
 //=====================================================================
@@ -176,6 +187,8 @@ void UpdateGame(void)
 		// 範囲をシーン依存にするためここで処理する
 		Clampf(&pPlayer->obj.pos.x, -1500.0f, 1500.0f);
 		Clampf(&pPlayer->obj.pos.y, -1500.0f, 1500.0f);
+
+		sprintf(&g_pFontScore->aText[0], "Score: 0");
 	}
 	else
 	{
@@ -198,6 +211,7 @@ void DrawGame(void)
 	DrawWeightFollow();
 	DrawPlayer();
 	DrawLevelGenerator();
+	DrawFont(g_pFontScore);
 
 	if (g_bPauseGame)
 	{// ポーズ画面描画

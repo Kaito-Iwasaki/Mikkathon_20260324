@@ -227,6 +227,11 @@ void SmashPlayer(D3DXVECTOR3 dir)
 	PlaySound(SOUND_LABEL_SE_PLAYERSMASH);
 }
 
+void AddScore(int nValue)
+{
+	g_Player.nScore += nValue;
+}
+
 void _PlayerControl()
 {
 	if (g_Player.bControlEnabled == false) return;
