@@ -252,10 +252,10 @@ void DrawGame(void)
 	DrawBackground2();
 	DrawBackground();
 	DrawEffect();
-	DrawEnemy();
-	DrawBulletManager();
 	DrawItem();
 	DrawWeightFollow();
+	DrawEnemy();
+	DrawBulletManager();
 	DrawPlayer();
 	DrawLevelGenerator();
 	DrawFont(g_pFontScore);
