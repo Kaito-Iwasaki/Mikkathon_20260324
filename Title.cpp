@@ -76,7 +76,7 @@ void UpdateTitle(void)
 		|| GetJoypadTrigger(JOYKEY_A)
 		|| GetJoypadTrigger(JOYKEY_START))
 	{
-		SetFade(SCENE_GAME);
+		SetFade(SCENE_TUTORIAL);
 	}
 
 	UpdateBackground();

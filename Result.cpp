@@ -118,7 +118,7 @@ void UpdateResult(void)
 
 	// 各スコアを表示
 	sprintf(&g_apFontResult[RESULTTYPE_KCAL]->aText[0], "消費カロリー : %d Kcal", GetPlayer()->nScore);
-	sprintf(&g_apFontResult[RESULTTYPE_KG]->aText[0], "%d", GetLevel(GetPlayer()->nIdxLevel));
+	sprintf(&g_apFontResult[RESULTTYPE_KG]->aText[0], "筋肉 : %d", GetLevel(GetPlayer()->nIdxLevel));
 }
 
 //=====================================================================

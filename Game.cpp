@@ -29,6 +29,7 @@
 #include "font.h"
 #include "fade.h"
 #include "gauge.h"
+#include "itemGenerator.h"
 
 //*********************************************************************
 // 
@@ -121,6 +122,15 @@ void InitGame(void)
 		"",
 		DT_CENTER | DT_TOP
 	);
+
+	ITEM_GENERATE_SETTING igs;
+	igs.nFrameSpawn = 240;
+	igs.nUpperSpawn = 10;
+	igs.nLowerSpawn = 3;
+	igs.rect = FLOAT_RECT{ -GAME_STAGE_SIZE.x, -GAME_STAGE_SIZE.y, GAME_STAGE_SIZE.x, GAME_STAGE_SIZE.y };
+
+	// アイテム発生処理の設定
+	SetItemGenerator(igs);
 }
 
 //=====================================================================
@@ -200,6 +210,7 @@ void UpdateGame(void)
 		// -- Generators --
 		UpdateEnemyGenerator();
 		UpdateLevelGenerator();
+		UpdateItemGenerator();
 
 		// プレイヤー位置の制限
 		// 範囲をシーン依存にするためここで処理する

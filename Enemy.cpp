@@ -18,6 +18,7 @@
 #include "particle.h"
 #include "sound.h"
 #include "Game.h"
+#include "scene.h"
 
 //*********************************************************************
 // 

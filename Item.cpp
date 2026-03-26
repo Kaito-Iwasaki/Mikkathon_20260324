@@ -163,15 +163,6 @@ void InitItem(void)
 	// バッファ作成
 	CreateItemBuffer(&g_itemBuffer);
 	CreateLvUpBuffer(&g_lvupBuffer);
-
-	ITEM_GENERATE_SETTING igs;
-	igs.nFrameSpawn = 240;
-	igs.nUpperSpawn = 10;
-	igs.nLowerSpawn = 3;
-	igs.rect = FLOAT_RECT{ -GAME_STAGE_SIZE.x, -GAME_STAGE_SIZE.y, GAME_STAGE_SIZE.x, GAME_STAGE_SIZE.y };
-
-	// アイテム発生処理の設定
-	SetItemGenerator(igs);
 }
 
 //=====================================================================
@@ -199,9 +190,6 @@ void UninitItem(void)
 //=====================================================================
 void UpdateItem(void)
 {
-	// アイテム発生処理
-	UpdateItemGenerator();
-
 	LPITEM pItem = GetItemPtr();
 
 	// 各アイテムの更新処理

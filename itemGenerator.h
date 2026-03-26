@@ -1,11 +1,11 @@
 //=====================================================================
 //
-// bulletManager.cppのヘッダファイル [bulletManager.h]
+// ItemManager.cppのヘッダファイル [ItemManager.h]
 // Author : 
 // 
 //=====================================================================
-#ifndef _BulletManager_H_
-#define _BulletManager_H_
+#ifndef _ItemManager_H_
+#define _ItemManager_H_
 
 //*********************************************************************
 // 

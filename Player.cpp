@@ -341,7 +341,14 @@ void _OnPlayerState()
 
 		if (g_Player.nCounterState > 90)
 		{
-			SetFade(SCENE_RESULT);
+			if (GetCurrentScene() == SCENE_TUTORIAL)
+			{
+				SetFade(SCENE_TUTORIAL);
+			}
+			else
+			{
+				SetFade(SCENE_RESULT);
+			}
 		}
 
 		EFFECTINFO info;
