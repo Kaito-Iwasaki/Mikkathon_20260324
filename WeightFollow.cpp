@@ -119,7 +119,7 @@ void UpdateWeightFollow(void)
 	PLAYER* pPlayer = GetPlayer();
 	if (pPlayer->state == PLAYERSTATE_SMASH) return;
 
-	for (int i = 0; i < pPlayer->nBulletLeft; i++)
+	for (int i = 0; i < pPlayer->nMaxBullet; i++)
 	{
 		D3DXVECTOR3 destination;
 		D3DXVECTOR3 direction;

@@ -94,7 +94,7 @@ void InitPlayer(void)
 	g_Player.move = g_Player.obj.pos + D3DXVECTOR3(0, 1, 0);
 	g_Player.nMaxBullet = PLAYER_MAX_HOLDABLE_BULLET;
 	g_Player.fBulletSpeed = PLAYER_INIT_BULLETSPEED;
-	g_Player.nBulletLeft = PLAYER_MAX_HOLDABLE_BULLET;
+	g_Player.nBulletLeft = 0;
 	g_Player.fSpeed = PLAYER_INIT_SPEED;
 	g_Player.nPower = PLAYER_INIT_POWER;
 	g_Player.state = PLAYERSTATE_APPEAR;

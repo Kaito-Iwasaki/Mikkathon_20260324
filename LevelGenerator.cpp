@@ -8,6 +8,7 @@
 #include "Enemy.h"
 #include "baseObject.h"
 #include <assert.h>
+#include "Player.h"
 
 //*************************************************************************************************
 //*** ƒ}ƒNƒ’è‹` ***
@@ -458,6 +459,8 @@ void AddLevel(int nIdxLevel, int nValue)
 	if (pLevel->bUse == false) return;
 
 	SetLevel(nIdxLevel, pLevel->nLevel + nValue);
+
+	GetPlayer()->nBulletLeft = pLevel->nLevel / 25;
 }
 
 //=====================================================================

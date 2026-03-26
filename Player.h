@@ -25,7 +25,7 @@
 #define PLAYER_INIT_POWER			(10)
 #define PLAYER_INIT_ROTSPEED		(0.05f)
 #define PLAYER_INIT_BULLETSPEED		(10.0f)
-#define PLAYER_MAX_HOLDABLE_BULLET	(5)
+#define PLAYER_MAX_HOLDABLE_BULLET	(1024)
 
 //*********************************************************************
 // 
