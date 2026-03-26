@@ -68,6 +68,7 @@ typedef struct ITEM_CONST
 {
 	static const D3DXCOLOR DefColor;		// 基本色
 	static const D3DXVECTOR2 DefSize;		// 基本サイズ
+	static const D3DXVECTOR2 DefSizeDiff;	// サイズオフセット
 	static const D3DXVECTOR2 DefSizeEffect;	// 演出基本サイズ
 	static const float fAlphaDecrease;		// エフェクトα値の減少係数
 	static const float fYIncrease;			// エフェクトの上昇係数

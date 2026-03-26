@@ -102,7 +102,8 @@ const int ITEM_CONST::aLevel[ITEMTYPE_MAX] =	// 各アイテムのレベルアップ幅
 	10
 };
 
-const D3DXVECTOR2 ITEM_CONST::DefSize = D3DXVECTOR2(100, 100);		// 基本サイズ
+const D3DXVECTOR2 ITEM_CONST::DefSize = D3DXVECTOR2(60, 60);		// 基本サイズ
+const D3DXVECTOR2 ITEM_CONST::DefSizeDiff = D3DXVECTOR2(20, 20);		// 基本サイズ
 const D3DXVECTOR2 ITEM_CONST::DefSizeEffect = D3DXVECTOR2(50, 25);	// 演出基本サイズ
 const D3DXCOLOR ITEM_CONST::DefColor = D3DXCOLOR(1, 1, 1, 1);		// 基本色
 
