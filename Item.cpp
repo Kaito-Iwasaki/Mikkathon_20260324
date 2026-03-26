@@ -74,6 +74,7 @@ void RemoveItem(LPITEM pItem);						// アイテムの消去処理
 bool CreateItemBuffer(_Out_ ITEMBUFFER *pOut);		// バッファ作成
 bool CreateLvUpBuffer(_Out_ LVUPEFFECTBUFFER *pOut);		// バッファ作成
 void SetVertexItem(void);							// 頂点設定
+void SetVertexItem(LPITEM pItem, int nIdx);					// 個別頂点設定
 void SetVertexLvUp(void);							// 頂点設定
 LPLVUPEFFECT GetLvUpEffectPtr(void);				// ポインタ取得
 void UpdateLvUpEffect(LPLVUPEFFECT pLvUp);			// レベルアップ演出の更新
@@ -273,6 +274,9 @@ void SetItem(D3DXVECTOR3 pos, ITEMTYPE type, D3DXCOLOR color, D3DXVECTOR2 size)
 		pItem->obj.bVisible = true;					// 描画状態を保存
 		pItem->state = ITEMSTATE_SPAWN;				// 出現状態
 		pItem->nCounterState = ITEM_CONST::aStateCount[ITEMSTATE_SPAWN];	// 状態カウンタを設定
+
+		// 位置の設定し直し
+		SetVertexItem(pItem, nCntItem);
 
 		pItem->bUse = true;							// 使用済みに変更
 		break;
@@ -660,4 +664,23 @@ void SetVertexLvUp(void)
 
 	// 頂点バッファをアンロック
 	g_lvupBuffer.pVtxBuff->Unlock();
+}
+
+void SetVertexItem(LPITEM pItem, int nIdx)
+{
+	VERTEX_2D* pVtx = NULL;				// 頂点情報へのポインタ
+
+	// 頂点バッファをロックして頂点情報へのポインタを取得
+	g_itemBuffer.pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nIdx;
+
+	// 頂点情報を設定
+	SetVertexPos(pVtx, pItem->obj);
+	SetVertexRHW(pVtx, 1.0f);
+	SetVertexColor(pVtx, pItem->obj.color);
+	SetVertexTexturePos(pVtx);
+
+	// 頂点バッファをアンロック
+	g_itemBuffer.pVtxBuff->Unlock();
 }
