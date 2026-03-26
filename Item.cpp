@@ -15,6 +15,7 @@
 #include "itemGenerator.h"
 #include "LevelGenerator.h"
 #include "sound.h"
+#include "particle.h"
 
 //*********************************************************************
 // 
@@ -513,6 +514,16 @@ void UpdateItemState(LPITEM pItem)
 
 		// –³‚ÉÝ’è
 		SetItemState(pItem, ITEMSTATE_NONE);
+
+		EFFECTINFO info;
+		info.col = D3DXCOLOR(0.59f, 0.29f, 0.0f, 0.3f);
+		info.fMaxAlpha = 0.1f;
+		info.fMaxScale = 0.9f;
+		info.fRotSpeed = 0.1f;
+		info.fSpeed = 3.0f;
+		info.nMaxLife = 60;
+
+		SetParticle(info, pItem->obj.pos, 0, D3DX_PI, 1, 15);
 
 		PlaySound(SOUND_LABEL_SE_EAT);
 
