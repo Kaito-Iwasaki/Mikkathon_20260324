@@ -94,7 +94,7 @@ void UpdateItemGenerator(void)
 				ITEMTYPE type = ITEMTYPE_PROTEIN_GAMMA;
 			}
 
-			SetItem(D3DXVECTOR3(fXPos, fYPos, 0), type);
+			SetItem(D3DXVECTOR3(fXPos, fYPos, 0), type, ITEM_CONST::DefColor, ITEM_CONST::DefSize + ITEM_CONST::DefSizeDiff * (type + 1));
 		}
 	}
 

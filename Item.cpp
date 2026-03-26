@@ -15,6 +15,7 @@
 #include "itemGenerator.h"
 #include "LevelGenerator.h"
 #include "sound.h"
+#include "particle.h"
 
 //*********************************************************************
 // 
@@ -101,7 +102,8 @@ const int ITEM_CONST::aLevel[ITEMTYPE_MAX] =	// 各アイテムのレベルアップ幅
 	10
 };
 
-const D3DXVECTOR2 ITEM_CONST::DefSize = D3DXVECTOR2(100, 100);		// 基本サイズ
+const D3DXVECTOR2 ITEM_CONST::DefSize = D3DXVECTOR2(60, 60);		// 基本サイズ
+const D3DXVECTOR2 ITEM_CONST::DefSizeDiff = D3DXVECTOR2(20, 20);		// 基本サイズ
 const D3DXVECTOR2 ITEM_CONST::DefSizeEffect = D3DXVECTOR2(50, 25);	// 演出基本サイズ
 const D3DXCOLOR ITEM_CONST::DefColor = D3DXCOLOR(1, 1, 1, 1);		// 基本色
 
@@ -474,6 +476,8 @@ void UpdateItemState(LPITEM pItem)
 	// NULLCHECK
 	if (pItem == nullptr) return;
 
+	PLAYER* pPlayer = GetPlayer();
+
 	// 状態により処理分け
 	switch (pItem->state)
 	{
@@ -514,7 +518,39 @@ void UpdateItemState(LPITEM pItem)
 		// 無に設定
 		SetItemState(pItem, ITEMSTATE_NONE);
 
+		EFFECTINFO info;
+		info.col = D3DXCOLOR(0.59f, 0.29f, 0.0f, 0.3f);
+		info.fMaxAlpha = 0.1f;
+		info.fMaxScale = 0.9f;
+		info.fRotSpeed = 0.1f;
+		info.fSpeed = 3.0f;
+		info.nMaxLife = 60;
+
+		SetParticle(info, pItem->obj.pos, 0, D3DX_PI, 1, 15);
+
 		PlaySound(SOUND_LABEL_SE_EAT);
+
+		switch (pItem->type)
+		{
+		case ITEMTYPE_PROTEIN_ALPHA:
+			pPlayer->fSpeed += 0.05f;
+			AddScore(100);
+			break;
+
+		case ITEMTYPE_PROTEIN_BETA:
+			pPlayer->nPower += 1;
+			AddScore(200);
+			break;
+
+		case ITEMTYPE_PROTEIN_GAMMA:
+			pPlayer->fSpeed += 0.05f;
+			pPlayer->nPower += 1;
+			AddScore(300);
+			break;
+
+		default:
+			break;
+		}
 
 		break;
 	}

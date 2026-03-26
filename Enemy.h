@@ -39,6 +39,8 @@ typedef enum
 	// ƒvƒŒƒCƒ„[•ûŒü‚ÉŒü‚©‚Á‚Ä’Ç‚¢‚©‚¯‚Ä‚­‚é“G
 	ENEMYTYPE_CHASER,
 
+	ENEMYTYPE_REFRECT,
+
 	ENEMYTYPE_MAX
 }ENEMYTYPE;
 
@@ -75,6 +77,7 @@ typedef struct ENEMY
 	int nLife;
 	float fSpeed;
 	ENEMYTYPE type;
+	int nScore;
 };
 
 //*********************************************************************

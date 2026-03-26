@@ -17,6 +17,7 @@
 #include "effect.h"
 #include "particle.h"
 #include "sound.h"
+#include "Game.h"
 
 //*********************************************************************
 // 
@@ -52,6 +53,7 @@
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
+void _InitEnemyParamsByType(ENEMY* pEnemy);
 void _OnEnemyType(ENEMY* pEnemy);
 void _OnEnemyState(ENEMY* pEnemy);
 void _CollisionEnemyPlayer(ENEMY* pEnemy);
@@ -210,6 +212,8 @@ ENEMY* SetEnemy(ENEMYTYPE type, D3DXVECTOR3 pos)
 		g_aEnemy[i].fSpeed = 3.0f;
 		g_aEnemy[i].type = type;
 
+		_InitEnemyParamsByType(&g_aEnemy[i]);
+
 		return &g_aEnemy[i];
 	}
 
@@ -292,11 +296,40 @@ void SetEnemyState(ENEMY* pEnemy, ENEMYSTATE newState)
 	pEnemy->nConunterState = 0;
 }
 
+void _InitEnemyParamsByType(ENEMY* pEnemy)
+{
+	switch (pEnemy->type)
+	{
+	case ENEMYTYPE_STATIC:
+		pEnemy->nLife = 200;
+		pEnemy->nScore = 100;
+		pEnemy->fSpeed = 0;
+		break;
+
+	case ENEMYTYPE_CHASER:
+		pEnemy->nLife = 100;
+		pEnemy->nScore = 100;
+		pEnemy->fSpeed = 3;
+		break;
+
+	case ENEMYTYPE_REFRECT:
+		pEnemy->move = Vector2To3(GetRandomVector2());
+		pEnemy->nLife = 200;
+		pEnemy->nScore = 200;
+		pEnemy->fSpeed = 3;
+		break;
+
+	default:
+		break;
+	}
+}
+
 void _OnEnemyType(ENEMY* pEnemy)
 {
 	if (pEnemy->nLife <= 0) return;
 
 	PLAYER* pPlayer = GetPlayer();
+	if (pPlayer->state == PLAYERSTATE_SMASH) return;
 
 	switch (pEnemy->type)
 	{
@@ -306,12 +339,29 @@ void _OnEnemyType(ENEMY* pEnemy)
 
 	case ENEMYTYPE_CHASER:
 	{
-		if (pPlayer->state == PLAYERSTATE_SMASH) return;
 		D3DXVECTOR3 vecMoveDir = Direction(pEnemy->obj.pos, pPlayer->obj.pos);
 		pEnemy->obj.pos += vecMoveDir * pEnemy->fSpeed;
 		pEnemy->obj.rot.z = atan2(vecMoveDir.x, vecMoveDir.y);
 		break;
 	}
+
+	case ENEMYTYPE_REFRECT:
+		pEnemy->obj.pos += pEnemy->move * pEnemy->fSpeed;
+		pEnemy->obj.rot.z = atan2(pEnemy->move.x, pEnemy->move.y);
+
+		int fRangeX = 1500.0f;
+		int fRangeY = 1500.0f;
+
+		if (pEnemy->obj.pos.x < -fRangeX || pEnemy->obj.pos.x > fRangeX)
+		{
+			pEnemy->move.x *= -1;
+		}
+		if (pEnemy->obj.pos.y < -fRangeY || pEnemy->obj.pos.y > fRangeY)
+		{
+			pEnemy->move.y *= -1;
+		}
+
+		break;
 
 	}
 
@@ -357,7 +407,9 @@ void _OnEnemyState(ENEMY* pEnemy)
 
 		SetParticle(info, pEnemy->obj.pos, 0, D3DX_PI, 1, 1);
 
-		if (IsObjectOutOfScreen(pEnemy->obj, GetCameraRect()))
+		if (IsObjectOutOfScreen(pEnemy->obj, GetCameraRect()) || 
+			fabsf(pEnemy->obj.pos.x) >= GAME_STAGE_SIZE.x ||
+			fabsf(pEnemy->obj.pos.y) >= GAME_STAGE_SIZE.y)
 		{
 			KillEnemy(pEnemy);
 		}
@@ -368,6 +420,9 @@ void _OnEnemyState(ENEMY* pEnemy)
 	default:
 		break;
 	}
+
+	Clampf(&pEnemy->obj.pos.x, -GAME_STAGE_SIZE.x, GAME_STAGE_SIZE.x);
+	Clampf(&pEnemy->obj.pos.y, -GAME_STAGE_SIZE.y, GAME_STAGE_SIZE.y);
 	
 	pEnemy->nConunterState++;
 }
@@ -383,7 +438,10 @@ void _CollisionEnemyPlayer(ENEMY* pEnemy)
 
 	if (Magnitude(vecEnemyToPlayer) < sizeAAndB)
 	{
-		SmashPlayer(Normalize(vecEnemyToPlayer));
+		if (pPlayer->state != PLAYERSTATE_SUPER)
+		{
+			SmashPlayer(Normalize(vecEnemyToPlayer));
+		}
 	}
 }
 
