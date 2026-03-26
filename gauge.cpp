@@ -15,6 +15,9 @@
 #include "LevelGenerator.h"
 #include "util.h"
 #include "input.h"
+#include "sound.h"
+#include "font.h"
+#include "scene.h"
 
 //*********************************************************************
 // 
@@ -84,6 +87,7 @@ const char *c_apTextureGauge[TEXTURE_NUM] =
 
 Gauge g_gauge = {};					// ゲージの情報
 GAUGEBUFFER g_gaugeBuffer = {};		// ゲージのバッファ
+FONT* g_pFontGaugePress = NULL;
 
 //=====================================================================
 // 初期化処理
@@ -100,6 +104,17 @@ void InitGauge(void)
 
 	// バッファ作成
 	CreateGaugeBuffer(&g_gaugeBuffer);
+
+	g_pFontGaugePress = SetFont(
+		FONT_LABEL_DONGURI,
+		D3DXVECTOR3(0, SCREEN_VCENTER + 210, 0),
+		D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0),
+		D3DXCOLOR(1.0f, 1.0f, 0, 1.0f),
+		71,
+		"- PRESS [MOUSE LEFT] OR [A]! -",
+		DT_CENTER | DT_TOP
+	);
+	g_pFontGaugePress->obj.bVisible = false;
 }
 
 //=====================================================================
@@ -122,10 +137,11 @@ void UpdateGauge(void)
 	LPGAUGE pGauge = GetGaugePtr();
 
 	if (
-		GetMouseTrigger(MOUSE_LEFT)&& 
-		GetJoypadTrigger(JOYKEY_A) &&
+		(GetMouseTrigger(MOUSE_LEFT) ||
+		GetJoypadTrigger(JOYKEY_A)) &&
 		pGauge->state == GAUGESTATE_FULLCHARGE)
 	{
+		PlaySound(SOUND_LABEL_SE_BURST);
 		SetStateGauge(pGauge, GAUGESTATE_BURST);
 	}
 
@@ -140,6 +156,22 @@ void UpdateGauge(void)
 
 	// 頂点設定
 	SetVertexGauge();
+
+	if (GetCurrentScene() == SCENE_GAME)
+	{
+		if (pGauge->state == GAUGESTATE_FULLCHARGE)
+		{
+			if (pGauge->nCounterState % 2 == 0)
+			{
+				g_pFontGaugePress->obj.bVisible ^= 1;
+			}
+		}
+		else
+		{
+			g_pFontGaugePress->obj.bVisible = false;
+		}
+	}
+
 }
 
 //=====================================================================
@@ -171,6 +203,8 @@ void DrawGauge(void)
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCntGauge, 2);
 		}
 	}
+
+	DrawFont(g_pFontGaugePress);
 }
 
 //=====================================================================

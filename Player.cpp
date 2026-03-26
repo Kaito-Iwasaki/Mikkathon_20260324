@@ -20,6 +20,7 @@
 #include "fade.h"
 #include "effect.h"
 #include "particle.h"
+#include "gauge.h"
 
 //*********************************************************************
 // 
@@ -302,6 +303,11 @@ void _OnPlayerState()
 			g_Player.obj.pos + vecLevelOffset
 		);
 
+		if (GetGaugePtr()->state == GAUGESTATE_BURST)
+		{
+			SetPlayerState(PLAYERSTATE_SUPER);
+		}
+
 		// テクスチャアニメーション（現在のテクスチャ位置を更新）
 		g_Player.nTexture = (g_Player.nTexture + 1) % (NUM_TEXTURE_X * NUM_TEXTURE_Y);
 
@@ -351,6 +357,7 @@ void _OnPlayerState()
 		// 若干向いてる方向にオフセットする
 		float fCamOffsetMagnitude = 100.0f;
 		D3DXVECTOR3 vecCamOffset = Direction(g_Player.obj.rot.z) * fCamOffsetMagnitude;
+		g_Player.obj.pos += Direction(g_Player.obj.rot.z) * g_Player.fSpeed;
 		GetCamera()->pos = g_Player.obj.pos + vecCamOffset;
 
 		// レベル表示をプレイヤーの頭上に追従させる
@@ -360,10 +367,30 @@ void _OnPlayerState()
 			g_Player.obj.pos + vecLevelOffset
 		);
 
+		if (g_Player.nCounterState % 2 == 0)
+		{
+			if (g_Player.obj.color == D3DXCOLOR_WHITE)
+			{
+				g_Player.obj.color = D3DXCOLOR(1, 1, 0, 1);
+			}
+			else
+			{
+				g_Player.obj.color = D3DXCOLOR_WHITE;
+			}
+		}
+
+		if (GetGaugePtr()->state == GAUGESTATE_CHARGE)
+		{
+			g_Player.obj.color = D3DXCOLOR_WHITE;
+			SetPlayerState(PLAYERSTATE_APPEAR);
+		}
+
 		// テクスチャアニメーション（現在のテクスチャ位置を更新）
 		g_Player.nTexture = (g_Player.nTexture + 1) % (NUM_TEXTURE_X * NUM_TEXTURE_Y);
 
-		// 一番近くの敵１人だけを攻撃
+		// 一番近くの敵１人だけを攻撃（3倍）
+		_AttackNearestEnemy();
+		_AttackNearestEnemy();
 		_AttackNearestEnemy();
 		break;
 	}

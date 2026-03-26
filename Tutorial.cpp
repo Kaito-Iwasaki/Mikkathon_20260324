@@ -168,13 +168,13 @@ void UpdateTutorial(void)
 	//------------------------------------------------------------------
 
 		// -- É|Å[ÉYêÿÇËë÷Ç¶ --
-	if (
-		GetKeyboardTrigger(DIK_P) ||
-		GetJoypadTrigger(JOYKEY_START)
-		)
-	{
-		g_bPauseTutorial ^= 1;
-	}
+	//if (
+	//	GetKeyboardTrigger(DIK_P) ||
+	//	GetJoypadTrigger(JOYKEY_START)
+	//	)
+	//{
+	//	g_bPauseTutorial ^= 1;
+	//}
 
 	//------------------------------------------------------------------
 
