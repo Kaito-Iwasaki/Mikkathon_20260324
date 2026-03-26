@@ -453,7 +453,7 @@ void HitItem(LPITEM pItem, PLAYER *pPlayer)
 	// レベルアップ演出
 	SetLvUpEffect(pItem->obj.pos, pItem->type);
 
-	AddGauge(1);
+	AddGauge(ITEM_CONST::aLevel[pItem->type]);
 
 	// レベルアップ
 	AddLevel(pPlayer->nIdxLevel, ITEM_CONST::aLevel[pItem->type]);
