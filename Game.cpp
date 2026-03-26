@@ -188,7 +188,7 @@ void UpdateGame(void)
 		Clampf(&pPlayer->obj.pos.x, -1500.0f, 1500.0f);
 		Clampf(&pPlayer->obj.pos.y, -1500.0f, 1500.0f);
 
-		sprintf(&g_pFontScore->aText[0], "Score: 0");
+		sprintf(&g_pFontScore->aText[0], "Score: %d", pPlayer->nScore);
 	}
 	else
 	{

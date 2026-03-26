@@ -476,6 +476,8 @@ void UpdateItemState(LPITEM pItem)
 	// NULLCHECK
 	if (pItem == nullptr) return;
 
+	PLAYER* pPlayer = GetPlayer();
+
 	// ó‘Ô‚É‚æ‚èˆ—•ª‚¯
 	switch (pItem->state)
 	{
@@ -527,6 +529,28 @@ void UpdateItemState(LPITEM pItem)
 		SetParticle(info, pItem->obj.pos, 0, D3DX_PI, 1, 15);
 
 		PlaySound(SOUND_LABEL_SE_EAT);
+
+		switch (pItem->type)
+		{
+		case ITEMTYPE_PROTEIN_ALPHA:
+			pPlayer->fSpeed += 0.05f;
+			AddScore(100);
+			break;
+
+		case ITEMTYPE_PROTEIN_BETA:
+			pPlayer->nPower += 1;
+			AddScore(200);
+			break;
+
+		case ITEMTYPE_PROTEIN_GAMMA:
+			pPlayer->fSpeed += 0.05f;
+			pPlayer->nPower += 1;
+			AddScore(300);
+			break;
+
+		default:
+			break;
+		}
 
 		break;
 	}
