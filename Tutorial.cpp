@@ -31,6 +31,9 @@
 #include "gauge.h"
 #include "pause.h"
 
+// Manager
+#include "bulletManager.h"
+
 // Generator
 #include "itemGenerator.h"
 #include "LevelGenerator.h"
@@ -80,6 +83,9 @@ void InitTutorial(void)
 {
 	StopSound();
 	PlaySound(SOUND_LABEL_BGM_TUTORIAL);
+
+	// -- Managers --
+	InitBulletManager();
 
 	// -- Generators --
 	InitLevelGenerator();
@@ -146,6 +152,9 @@ void UninitTutorial(void)
 	UninitPause();
 	UninitFont();
 
+	// -- Managers --
+	UninitBulletManager();
+
 	// -- Generators --
 	UninitLevelGenerator();
 }
@@ -193,6 +202,7 @@ void UpdateTutorial(void)
 		UpdateGauge();
 
 		// -- Managers --
+		UpdateBulletManager();
 
 		// -- Generators --
 		UpdateLevelGenerator();
@@ -220,6 +230,7 @@ void DrawTutorial(void)
 	DrawBackground();
 	DrawEffect();
 	DrawEnemy();
+	DrawBulletManager();
 	DrawItem();
 	DrawWeightFollow();
 	DrawPlayer();
