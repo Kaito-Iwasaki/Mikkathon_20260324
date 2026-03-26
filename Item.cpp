@@ -16,6 +16,8 @@
 #include "LevelGenerator.h"
 #include "sound.h"
 #include "particle.h"
+#include "Game.h"
+#include "gauge.h"
 
 //*********************************************************************
 // 
@@ -86,7 +88,7 @@ void SetLvUpEffect(D3DXVECTOR3 pos, ITEMTYPE type);	// 演出の設置
 // --- static const変数の値設定 --- //
 const float ITEM_CONST::fAlphaDecrease = 0.02f;	// α値の減少係数
 const float ITEM_CONST::fYIncrease = 4.0f;		// Yの増加係数
-const int ITEM_CONST::nMaxItem = 256;		// アイテムの最大数
+const int ITEM_CONST::nMaxItem = 64;		// アイテムの最大数
 const unsigned int ITEM_CONST::aStateCount[ITEMSTATE_MAX] = 
 {
 	0,
@@ -166,7 +168,7 @@ void InitItem(void)
 	igs.nFrameSpawn = 240;
 	igs.nUpperSpawn = 10;
 	igs.nLowerSpawn = 3;
-	igs.rect = FLOAT_RECT{ -500, -500, 2000, 2000 };
+	igs.rect = FLOAT_RECT{ -GAME_STAGE_SIZE.x, -GAME_STAGE_SIZE.y, GAME_STAGE_SIZE.x, GAME_STAGE_SIZE.y };
 
 	// アイテム発生処理の設定
 	SetItemGenerator(igs);
@@ -450,6 +452,8 @@ void HitItem(LPITEM pItem, PLAYER *pPlayer)
 
 	// レベルアップ演出
 	SetLvUpEffect(pItem->obj.pos, pItem->type);
+
+	AddGauge(1);
 
 	// レベルアップ
 	AddLevel(pPlayer->nIdxLevel, ITEM_CONST::aLevel[pItem->type]);
