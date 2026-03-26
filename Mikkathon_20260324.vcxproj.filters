@@ -150,6 +150,9 @@
     <ClCompile Include="Tutorial.cpp">
       <Filter>ソース ファイル\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="TutorialDecal.cpp">
+      <Filter>ソース ファイル\GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sound.h">
@@ -247,6 +250,9 @@
     </ClInclude>
     <ClInclude Include="Tutorial.h">
       <Filter>ヘッダー ファイル\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="TutorialDecal.h">
+      <Filter>ヘッダー ファイル\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
