@@ -65,6 +65,7 @@ void SetCursorMid(void);
 //*********************************************************************
 bool g_bPauseGame = false;
 int g_nGameTimer = 0;
+int g_nCounterStateGame = 0;
 FONT* g_pFontScore = NULL;
 FONT* g_pFontTimer = NULL;
 
@@ -101,6 +102,7 @@ void InitGame(void)
 	// -- 構造体・グローバル変数 --
 	g_bPauseGame = false;
 	g_nGameTimer = GAME_TIME;
+	g_nCounterStateGame = 0;
 
 	g_pFontScore = SetFont(
 		FONT_LABEL_DONGURI,
@@ -207,14 +209,19 @@ void UpdateGame(void)
 		Clampf(&pPlayer->obj.pos.y, -GAME_STAGE_SIZE.y, GAME_STAGE_SIZE.y);
 
 		sprintf(&g_pFontScore->aText[0], "Score: %d", pPlayer->nScore);
-		sprintf(&g_pFontTimer->aText[0], "Time: %d", ((g_nGameTimer / 60) % 60));
+		sprintf(&g_pFontTimer->aText[0], "Time: %d", g_nGameTimer);
 
-		if ((g_nGameTimer / 60) % 60 < 1)
+		if (g_nCounterStateGame % 60 == 0)
+		{
+			g_nGameTimer--;
+		}
+
+		if (g_nGameTimer <= 0)
 		{
 			SetFade(SCENE_RESULT);
 		}
 
-		g_nGameTimer--;
+		g_nCounterStateGame++;
 	}
 	else
 	{
