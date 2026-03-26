@@ -80,7 +80,7 @@ const float GAUGE_CONST::fAnimSpeed = -0.01f;	// アニメーションスピード
 // --- const変数宣言 --- //
 const char *c_apTextureGauge[TEXTURE_NUM] =
 {
-	"data/TEXTURE/title.jpg",
+	"data/TEXTURE/StarAnimation_sub.png",
 };
 
 Gauge g_gauge = {};					// ゲージの情報
