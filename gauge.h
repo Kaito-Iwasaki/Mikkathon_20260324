@@ -72,6 +72,6 @@ void InitGauge(void);
 void UninitGauge(void);
 void UpdateGauge(void);
 void DrawGauge(void);
-
+LPGAUGE GetGaugePtr(void);							// ƒ|ƒCƒ“ƒ^Žæ“¾
 void AddGauge(int nValue);
 #endif
