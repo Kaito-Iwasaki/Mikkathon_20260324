@@ -14,6 +14,7 @@
 #include "fade.h"
 #include "input.h"
 #include "Background.h"
+#include "sound.h"
 
 //*********************************************************************
 // 
@@ -55,6 +56,9 @@ ENDINGTYPE g_edType = ED_B;
 //=====================================================================
 void InitResult(void)
 {
+	StopSound();
+	PlaySound(SOUND_LABEL_BGM_RESULT);
+
 	InitBackground();
 }
 

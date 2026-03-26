@@ -29,6 +29,7 @@
 #include "font.h"
 #include "fade.h"
 #include "gauge.h"
+#include "sound.h"
 
 //*********************************************************************
 // 
@@ -74,6 +75,8 @@ FONT* g_pFontTimer = NULL;
 //=====================================================================
 void InitGame(void)
 {
+	StopSound();
+	PlaySound(SOUND_LABEL_BGM_GAME);
 
 	// -- Managers --
 	InitBulletManager();
