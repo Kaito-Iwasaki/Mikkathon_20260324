@@ -27,6 +27,7 @@
 #include "Background2.h"
 #include "pause.h"
 #include "font.h"
+#include "fade.h"
 
 //*********************************************************************
 // 
@@ -62,7 +63,9 @@ void SetCursorMid(void);
 // 
 //*********************************************************************
 bool g_bPauseGame = false;
+int g_nGameTimer = 0;
 FONT* g_pFontScore = NULL;
+FONT* g_pFontTimer = NULL;
 
 //=====================================================================
 // 初期化処理
@@ -95,6 +98,7 @@ void InitGame(void)
 
 	// -- 構造体・グローバル変数 --
 	g_bPauseGame = false;
+	g_nGameTimer = GAME_TIME;
 
 	g_pFontScore = SetFont(
 		FONT_LABEL_DONGURI,
@@ -104,6 +108,16 @@ void InitGame(void)
 		50,
 		"",
 		DT_LEFT | DT_TOP
+	);
+
+	g_pFontTimer = SetFont(
+		FONT_LABEL_DONGURI,
+		D3DXVECTOR3(0, 0, 0),
+		D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0),
+		D3DXCOLOR(1, 1, 0, 1),
+		60,
+		"",
+		DT_CENTER | DT_TOP
 	);
 }
 
@@ -189,6 +203,14 @@ void UpdateGame(void)
 		Clampf(&pPlayer->obj.pos.y, -GAME_STAGE_SIZE.y, GAME_STAGE_SIZE.y);
 
 		sprintf(&g_pFontScore->aText[0], "Score: %d", pPlayer->nScore);
+		sprintf(&g_pFontTimer->aText[0], "Time: %d", ((g_nGameTimer / 60) % 60));
+
+		if ((g_nGameTimer / 60) % 60 < 1)
+		{
+			SetFade(SCENE_RESULT);
+		}
+
+		g_nGameTimer--;
 	}
 	else
 	{
@@ -212,6 +234,7 @@ void DrawGame(void)
 	DrawPlayer();
 	DrawLevelGenerator();
 	DrawFont(g_pFontScore);
+	DrawFont(g_pFontTimer);
 
 	if (g_bPauseGame)
 	{// ポーズ画面描画
