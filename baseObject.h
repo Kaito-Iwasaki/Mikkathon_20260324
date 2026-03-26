@@ -58,5 +58,7 @@ void SetVertexTexturePos(VERTEX_2D* pVtx, D3DXVECTOR2 leftTop, D3DXVECTOR2 right
 void SetVertexTexturePos(VERTEX_2D* pVtx, int nTextureX, int nTextureY, int nSizeX, int nSizeY, bool bInversed);
 bool IsObjectOutOfScreen(BASEOBJECT obj, DWORD flags = OOS_ALL);
 bool IsObjectOutOfScreen(BASEOBJECT obj, RECT rect, DWORD flags = OOS_ALL);
+bool IsOutOfScreen(D3DXVECTOR3 pos, D3DXVECTOR3 size,  DWORD flags = OOS_ALL);
+bool IsOutOfScreen(D3DXVECTOR3 pos, D3DXVECTOR3 size,  RECT rect, DWORD flags = OOS_ALL);
 
 #endif

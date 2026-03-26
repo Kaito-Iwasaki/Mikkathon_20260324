@@ -12,6 +12,9 @@
 //*********************************************************************
 #include "enemyGenerator.h"
 #include "Enemy.h"
+#include "Player.h"
+#include "camera.h"
+#include "Game.h"
 
 //*********************************************************************
 // 
@@ -39,7 +42,7 @@
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-
+void _Horde(int nNum);
 
 //*********************************************************************
 // 
@@ -99,5 +102,26 @@ void UninitEnemyGenerator(void)
 //=====================================================================
 void UpdateEnemyGenerator(void)
 {
+	PLAYER* pPlayer = GetPlayer();
+
 	g_nCountEnemyGen++;
+
+
+
+}
+
+void _Horde(int nNum)
+{
+	PLAYER* pPlayer = GetPlayer();
+	for (int i = 0; i < nNum; i++)
+	{
+		float fRate = (float)i / (float)nNum;
+		D3DXVECTOR3 vecSpawn = pPlayer->obj.pos + D3DXVECTOR3(sinf(D3DX_PI * 2 * fRate), cosf(D3DX_PI * 2 * fRate), 0) * 800;
+
+		if (fabsf(vecSpawn.x) > GAME_STAGE_SIZE.x || fabsf(vecSpawn.y) > GAME_STAGE_SIZE.y)
+		{
+			continue;
+		}
+		SetEnemy(ENEMYTYPE_CHASER, vecSpawn);
+	}
 }
