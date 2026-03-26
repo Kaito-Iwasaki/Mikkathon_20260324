@@ -14,6 +14,7 @@
 #include "Player.h"
 #include "LevelGenerator.h"
 #include "util.h"
+#include "input.h"
 
 //*********************************************************************
 // 
@@ -52,10 +53,11 @@ bool CreateGaugeBuffer(_Out_ GAUGEBUFFER *pOut);	// ÉoÉbÉtÉ@çÏê¨
 void SetVertexGauge(void);							// í∏ì_ê›íË
 LPGAUGE GetGaugePtr(void);							// É|ÉCÉìÉ^éÊìæ
 void SetStateGauge(LPGAUGE pGauge, GAUGESTATE state);				// èÛë‘ê›íË
-void UpdateStageGauge(LPGAUGE pGauge);				// èÛë‘çXêV
+void UpdateStateGauge(LPGAUGE pGauge);				// èÛë‘çXêV
 void CalcGauge(LPGAUGE pGauge);						// ÉQÅ[ÉWÇÃåvéZ
 void SetVertexDefGauge(void);						// ó†ÉQÅ[ÉWÇÃí∏ì_ê›íË
 void SetVertexPosUnFollow(VERTEX_2D *pVtx, BASEOBJECT obj);	// í«è]ñ≥ÇµÇÃí∏ì_ê›íË
+void SetTextureAnim(VERTEX_2D *pVtx, float f, int nCounter, float spd);	// ÉAÉjÉÅÅ[ÉVÉáÉìÉeÉNÉXÉ`ÉÉÇÃê›íË
 
 //*********************************************************************
 // 
@@ -64,20 +66,21 @@ void SetVertexPosUnFollow(VERTEX_2D *pVtx, BASEOBJECT obj);	// í«è]ñ≥ÇµÇÃí∏ì_ê›í
 //*********************************************************************
 // --- static constïœêîÇÃíËã` --- //
 const D3DXVECTOR3 GAUGE_CONST::DefPosition = D3DXVECTOR3(0, SCREEN_HEIGHT, 0);
-const D3DXVECTOR2 GAUGE_CONST::DefSize = D3DXVECTOR2(SCREEN_WIDTH, 200.0f);
+const D3DXVECTOR2 GAUGE_CONST::DefSize = D3DXVECTOR2(SCREEN_WIDTH, 40.0f);
 const int GAUGE_CONST::aStateCount[GAUGESTATE_MAX] =
 {
 	0,		// null
 	0,		// É`ÉÉÅ[ÉWíÜ
 	120,	// É`ÉÉÅ[ÉWäÆóπ(äÆóπÉJÉEÉìÉg)
-	0,		// âï˙íÜ
+	120,	// âï˙íÜ
 };
-const int GAUGE_CONST::nGaugePhase = 2;		// ÉQÅ[ÉWÇÃíiäK(0íiäK -> 1íiäK)
+const int GAUGE_CONST::nGaugePhase = 2;			// ÉQÅ[ÉWÇÃíiäK(0íiäK -> 1íiäK)
+const float GAUGE_CONST::fAnimSpeed = -0.01f;	// ÉAÉjÉÅÅ[ÉVÉáÉìÉXÉsÅ[Éh
 
 // --- constïœêîêÈåæ --- //
 const char *c_apTextureGauge[TEXTURE_NUM] =
 {
-	NULL,
+	"data/TEXTURE/title.jpg",
 };
 
 Gauge g_gauge = {};					// ÉQÅ[ÉWÇÃèÓïÒ
@@ -90,6 +93,11 @@ void InitGauge(void)
 {
 	// èâä˙âª
 	ZeroMemory(GetGaugePtr(), sizeof(Gauge));
+
+	LPGAUGE pGauge = GetGaugePtr();
+	pGauge->obj.color = D3DXCOLOR_WHITE;
+	pGauge->obj.bVisible = true;
+	SetStateGauge(pGauge, GAUGESTATE_CHARGE);
 
 	// ÉoÉbÉtÉ@çÏê¨
 	CreateGaugeBuffer(&g_gaugeBuffer);
@@ -114,8 +122,13 @@ void UpdateGauge(void)
 {
 	LPGAUGE pGauge = GetGaugePtr();
 
+	if (GetMouseTrigger(MOUSE_LEFT) && pGauge->state == GAUGESTATE_FULLCHARGE)
+	{
+		SetStateGauge(pGauge, GAUGESTATE_BURST);
+	}
+
 	// èÛë‘çXêV
-	UpdateStageGauge(pGauge);
+	UpdateStateGauge(pGauge);
 
 	// ÉQÅ[ÉWÇÃåvéZ
 	CalcGauge(pGauge);
@@ -142,7 +155,7 @@ void DrawGauge(void)
 	// í∏ì_ÉtÉHÅ[É}ÉbÉgÇÃê›íË
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	for (int nCntGauge = 0; nCntGauge < GAUGE_CONST::nGaugePhase; nCntGauge++, pGauge++)
+	for (int nCntGauge = 0; nCntGauge < GAUGE_CONST::nGaugePhase; nCntGauge++)
 	{
 		if (pGauge->obj.bVisible)
 		{// ï\é¶èÛë‘
@@ -228,22 +241,43 @@ void SetVertexGauge(void)
 	// í∏ì_ÉoÉbÉtÉ@ÇÉçÉbÉNÇµÇƒí∏ì_èÓïÒÇ÷ÇÃÉ|ÉCÉìÉ^ÇéÊìæ
 	g_gaugeBuffer.pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int nCntGauge = 0; nCntGauge < GAUGE_CONST::nGaugePhase; nCntGauge++)
+	pVtx += 4;
+
+	if (pGauge->state == GAUGESTATE_FULLCHARGE)
 	{
-		if (nCntGauge == 0)
+		if (pGauge->bAlpha)
 		{
-			pVtx += 4;
-			continue;
+			pGauge->obj.color.a -= 0.03f;
+			if (pGauge->obj.color.a <= 0.0f)
+			{
+				pGauge->obj.color.a = 0.0f;
+				pGauge->bAlpha = false;
+			}
 		}
-
-		// í∏ì_èÓïÒÇê›íË
-		SetVertexPosUnFollow(pVtx, pGauge->obj);
-		SetVertexRHW(pVtx, 1.0f);
-		SetVertexColor(pVtx, pGauge->obj.color);
-		SetVertexTexturePos(pVtx, pGauge->obj.bInversed);
-
-		pVtx += 4;
+		else
+		{
+			pGauge->obj.color.a += 0.03f;
+			if (pGauge->obj.color.a >= 1.0f)
+			{
+				pGauge->obj.color.a = 1.0f;
+				pGauge->bAlpha = true;
+			}
+		}
 	}
+
+	float fAnimSpeed = GAUGE_CONST::fAnimSpeed;
+	if (pGauge->state == GAUGESTATE_BURST)
+	{
+		fAnimSpeed += fAnimSpeed;
+		pGauge->obj.color.a = 1.0f;
+	}
+
+	// í∏ì_èÓïÒÇê›íË
+	SetVertexPosUnFollow(pVtx, pGauge->obj);
+	SetVertexRHW(pVtx, 1.0f);
+	SetVertexColor(pVtx, pGauge->obj.color);
+
+	SetTextureAnim(pVtx, pGauge->fLerp, pGauge->nAnimationCounter, fAnimSpeed);
 
 	// í∏ì_ÉoÉbÉtÉ@ÇÉAÉìÉçÉbÉN
 	g_gaugeBuffer.pVtxBuff->Unlock();
@@ -265,7 +299,7 @@ void SetStateGauge(LPGAUGE pGauge, GAUGESTATE state)
 //=====================================================================
 // èÛë‘çXêV
 //=====================================================================
-void UpdateStageGauge(LPGAUGE pGauge)				
+void UpdateStateGauge(LPGAUGE pGauge)				
 {
 	// NULLCHECK
 	if (pGauge == nullptr) return;
@@ -277,14 +311,19 @@ void UpdateStageGauge(LPGAUGE pGauge)
 
 	case GAUGESTATE_CHARGE:
 
+		pGauge->nAnimationCounter++;
+
 		break;
 
 	case GAUGESTATE_FULLCHARGE:
+
+		pGauge->nAnimationCounter++;
 
 		break;
 
 	case GAUGESTATE_BURST:
 
+		pGauge->nAnimationCounter--;
 		pGauge->nCounterState--;
 		if (pGauge->nCounterState <= 0)
 		{
@@ -385,9 +424,37 @@ void SetVertexDefGauge(void)
 	pVtx[3].pos.z = 0.0f;
 
 	SetVertexRHW(pVtx, 1.0f);
-	SetVertexColor(pVtx, pGauge->obj.color);
+	if (GetGaugePtr()->state == GAUGESTATE_FULLCHARGE)
+	{
+		SetVertexColor(pVtx, D3DXCOLOR_GRAY(1.0f));
+	}
+	else
+	{
+		SetVertexColor(pVtx, D3DXCOLOR_GRAY(0.3f));
+	}
 	SetVertexTexturePos(pVtx, pGauge->obj.bInversed);
 
 	// í∏ì_ÉoÉbÉtÉ@ÇÉAÉìÉçÉbÉN
 	g_gaugeBuffer.pVtxBuff->Unlock();
+}
+
+//=====================================================================
+// ÉAÉjÉÅÅ[ÉVÉáÉìÉeÉNÉXÉ`ÉÉÇÃê›íË
+//=====================================================================
+void SetTextureAnim(VERTEX_2D *pVtx, float f, int nCounter, float spd)
+{
+	float fStart = spd * nCounter;
+	float fEnd = f + fStart;
+
+	pVtx[0].tex.x = fStart;
+	pVtx[0].tex.y = 0.0f;
+
+	pVtx[1].tex.x = fEnd;
+	pVtx[1].tex.y = 0.0f;
+
+	pVtx[2].tex.x = fStart;
+	pVtx[2].tex.y = 1.0f;
+
+	pVtx[3].tex.x = fEnd;
+	pVtx[3].tex.y = 1.0f;
 }
