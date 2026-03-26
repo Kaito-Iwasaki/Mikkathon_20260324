@@ -202,6 +202,14 @@ void UpdateTutorial(void)
 		Clampf(&pPlayer->obj.pos.x, -GAME_STAGE_SIZE.x * 0.1f, GAME_STAGE_SIZE.x * 0.5f);
 		Clampf(&pPlayer->obj.pos.y, -GAME_STAGE_SIZE.y * 0.1f, GAME_STAGE_SIZE.y * 0.3f);
 
+		ENEMY* pEnemy = GetEnemy();
+
+		for (int i = 0; i < MAX_ENEMY; i++, pEnemy++)
+		{
+			Clampf(&pEnemy->obj.pos.x, -GAME_STAGE_SIZE.x * 0.1f, GAME_STAGE_SIZE.x * 0.5f);
+			Clampf(&pEnemy->obj.pos.y, -GAME_STAGE_SIZE.y * 0.1f, GAME_STAGE_SIZE.y * 0.3f);
+		}
+
 		sprintf(&g_pFontTutorial->aText[0], "左クリック・A・STARTで開始");
 	}
 	else
