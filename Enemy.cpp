@@ -308,14 +308,14 @@ void _InitEnemyParamsByType(ENEMY* pEnemy)
 		break;
 
 	case ENEMYTYPE_CHASER:
-		pEnemy->nLife = 1000;
+		pEnemy->nLife = 1100;
 		pEnemy->nScore = 300;
 		pEnemy->fSpeed = 3;
 		break;
 
 	case ENEMYTYPE_CHASER_SMALL:
 		pEnemy->obj.size = INIT_SIZE * 0.7f;
-		pEnemy->nLife = 90;
+		pEnemy->nLife = 100;
 		pEnemy->nScore = 100;
 		pEnemy->fSpeed = 6;
 		break;
