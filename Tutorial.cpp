@@ -27,6 +27,7 @@
 #include "effect.h"
 #include "particle.h"
 #include "fade.h"
+#include "font.h"
 #include "gauge.h"
 #include "pause.h"
 
@@ -69,6 +70,7 @@ void SetCursorMid_Tutorial(void);
 // 
 //*********************************************************************
 bool g_bPauseTutorial = false;
+FONT* g_pFontTutorial = NULL;
 
 //=====================================================================
 // 初期化処理
@@ -90,6 +92,7 @@ void InitTutorial(void)
 	InitParticle();
 	InitGauge();
 	InitPause();
+	InitFont();
 
 	// -- Ex --
 	SetCursorMid_Tutorial();
@@ -107,6 +110,16 @@ void InitTutorial(void)
 	}
 
 	g_bPauseTutorial = false;
+
+	g_pFontTutorial = SetFont(
+		FONT_LABEL_TAMANEGI,
+		D3DXVECTOR3(0, 0, 0),
+		D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0),
+		D3DXCOLOR(0, 0, 0, 1),
+		60,
+		"",
+		DT_CENTER | DT_TOP
+	);
 }
 
 //=====================================================================
@@ -127,6 +140,7 @@ void UninitTutorial(void)
 	UninitParticle();
 	UninitGauge();
 	UninitPause();
+	UninitFont();
 
 	// -- Generators --
 	UninitLevelGenerator();
@@ -183,6 +197,8 @@ void UpdateTutorial(void)
 		// 範囲をシーン依存にするためここで処理する
 		Clampf(&pPlayer->obj.pos.x, -GAME_STAGE_SIZE.x * 0.1f, GAME_STAGE_SIZE.x * 0.5f);
 		Clampf(&pPlayer->obj.pos.y, -GAME_STAGE_SIZE.y * 0.1f, GAME_STAGE_SIZE.y * 0.3f);
+
+		sprintf(&g_pFontTutorial->aText[0], "左クリック・A・STARTで開始");
 	}
 	else
 	{
@@ -205,6 +221,7 @@ void DrawTutorial(void)
 	DrawPlayer();
 	DrawLevelGenerator();
 	DrawGauge();
+	DrawFont(g_pFontTutorial);
 
 	if (g_bPauseTutorial)
 	{// ポーズ画面描画

@@ -14,6 +14,7 @@
 #include "fade.h"
 #include "input.h"
 #include "Background.h"
+#include "font.h"
 
 //*********************************************************************
 // 
@@ -48,7 +49,8 @@
 // ***** グローバル変数 *****
 // 
 //*********************************************************************
-
+FONT *g_pFontTitle = NULL;
+FONT* g_pFontTitle_1 = NULL;
 
 //=====================================================================
 // 初期化処理
@@ -56,6 +58,27 @@
 void InitTitle(void)
 {
 	InitBackground();
+	InitFont();
+
+	g_pFontTitle = SetFont(
+		FONT_LABEL_TAMANEGI,
+		D3DXVECTOR3(0, SCREEN_VCENTER + 200, 0),
+		D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0),
+		D3DXCOLOR(0.9f, 0, 0, 1),
+		70,
+		"",
+		DT_CENTER | DT_TOP
+	);
+
+	g_pFontTitle_1 = SetFont(
+		FONT_LABEL_TAMANEGI,
+		D3DXVECTOR3(0, SCREEN_VCENTER + 210, 0),
+		D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0),
+		D3DXCOLOR(0, 0, 0, 0.5f),
+		71,
+		"",
+		DT_CENTER | DT_TOP
+	);
 }
 
 //=====================================================================
@@ -64,6 +87,7 @@ void InitTitle(void)
 void UninitTitle(void)
 {
 	UninitBackground();
+	UninitFont();
 }
 
 //=====================================================================
@@ -80,6 +104,9 @@ void UpdateTitle(void)
 	}
 
 	UpdateBackground();
+
+	sprintf(&g_pFontTitle->aText[0], "右クリック・STARTで筋トレ開始");
+	sprintf(&g_pFontTitle_1->aText[0], "右クリック・STARTで筋トレ開始");
 }
 
 //=====================================================================
@@ -88,4 +115,6 @@ void UpdateTitle(void)
 void DrawTitle(void)
 {
 	DrawBackground();
+	DrawFont(g_pFontTitle_1);
+	DrawFont(g_pFontTitle);
 }
