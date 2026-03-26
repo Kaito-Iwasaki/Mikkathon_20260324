@@ -87,7 +87,7 @@ void SetLvUpEffect(D3DXVECTOR3 pos, ITEMTYPE type);	// 演出の設置
 // --- static const変数の値設定 --- //
 const float ITEM_CONST::fAlphaDecrease = 0.02f;	// α値の減少係数
 const float ITEM_CONST::fYIncrease = 4.0f;		// Yの増加係数
-const int ITEM_CONST::nMaxItem = 256;		// アイテムの最大数
+const int ITEM_CONST::nMaxItem = 64;		// アイテムの最大数
 const unsigned int ITEM_CONST::aStateCount[ITEMSTATE_MAX] = 
 {
 	0,
