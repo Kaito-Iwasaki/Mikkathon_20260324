@@ -155,6 +155,10 @@
     <ClInclude Include="particle.h" />
     <ClInclude Include="pause.h" />
     <ClInclude Include="Tutorial.h" />
+    <ClInclude Include="TutorialDecal.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="WeightFollow.h">
       <SubType>
       </SubType>
@@ -221,6 +225,10 @@
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="pause.cpp" />
     <ClCompile Include="Tutorial.cpp" />
+    <ClCompile Include="TutorialDecal.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="WeightFollow.cpp">
       <SubType>
       </SubType>

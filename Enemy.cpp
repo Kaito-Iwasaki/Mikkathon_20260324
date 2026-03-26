@@ -25,7 +25,9 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define TEXTURE_FILENAME	"data\\TEXTURE\\Enemy.png"
+#define TEXTURE_FILENAME	"data\\TEXTURE\\EnemyAnimation.png"
+#define NUM_TEXTURE_X		(4)
+#define NUM_TEXTURE_Y		(2)
 #define INIT_POS			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
 #define INIT_SIZE			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
 #define INIT_COLOR			D3DXCOLOR(1, 1, 1, 1)
@@ -148,6 +150,8 @@ void UpdateEnemy(void)
 
 		// 敵同士で押し出し合って重ならないようにする
 		_CollisionEnemyEnemy(&g_aEnemy[i]);
+
+		g_aEnemy[i].nTexture = (g_aEnemy[i].nTexture + 1) % (NUM_TEXTURE_X * NUM_TEXTURE_Y);
 	}
 }
 
@@ -170,7 +174,16 @@ void DrawEnemy(void)
 		SetVertexPos(pVtx, g_aEnemy[i].obj);
 		SetVertexRHW(pVtx, 1.0f);
 		SetVertexColor(pVtx, g_aEnemy[i].obj.color);
-		SetVertexTexturePos(pVtx);
+		int nTextureX = g_aEnemy[i].nTexture % NUM_TEXTURE_X;
+		int nTextureY = g_aEnemy[i].nTexture / NUM_TEXTURE_X;
+		SetVertexTexturePos(
+			pVtx,
+			nTextureX,
+			nTextureY,
+			NUM_TEXTURE_X,
+			NUM_TEXTURE_Y,
+			g_aEnemy[i].obj.bInversed
+		);
 	}
 
 	// 頂点バッファをアンロック
@@ -308,14 +321,14 @@ void _InitEnemyParamsByType(ENEMY* pEnemy)
 		break;
 
 	case ENEMYTYPE_CHASER:
-		pEnemy->nLife = 1000;
+		pEnemy->nLife = 1100;
 		pEnemy->nScore = 300;
 		pEnemy->fSpeed = 3;
 		break;
 
 	case ENEMYTYPE_CHASER_SMALL:
 		pEnemy->obj.size = INIT_SIZE * 0.7f;
-		pEnemy->nLife = 90;
+		pEnemy->nLife = 100;
 		pEnemy->nScore = 100;
 		pEnemy->fSpeed = 6;
 		break;

@@ -82,6 +82,7 @@ typedef struct ENEMY
 	float fSpeed;
 	ENEMYTYPE type;
 	int nScore;
+	int nTexture;
 };
 
 //*********************************************************************

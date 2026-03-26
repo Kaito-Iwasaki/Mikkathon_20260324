@@ -38,6 +38,7 @@
 #include "itemGenerator.h"
 #include "LevelGenerator.h"
 #include "sound.h"
+#include "TutorialDecal.h"
 
 
 //*********************************************************************
@@ -103,11 +104,13 @@ void InitTutorial(void)
 	InitGauge();
 	InitPause();
 	InitFont();
+	InitTutorialDecal();
 
 	// -- Ex --
 	SetCursorMid_Tutorial();
 
 	// 敵を出現
+	SetEnemy(ENEMYTYPE_STATIC, GetPlayer()->obj.pos + D3DXVECTOR3(-400, 0, 0));
 	SetEnemy(ENEMYTYPE_STATIC, GetPlayer()->obj.pos + D3DXVECTOR3(400, 0, 0));
 
 	// アイテムを設置
@@ -151,6 +154,7 @@ void UninitTutorial(void)
 	UninitGauge();
 	UninitPause();
 	UninitFont();
+	UninitTutorialDecal();
 
 	// -- Managers --
 	UninitBulletManager();
@@ -200,6 +204,7 @@ void UpdateTutorial(void)
 		UpdateEffect();
 		UpdateParticle();
 		UpdateGauge();
+		UpdateTutorialDecal();
 
 		// -- Managers --
 		UpdateBulletManager();
@@ -236,6 +241,7 @@ void DrawTutorial(void)
 	// -- 2D Objects --
 	DrawBackground2();
 	DrawBackground();
+	DrawTutorialDecal();
 	DrawEffect();
 	DrawEnemy();
 	DrawBulletManager();
