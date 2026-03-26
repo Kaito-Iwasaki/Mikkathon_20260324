@@ -122,7 +122,10 @@ void UpdateGauge(void)
 {
 	LPGAUGE pGauge = GetGaugePtr();
 
-	if (GetMouseTrigger(MOUSE_LEFT) && pGauge->state == GAUGESTATE_FULLCHARGE)
+	if (
+		GetMouseTrigger(MOUSE_LEFT)&& 
+		GetJoypadTrigger(JOYKEY_A) &&
+		pGauge->state == GAUGESTATE_FULLCHARGE)
 	{
 		SetStateGauge(pGauge, GAUGESTATE_BURST);
 	}
