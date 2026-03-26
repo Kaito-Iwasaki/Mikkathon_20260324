@@ -26,6 +26,7 @@
 #include "LevelGenerator.h"
 #include "Background2.h"
 #include "pause.h"
+#include "font.h"
 
 //*********************************************************************
 // 
@@ -83,6 +84,7 @@ void InitGame(void)
 	InitEffect();
 	InitParticle();
 	InitPause();
+	InitFont();
 
 	// -- Generators --
 	InitEnemyGenerator();
@@ -111,6 +113,7 @@ void UninitGame(void)
 	UninitEffect();
 	UninitParticle();
 	UninitPause();
+	UninitFont();
 	
 	// -- Managers --
 	UninitBulletManager();
