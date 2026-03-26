@@ -51,7 +51,6 @@ typedef struct
 //*********************************************************************
 bool CreateGaugeBuffer(_Out_ GAUGEBUFFER *pOut);	// バッファ作成
 void SetVertexGauge(void);							// 頂点設定
-LPGAUGE GetGaugePtr(void);							// ポインタ取得
 void SetStateGauge(LPGAUGE pGauge, GAUGESTATE state);				// 状態設定
 void UpdateStateGauge(LPGAUGE pGauge);				// 状態更新
 void CalcGauge(LPGAUGE pGauge);						// ゲージの計算
