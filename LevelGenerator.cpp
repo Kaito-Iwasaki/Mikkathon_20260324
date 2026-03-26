@@ -32,6 +32,8 @@ typedef struct
 	BASEOBJECT aLevelNum[NUM_PLACE];	// 数字のポリゴン
 	int nLevel;				// スコア
 	bool bUse;				// 使用状況
+	int nCounter;			// 点滅カウント
+	bool bBlink;			// 点滅
 	LPDIRECT3DVERTEXBUFFER9 pVtxBuffNum;	// 数字の頂点バッファのポインタ
 	LPDIRECT3DVERTEXBUFFER9 pVtxBuffLv;		// Lvの頂点バッファのポインタ
 } Level, *LPLEVEL, *PLEVEL;
@@ -68,6 +70,7 @@ void InitLevelGenerator(void)
 	for (int nCntItem = 0; nCntItem < MAX_LEVEL; nCntItem++, pLevel++)
 	{
 		CreateBufferLevel(pLevel);
+		pLevel->objLv.bVisible = true;
 	}
 
 	// テクスチャの読み込み
@@ -113,6 +116,26 @@ void UpdateLevelGenerator(void)
 
 		if (pLevel->bUse)
 		{// 表示状態
+			if (pLevel->bBlink)
+			{
+				pLevel->nCounter--;
+				if (pLevel->nCounter % 10 < 5)
+				{
+					pLevel->objLv.bVisible = false;
+				}
+				else
+				{
+					pLevel->objLv.bVisible = true;
+				}
+
+				if (pLevel->nCounter <= 0)
+				{
+					pLevel->bBlink = false;
+					pLevel->objLv.bVisible = true;
+					pLevel->nCounter = 60;
+				}
+			}
+
 			// 頂点バッファをロックし、頂点情報へのポインタを取得
 			pLevel->pVtxBuffNum->Lock(0, 0, (void**)&pVtx, 0);
 
@@ -197,10 +220,13 @@ void DrawLevelGenerator(void)
 			// テクスチャの設定
 			pDevice->SetTexture(0, g_apTexBuffLevel[0]);
 
-			for (int nCntNum = 0; nCntItem < NUM_PLACE; nCntItem++)
+			if (pLevel->objLv.bVisible)
 			{
-				// ポリゴンの描画
-				pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCntItem, 2);
+				for (int nCntNum = 0; nCntItem < NUM_PLACE; nCntItem++)
+				{
+					// ポリゴンの描画
+					pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCntItem, 2);
+				}
 			}
 
 			// Lvの描画
@@ -211,8 +237,11 @@ void DrawLevelGenerator(void)
 			// テクスチャの設定
 			pDevice->SetTexture(0, g_apTexBuffLevel[1]);
 
-			// ポリゴンの描画
-			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+			if (pLevel->objLv.bVisible)
+			{
+				// ポリゴンの描画
+				pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+			}
 		}
 	}
 }
@@ -293,7 +322,7 @@ int GeneratorLevel(int nLevel, D3DXVECTOR3 posCenter)
 			// 頂点バッファをロックし、頂点情報へのポインタを取得
 			pLevel->pVtxBuffLv->Lock(0, 0, (void**)&pVtx, 0);
 
-			pLevel->objLv.pos.x = posCenter.x - (2 * NUM_SPACE);
+			pLevel->objLv.pos.x = posCenter.x + (4 * NUM_SPACE);
 			pLevel->objLv.pos.y = posCenter.y;
 			pLevel->objLv.pos.z = 0.0f;
 			pLevel->objLv.size.x = WIDTH_LV;
@@ -422,7 +451,7 @@ void SetPositionLevel(int nIdxLevel, D3DXVECTOR3 pos)
 	pLevel->pVtxBuffLv->Lock(0, 0, (void**)&pVtx, 0);
 
 	pLevel->objLv.pos = pos;
-	pLevel->objLv.pos.x = pos.x - (2 * NUM_SPACE);
+	pLevel->objLv.pos.x = pos.x + (3.7f * NUM_SPACE);
 
 	// 頂点情報を設定
 	pVtx[0].pos.x = pLevel->objLv.pos.x - WIDTH_LV;
@@ -469,10 +498,17 @@ void SetLevel(int nIdxLevel, int nElem)
 	VERTEX_2D* pVtx;				// 頂点情報へのポインタ
 	int aTexU[128];					//各桁の数字を収納
 
-	pLevel->nLevel = nElem;
-
 	pLevel += nIdxLevel;
 	if (pLevel->bUse == false) return;
+
+	if (pLevel->nLevel / 100 < nElem / 100)
+	{
+		pLevel->bBlink = true;
+		pLevel->nCounter = 60;
+	}
+
+	pLevel->nLevel = nElem;
+	if (pLevel->nLevel > 999) pLevel->nLevel = 999;
 
 	// スコアから各桁を求める
 	for (int nCntTex = 0; nCntTex < NUM_PLACE; nCntTex++)
@@ -491,6 +527,14 @@ void SetLevel(int nIdxLevel, int nElem)
 		pVtx[1].tex = D3DXVECTOR2((0.1f * aTexU[nCntVtx]) + 0.1f, 0.0f);
 		pVtx[2].tex = D3DXVECTOR2((0.1f * aTexU[nCntVtx]), 1.0f);
 		pVtx[3].tex = D3DXVECTOR2((0.1f * aTexU[nCntVtx]) + 0.1f, 1.0f);
+
+		if (pLevel->nLevel == 999)
+		{
+			pVtx[0].col = D3DXCOLOR(1, 1, 0, 1);
+			pVtx[1].col = D3DXCOLOR(1, 1, 0, 1);
+			pVtx[2].col = D3DXCOLOR(1, 1, 0, 1);
+			pVtx[3].col = D3DXCOLOR(1, 1, 0, 1);
+		}
 
 		pVtx += 4;
 	}
