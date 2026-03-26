@@ -88,7 +88,7 @@ void SetLvUpEffect(D3DXVECTOR3 pos, ITEMTYPE type);	// 演出の設置
 // --- static const変数の値設定 --- //
 const float ITEM_CONST::fAlphaDecrease = 0.02f;	// α値の減少係数
 const float ITEM_CONST::fYIncrease = 4.0f;		// Yの増加係数
-const int ITEM_CONST::nMaxItem = 64;		// アイテムの最大数
+const int ITEM_CONST::nMaxItem = 128;		// アイテムの最大数
 const unsigned int ITEM_CONST::aStateCount[ITEMSTATE_MAX] = 
 {
 	0,
@@ -449,6 +449,7 @@ void HitItem(LPITEM pItem, PLAYER *pPlayer)
 {
 	// NULLCHECK
 	if (pItem == nullptr || pPlayer == nullptr) return;
+	if (pPlayer->state == PLAYERSTATE_SMASH) return;
 
 	// レベルアップ演出
 	SetLvUpEffect(pItem->obj.pos, pItem->type);
@@ -538,18 +539,19 @@ void UpdateItemState(LPITEM pItem)
 		{
 		case ITEMTYPE_PROTEIN_ALPHA:
 			pPlayer->fSpeed += 0.05f;
-			AddScore(100);
+			AddScore(30);
 			break;
 
 		case ITEMTYPE_PROTEIN_BETA:
-			pPlayer->nPower += 1;
-			AddScore(200);
+			pPlayer->nPower += 2;
+			pPlayer->fSpeed += 0.075f;
+			AddScore(60);
 			break;
 
 		case ITEMTYPE_PROTEIN_GAMMA:
-			pPlayer->fSpeed += 0.05f;
-			pPlayer->nPower += 1;
-			AddScore(300);
+			pPlayer->fSpeed += 0.1f;
+			pPlayer->nPower += 3;
+			AddScore(90);
 			break;
 
 		default:
