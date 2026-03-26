@@ -17,6 +17,7 @@
 #include "sound.h"
 #include "particle.h"
 #include "Game.h"
+#include "gauge.h"
 
 //*********************************************************************
 // 
@@ -451,6 +452,8 @@ void HitItem(LPITEM pItem, PLAYER *pPlayer)
 
 	// レベルアップ演出
 	SetLvUpEffect(pItem->obj.pos, pItem->type);
+
+	AddGauge(1);
 
 	// レベルアップ
 	AddLevel(pPlayer->nIdxLevel, ITEM_CONST::aLevel[pItem->type]);
