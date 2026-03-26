@@ -384,7 +384,7 @@ void AddGauge(int nValue)
 	if (pGauge == nullptr) return;
 
 	pGauge->nCounterState += nValue;
-	if (pGauge->nCounterState >= GAUGE_CONST::aStateCount[GAUGESTATE_FULLCHARGE])
+	if (pGauge->nCounterState >= GAUGE_CONST::aStateCount[GAUGESTATE_FULLCHARGE] && pGauge->state != GAUGESTATE_BURST)
 	{
 		// ó‘ÔXV
 		SetStateGauge(pGauge, GAUGESTATE_FULLCHARGE);
