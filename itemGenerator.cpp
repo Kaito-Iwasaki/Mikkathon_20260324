@@ -12,6 +12,7 @@
 //*********************************************************************
 #include "itemGenerator.h"
 #include "Item.h"
+#include "util.h"
 
 //*********************************************************************
 // 
@@ -61,6 +62,8 @@ int g_aLineGenerator[ITEMTYPE_MAX] =	// ジェネレータのアイテム選択の条件
 //=====================================================================
 void UpdateItemGenerator(void)
 {
+	LPITEM pItem = GetItemPtr();
+
 	if (g_itemGenerator.nCounter % g_itemGenerator.IGS.nFrameSpawn == 0)
 	{
 		ITEM_GENERATE_SETTING *pSetting = &g_itemGenerator.IGS;
@@ -75,8 +78,8 @@ void UpdateItemGenerator(void)
 			int nYMax = pSetting->rect.bottom, nYMin = pSetting->rect.top;
 
 			// 位置を設定
-			float fXPos = (float)(rand() % nXMax + nXMin);
-			float fYPos = (float)(rand() % nYMax + nYMin);
+			float fXPos = RandRange(nXMin, nXMax);
+			float fYPos = RandRange(nYMin, nYMax);
 
 			// 種類を設定
 			int nType = rand() % 100;

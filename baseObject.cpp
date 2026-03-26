@@ -224,3 +224,51 @@ bool IsObjectOutOfScreen(BASEOBJECT obj, RECT rect, DWORD flags)
 
 	return bOutofScreen;
 }
+
+bool IsOutOfScreen(D3DXVECTOR3 pos, D3DXVECTOR3 size, DWORD flags)
+{
+	bool bOutofScreen = false;
+
+	if (flags & OOS_TOP)
+	{
+		bOutofScreen = bOutofScreen || pos.y < 0 - size.y;
+	}
+	if (flags & OOS_BOTTOM)
+	{
+		bOutofScreen = bOutofScreen || pos.y > SCREEN_HEIGHT + size.y;
+	}
+	if (flags & OOS_LEFT)
+	{
+		bOutofScreen = bOutofScreen || pos.x < 0 - size.x;
+	}
+	if (flags & OOS_RIGHT)
+	{
+		bOutofScreen = bOutofScreen || pos.x > SCREEN_WIDTH + size.x;
+	}
+
+	return bOutofScreen;
+}
+
+bool IsOutOfScreen(D3DXVECTOR3 pos, D3DXVECTOR3 size, RECT rect, DWORD flags)
+{
+	bool bOutofScreen = false;
+
+	if (flags & OOS_TOP)
+	{
+		bOutofScreen = bOutofScreen || pos.y < rect.top - size.y;
+	}
+	if (flags & OOS_BOTTOM)
+	{
+		bOutofScreen = bOutofScreen ||pos.y > rect.bottom + size.y;
+	}
+	if (flags & OOS_LEFT)
+	{
+		bOutofScreen = bOutofScreen ||pos.x < rect.left - size.x;
+	}
+	if (flags & OOS_RIGHT)
+	{
+		bOutofScreen = bOutofScreen || pos.x > rect.right + size.x;
+	}
+
+	return bOutofScreen;
+}

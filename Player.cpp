@@ -26,7 +26,7 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define TEXTURE_FILENAME	"data\\TEXTURE\\PlayerAnimation.png"
+#define TEXTURE_FILENAME	"data\\TEXTURE\\PlayerAnimationGORI.png"
 #define NUM_TEXTURE_X		(4)
 #define NUM_TEXTURE_Y		(2)
 #define INIT_POS			D3DXVECTOR3(100.0f, 100.0f, 0.0f)
