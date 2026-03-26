@@ -48,6 +48,7 @@ FONT g_aFont[MAX_FONT] = {};
 FONT_INFO g_aFontInfo[FONT_LABEL_MAX] = {
 	{ "", "Terminal"},
 	{ "data\\FONT\\x10y12pxDonguriDuel.ttf", "x10y12pxDonguriDuel" },
+	{ "data\\FONT\\‹Ê‚Ë‚¬²‘Œƒ–³—¿”Åv7‰ü.ttf", "‹Ê‚Ë‚¬²‘Œƒ–³—¿”Åv7‰ü" },
 };
 
 //=====================================================================

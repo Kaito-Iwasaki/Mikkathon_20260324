@@ -23,7 +23,8 @@
 #define INIT_POS			D3DXVECTOR3(0.0f, 0.0f, 0.0f)
 #define INIT_SIZE			D3DXVECTOR3(3000.0f, 3000.0f, 0.0f)
 #define INIT_COLOR			D3DXCOLOR_WHITE
-#define TEXTURE_NUM			(2 + ED_MAX)
+#define UNRESULTSCENE_NUM	(3)
+#define TEXTURE_NUM			(UNRESULTSCENE_NUM + ED_MAX)
 #define RELEASE_ARRAY(pp, num) do{ for(int i = 0; i < num; i++){ RELEASE(pp[i]); } }while(0)	// 配列バッファ解放(配列の先頭アドレス, 配列数)
 
 //*********************************************************************
@@ -59,6 +60,7 @@ BackgroundStruct g_Background;
 const char *g_apTextureBG[TEXTURE_NUM] =
 {
 	"data/TEXTURE/title.jpg",
+	"data/TEXTURE/background.jpg",
 	"data/TEXTURE/background.jpg",
 	"data/TEXTURE/ResultB.jpg",
 	"data/TEXTURE/ResultA.jpg",
@@ -140,7 +142,7 @@ void DrawBackground(void)
 
 	// 頂点情報を設定
 	SetVertexPos(pVtx, g_Background.obj);
-	if (GetCurrentScene() != SCENE_GAME)
+	if (GetCurrentScene() != SCENE_GAME && GetCurrentScene() != SCENE_TUTORIAL)
 	{
 		pVtx[0].pos = D3DXVECTOR3(0, 0, 0);
 		pVtx[1].pos = D3DXVECTOR3(1280, 0, 0);
@@ -170,7 +172,7 @@ void DrawBackground(void)
 		}
 		else
 		{
-			nIdxTexture = 2 + GetEndingType();
+			nIdxTexture = UNRESULTSCENE_NUM + GetEndingType();
 		}
 
 		// テクスチャの設定

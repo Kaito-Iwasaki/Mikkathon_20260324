@@ -296,7 +296,7 @@ void _OnPlayerState()
 		GetCamera()->pos = g_Player.obj.pos + vecCamOffset;
 
 		// レベル表示をプレイヤーの頭上に追従させる
-		D3DXVECTOR3 vecLevelOffset = D3DXVECTOR3(0, -g_Player.obj.size.y, 0);
+		D3DXVECTOR3 vecLevelOffset = D3DXVECTOR3(-50, -g_Player.obj.size.y, 0);
 		SetPositionLevel(
 			g_Player.nIdxLevel,
 			g_Player.obj.pos + vecLevelOffset
@@ -354,7 +354,7 @@ void _OnPlayerState()
 		GetCamera()->pos = g_Player.obj.pos + vecCamOffset;
 
 		// レベル表示をプレイヤーの頭上に追従させる
-		D3DXVECTOR3 vecLevelOffset = D3DXVECTOR3(0, -g_Player.obj.size.y, 0);
+		D3DXVECTOR3 vecLevelOffset = D3DXVECTOR3(-50, -g_Player.obj.size.y, 0);
 		SetPositionLevel(
 			g_Player.nIdxLevel,
 			g_Player.obj.pos + vecLevelOffset
@@ -376,7 +376,14 @@ void _OnPlayerState()
 
 		if (g_Player.nCounterState > 90)
 		{
-			SetFade(SCENE_RESULT);
+			if (GetCurrentScene() == SCENE_TUTORIAL)
+			{
+				SetFade(SCENE_TUTORIAL);
+			}
+			else
+			{
+				SetFade(SCENE_RESULT);
+			}
 		}
 
 		EFFECTINFO info;
@@ -390,7 +397,7 @@ void _OnPlayerState()
 		SetParticle(info, g_Player.obj.pos, 0, D3DX_PI, 1, 1);
 
 		// レベル表示をプレイヤーの頭上に追従させる
-		D3DXVECTOR3 vecLevelOffset = D3DXVECTOR3(0, -g_Player.obj.size.y, 0);
+		D3DXVECTOR3 vecLevelOffset = D3DXVECTOR3(-50, -g_Player.obj.size.y, 0);
 		SetPositionLevel(
 			g_Player.nIdxLevel,
 			g_Player.obj.pos + vecLevelOffset
